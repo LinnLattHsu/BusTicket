@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  {%if available_routes%}
+    {%for route in available_routes%}
+      {{route.source}}
+    {%endfor%}
+  {%else%}
+    <p>Nothing</p>
+  {%endif%}
+
+  <div class="searchinfo">
+    <div>
+
+    </div>
+  </div>
+
+</body>
+</html>
