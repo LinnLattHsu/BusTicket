@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-dj0X1KrqucO8tBm47gcrN9gh8z3IiK7UJUE0wheG/2UWTvALp0EgVgg8OAVprO71JQyYYDyW0h+irPl+jDGIxg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="icon"
+        href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
+
+    <title>Bus Reservation System</title>
+
+    <style>
+        /* Custom styles for background image and transitions not directly covered by Tailwind's default utilities */
+        body {
+            background-image: url('https://res.cloudinary.com/ddvru0ow1/image/upload/v1727193013/imgblur_vcheyk.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff; /* Ensure text remains white on dark background */
+        }
+
+        /* Navbar background with transparency and hover effect */
+        .navbar-custom {
+            background-color: rgba(0, 123, 255, 0.5);
+            transition: background-color 0.3s ease;
+        }
+        .navbar-custom:hover {
+            background-color: rgba(0, 86, 179, 0.8);
+        }
+
+        /* Nav link hover effects */
+        .nav-link-custom {
+            transition: color 0.3s, background-color 0.3s;
+        }
+        .nav-link-custom:hover {
+            color: #ffcc00 !important; /* Tailwind's arbitrary value for yellow */
+            background-color: rgba(255, 204, 0, 0.2);
+        }
+
+        /* Footer background with transparency and hover effect */
+        .footer-custom {
+            background-color: rgba(0, 123, 255, 0.4);
+            transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
+        }
+        .footer-custom:hover {
+            background-color: rgba(0, 86, 179, 0.6);
+            padding-top: 22px;
+            padding-bottom: 22px;
+        }
+
+        /* Footer title underline */
+        .footer-title-underline::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background-color: #ffcc00;
+            margin: 8px auto;
+        }
+
+        /* Card custom transition and shadow */
+        .card-custom-transition {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card-custom-transition:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Review card hover effect */
+        .review-card-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Section title animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar-custom py-2">
+        <div class="container mx-auto px-4 flex flex-wrap items-center justify-between">
+            <a class="flex items-center" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt="Logo"
+                    class="h-12 w-12 rounded-full transition-transform ease-in-out duration-300 hover:scale-110">
+            </a>
+            <button class="block lg:hidden text-white focus:outline-none" type="button"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"
+                onclick="document.getElementById('navbarNavAltMarkup').classList.toggle('hidden')">
+                <span class="text-white text-2xl"><i class="fas fa-bars"></i></span>
+            </button>
+            <div class="hidden lg:flex lg:flex-grow lg:items-center w-full lg:w-auto" id="navbarNavAltMarkup">
+                <div class="lg:flex-grow flex flex-col lg:flex-row lg:ml-auto">
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'home' %}">
+                        <i class="fas fa-home mr-2"></i> Home
+                    </a>
+                    {% if request.user.is_not_active %}
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'login' %}">
+                        <i class="fas fa-home mr-2"></i>Login
+                    </a>
+                    {% endif %}
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'findbus' %}">
+                        <i class="fas fa-bus mr-2"></i> Find Bus
+                    </a>
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'seebookings' %}">
+                        <i class="fas fa-list mr-2"></i> See Bookings
+                    </a>
+                    {% if request.user.is_active %}
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'signout' %}">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                    {% else %}
+                    <a class="nav-link-custom text-white text-lg px-3 py-2 flex items-center rounded-md hover:bg-yellow-400 hover:bg-opacity-20 hover:text-[#ffcc00] !important" href="{% url 'signup' %}">
+                        <i class="fas fa-user-plus mr-2"></i> Registration
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    <div class="container mx-auto mt-12 px-4 animate-fade-in">
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full sm:w-1/2 md:w-1/4 px-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-md card-custom-transition">
+                    <img src="https://www.shutterstock.com/image-vector/mobile-application-buying-tickets-online-260nw-2428555701.jpg" class="w-full h-48 object-cover rounded-t-lg" alt="Book Anywhere">
+                    <div class="pt-4 text-center">
+                        <h5 class="text-blue-600 font-bold text-xl mb-2">Book Anywhere</h5>
+                        <p class="text-gray-700 text-base">Reserve your tickets from the comfort of your home.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full sm:w-1/2 md:w-1/4 px-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-md card-custom-transition">
+                    <img src="https://png.pngtree.com/png-vector/20220518/ourlarge/pngtree-flat-vector-image-of-airport-ticket-counter-with-distancing-queue-vector-png-image_46154588.jpg" class="w-full h-48 object-cover rounded-t-lg" alt="Say No to Queue">
+                    <div class="pt-4 text-center">
+                        <h5 class="text-blue-600 font-bold text-xl mb-2">Say No to Queue</h5>
+                        <p class="text-gray-700 text-base">Skip the lines and book your tickets online.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full sm:w-1/2 md:w-1/4 px-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-md card-custom-transition">
+                    <img src="https://png.pngtree.com/png-clipart/20220430/original/pngtree-online-payment-mobile-phone-application-vector-illustration-banner-png-image_7609687.png" class="w-full h-48 object-cover rounded-t-lg" alt="Online Transactions">
+                    <div class="pt-4 text-center">
+                        <h5 class="text-blue-600 font-bold text-xl mb-2">Online Transactions</h5>
+                        <p class="text-gray-700 text-base">Make your payments online securely and conveniently.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full sm:w-1/2 md:w-1/4 px-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-md card-custom-transition">
+                    <img src="https://img.freepik.com/premium-vector/travel-insurance-illustration-concept-white-background_701961-841.jpg" class="w-full h-48 object-cover rounded-t-lg" alt="Travel Insurance">
+                    <div class="pt-4 text-center">
+                        <h5 class="text-blue-600 font-bold text-xl mb-2">Travel Insurance</h5>
+                        <p class="text-gray-700 text-base">Purchase tickets with optional travel insurance for an additional fee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-12 px-4">
+        <div class="reviews-section">
+            <h2 class="text-center text-4xl font-bold mb-10 relative text-black animate-fade-in">Customer Reviews</h2>
+            <div class="flex flex-wrap -mx-4">
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md review-card-hover text-black">
+                        <div class="text-center">
+                            <img src="https://b3314858.smushcdn.com/3314858/wp-content/uploads/2021/12/Cartoon-Avatar-White-Background.png?lossy=2&strip=1&webp=1" class="rounded-full mx-auto mb-4 w-20 h-20 object-cover" alt="Review 1">
+                            <h5 class="font-bold text-xl mb-2">John Doe</h5>
+                            <p class="text-base mb-3">"Amazing service! I booked my tickets within minutes."</p>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md review-card-hover text-black">
+                        <div class="text-center">
+                            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxIQEhUQEBIVDxUWFRUVFRUVEBAVFRAQFRUWFhUVFhUYHSggGBolGxUXITEhJSkrLi4uFyAzODMtNygwLisBCgoKDg0OGxAQGi0gICUtLS0uKy0tLSsrLS0uLy0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLf/AABEIAOEA4QMBIgACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAADAAEEBQYCBwj/xABDEAACAQIDBQQGCQMCBAcAAAABAgADEQQFIQYSMUFRImFxgRMykaGxwQcUI0JSctHh8DNikoKyFTSj8RYkQ1Njc6L/xAAaAQACAwEBAAAAAAAAAAAAAAAAAQIDBAUG/8QAKhEAAgIBBAEDAwQDAAAAAAAAAAECEQMEEiExQSJRYRMygTNCcbEUkaH/2gAMAwEAAhEDEQA/POQI9ohFLyoVorRRQAVorRRQAUaPFABoo8QW8AGik7AZTWr/wBKm1TqQLKPFjoJZps2V/rV6NLuB32HsBHvkJZIx7ZZHHOX2oz0U1dHJ8JwOKcn+2kVHvYyemwq1uhiAx5B0tfzBMgtRD3LHpciV0YWKWOcZNVwr+jrIUbl0PeDzB+Ug7n8sflLU7KGmjiKORGjAUeNFAQoo8UAGtFaPFABrRWjxQGNGnUaAjm0UeKMBxHjCPEAooooAKNFFABR4gJptl9l/rA+sYgmlhlJuR69dh9yn3dW5cOPBNpcsaTbpFTlGTVsUxFFCwHrMSFRB1Zzoo9/QGXv1TB4PWoRjao5aigp/LxqeLad0JtDtIAow+HUUqa6LTXRVHVjzPedTMkzljcm/w9kx5MzfCOjh0qXMuS7zDaOtW7IO6vJVAVQO4DSDwOCqVTxsO8DynAekNzwE0VWoKa2UWlCXk13XCCYfCUqI7R3j4Xmn2YRajXQbtumntEwFKq1Rxc8+79Z6CMUMFg2rH1gvZ59o8P4ILsU+EV30kbT4ZHp4Z6K4hkO9vEkBD001I7u6VGV7UqLKaCBem4treFp59icQatUuxJLEm5PH+Xl1R1tp85ZLoqhFX0ejYzY/C5jT9JhSMPVtfd403PQr93xW08xznKKuEqGlWQow5HpyIPAg9RPTNi6pWxBmt2myKjmNHcqWWoAfR1OanoeqnmP0lmLM1wzNqMCT9J872ik3NcuqYaq9CqN1kNj39CO4jWQyJsMQ0aPFABo8UUAFFGjwEKMY8aADR4ooAIR4wjwAaKKdAQAQEcCdASTgcI1V1prxJ9g5mAFpspkQxLmpWO7Qp6ueBqNypqe/meQk/avaX0n2VKyIo3VCiyoo0CqIPPczWhSXDUdFUakfeY8T4mZJnvqZhyZHN/B08GFQVvs74wlMRP3pKw8pLVpFejTZRTsonGZoT+8JlLBV36jBQOZMq892vpeph6fpj+I3C+VuMffQnUXbLPZvBF6oEm/SbmNkTCI17atbryBmGwmZ5gzfYLuE/gT9ZoE2axu4cTigzvxUWJN+rRqNdlcpqTMqKdnt+Gw8xx980GC1tKUqabWcFTfmDNBlFIPbdN/DWNscIm42XHA8O/wB/ebN8TZe+ZTJKe6uslYvMANLyPSCS3SK/b7KBjKH1hB9tRGtuNSjz8xxnk5E9gwWYbr9QdCOU892uyoYbEMq+o3bT8jcvI3HlL9Ll3ehmPWYNnrXTKAickQpEYibTCCinREYiIBo0eNAYojFFABRRRQEIRxGE7AgAgJ2BEBCARiGCzQZaow1Bqx9dxZe5OftPwlXgML6RwvU+wcz5CdbTY4FtxdFXQDuGgmfPKltXk06aFvc/BU4vEb7FjIzVIJ3/nfOVNz/NJmo3pkqlrLDDEDtHh8TIFHU2HnNDk+WmoQSPAdJWy6LoCuAq4ogG6pyUfOa7INhEFiy+2XuSZWqgaTTUFAhZXJ8g8qyWlSACqB32EvaeGFrEXkSi0sKVTSWRM87MhtVsdSxCkqoVvDQzxvNcpr4CrvU7rY8OU+j62syG1eQriaZ07QGnf3SL7LISZhcg2wp16e6w3Kg4jkT8pHzLMiTMVtBl74WpvrdSDrJuW5qKwsT2un4v3kJp1aNWKUW6fZqMvzLeNideXfJ+1NAYjCCqNWon/AKbWv7Db3zIFyp3hy4902OzmJFZGpNwdSjf6ha8qjLZNTLc0FkxuBgSs5IkirSKkqeIJB8QbGDKzuHmQBE5Ihys4KxDAkTmFInBEBnEUeNEA0eKKAHSiFURlEIojEJVhAIlEKqxiLDAn0VN6p423V89T8pk8VW3mJl9tBX3EWkOQufE6zL1W5TDJ7pNnSxR2wSGLXhAbaCDXQX58oXDLrvGQZdEtssw9yB7fGei7P4G1tJktm8JvEGek5XRCgSplllphksJMSApmGBgVslUjJ9CVSPaG/wCJ0qetSoieLASUSEkWbrAOkp8TdvgUH9YOeiC/v4SHQ24pVT9nRquvMqL2/njG0KKl7FB9I2zQqIaqjl2h39Z4ZVptSYgaEGfVSVqWJpkod5TowIsVPRgeBnhX0kZGcLXuB3X4d8IuuCfZT5bnSvZavZPDftfyccx3zUZG5o1FIN1bgQbj2zz2rSFrj9x3GWuzOcGm/o27SkjQngeRHfIZMVptGjFnaaUjVbT0N3EvbgxD/wCQvKgrNHtSAxpVBwan7bH9CJQlZ0sEt2OL+Di6iOzLJfIArOCIcicESwqAEQbCSCINhEMAROYUicMIDOIo9oogJKiEURlEKokiI6rJOGTtC/X3DWCVYRm3VY9AYpOothBXJIos5xO/UY98rAOZhqpuZwRMPg6nk4AuYdmsQijePTqekHvBBvHykjIhvMGPWR+Sd/tNBl9PMaa7vTUboNwn3yam12Y0tHo+2kfiJFxe0zUmFGipdzpYC5v3D5lhtoqqP6PEUWvcLYVKV9827IG7YnUaAwUZPmgc4p02a7INjatRglenuX4EAjXvvNnQxgYaTzTDYhXvuE3BIIKlWVhxVlPA+0TSbN4sud0yp2nyW0mrReZ7UqGmRSO6evdPO8Vs3VqsS9U69NfjPWKuDukxme76AU6Yu7tuqL2vfv5DqegMOQjJUVGUbOYdG7Qaub8LO4B71QW9s3eDzoYYBSpopwF6TovhcgCePbT4PGUWsxq1lFTdK0yyKo3VNgF4XubE3lxl2zFY0K2Jw+IrUGpsgSlUqb4b0gU+hc6BmuQLga3Gkv8AotKzL/kwlLbR7ZgsTTrdsAb1rXGhI6HrMZ9MGUirgjUA1pspvzsTLfYjK8VSog4vcD9KfADv5DwlptZhRVwVdD/7ZPmuvylXknxZ88ZPkYxdajRL7oqOqFgO0FPHXgdJN202aw2De+DrCsEIWpZr2JNvaDLHZHKTUrizpTIuASyq2uh3bnU2Jlj9IGSLhaVWw03aIHeWqr8gYKTujQ8cabfdEY1vS4Sg3MFh7QD8pAKwmTtfCAdKnyaOVm7S/p18v+zla39Z/j+iOVnBWSCs4ZZoMtkZhBssklYNlkllg2WAVkZhBMIllgmEQwNooS0UBklBCqIyiFURkLHUQeP0pt4SQoixNLeRh1BimrixwlU0zJhf3gmcceAEJiDYbvDmZV16u9oOEwJWdRy2o7qV98noJd7OUd4W7zM3TNjNbsrobHkfdDJwh6f1PkuMHlQoYhawBPW5LE+Zl7kGDuQTrK1KM1Wz9G1pUy/wAGkwlGwAlkgsJGoyV0gUMwH005SzYaljKYu1BrP/8ATUsLnwYL/kZ4/muXjcXEUxZH9ZR9x+7uPzn01nlJHwtZKgurU3Ug8wRaeH4TAj6u9I9oA2F+lrTZpvUnExahVUjF5ep3h4iXuKpkWYcR7x0neU5MUu56nd8JKr0T0lOSXqN+CFYzSbAbWPhmAJJpE9pfw/3L856NtNlqVKf1qjbUAtbgQfvfr7Z4Zh1KG46z1nYDOt+l9XqajVfIj944ZNkrIZ8H1Y/JUOIFhJmMp7rMp5Ej2G0itOqmcCqAMIFodxBMIAR2EC4khhAuIDA2inVooDJdMSQggaYkhIEQqCHQQSCHQRkQqCHQQSCSaFItwHDieAHiToIxMdRC6AFmIVRqWJACjvJ0EqM12iw+GFgfTv0BIQHvPFvK0xuLzitjaqiq3YBuEHZRQNfV68r98TdElBs2Wf5mPQ1Fpm4CNc9SRYfGeU1KNiJrs6zFKVA751c6AcSBKDDuuIQsmhU6qeI6HwlWX1KjRg9HJOy7lL6gOEpMsSaKlQJGk5ckdvG+CxXA6AgS1y0bslZDQ9LS8Iephd2V0T3eCdhqt7SyWUeAa72l2TZSY0iufBR7a5mKdBqYOrC08xrt6Olu8C7W8hxlxttnCIxeoeyOQ4s3QCZDH5slfcencBLYgPFWJ1BNtzLYjcveWY8nryxhPCNLgGSwHkJKfLUcXEzNHEESyw2ZETHZ06Fi8nI1AlpslTZKg8f0hsDj1fRpfYZKVEelayj+fsPODVi3V2RM4P21T8x/wFle009TI0xI9Jh8QjltSrHnzsw/SUmY5VWof1aZUfh4r/kNJ2IcRSPNZHcm/kr2gWhmgmkiIFoF4ZoF4DBR4ooATKckJI1OSKcBEhJMwuHaobKL21JJACjqSdBIW8FBY6AcTKbMto3cBEsqgW3RwvwLEczfrGKmzT4nMMPhx2mFZu47tMHx4t5TL51tQ9Xsg9kcFUbqD9ZSVN5zdiWPfBmlCyxQS7AVXLG5kjCMKatUbQfIcvM/CcMlpVZjVerZALKOXU8zK3wWVfBAzXHNXcseHBR0Ek7PZo2EqelFNao3SrI40ZT8DADBGEWjaV0+yziqNvlVWnWJqU9EY3tf+mT90+E3GV5YeYni+XY6phXvTN1bip9Vh39D3z1vYPainXtRJ3WHBWOo7r8x0PlKM2K/UjVgzbfS/wbLIMuNEsD6rcO6TsdhRa8lUnG7I2JYkWmTpGltt2UeCIFY+HvnO2ednC4fet2nYU0/MQTfyAJkl8IUJccZ55txWrOUJOqOGUNfdvYjh5x4kt6seVNwbj7GB2qDs4ZyST15CQcr0BHf+k22ebPlaPpqrB2I3vVsAQu9ZddRY2v1mOpLun3zfmjxZz9PL1IvMPrJa0ja8i4DlNLloQizTntHZUuCtwVxUUf3D4ianaZzvJSHADePeSbD4ThMqR7FTYiWG0OF3hTrd243cw1HzlunS+orMusb+m6KSgCpupKnqCQfaJpMq2orUuzU+2TgQ3G3j8iPOUlOnO6i2E6hxDSVspoY1TUwv2NTUmmRZCen9p8NJkK6FSVYFSCQQeII4gzTZDjhS7J01htrsAKqfWqY7SgCpb7ycA3iPh4Q6I0YtoJ4R4JoAcRRrxQAl0zJFORKZixuI9HTZudrDxOkBUQM9zLejolPZHH+49ZV0eJHnIytc3h+h/lj/BFZalSJ1JLzpqE4oVJYUxeSEVdWjIpoDpLqtSkNqcGhpkEYecPgbyxVYZUiodmdxGAPD2QFDfpMGUlGU3BHEETXCgDoZAxmXfsZFxJKR6tsNtD9dw4ZrConYqD+7kw7iNfbNKBPGNgsccHjFDaU6v2b9Ax9RvI6eZntaLObmx7ZHRw5N0RhSvMX9IlCmFRABvk7x/KOHv+E3VwoLHQAXJ6ATzPPMX9YqtUPA6KOiDh1PnLNNj3Sv2KtTl2xr3Mbm1S1Pd/F2R3Lxa3QW+MytfQzU5qu85twXsjx+8fbp5TOYylYzbNGODok4TFWEkDMyNQZRK9pc4OnhmRS72cghrvYKd8aiw0st9DxvpflglCmdSGa0WGF2iZTe802X7VhwadQbyty7+7vmPKYMffGgex3rks1NbAqBqAxexvxUDnqXDfVEfSrvDTVnHZ10KgKd4217vdI7Wuif1E1TRt6VQHVTvA6g9RFVqDeAPn/PKV2S4+hUG4pChRvaHjcENy43C+0ye5oXNn5nnwWy63A1PHTn3ToYp7o2cnNj2SaQUVOcuslzL/ANN9QRYg/eU6EGU9P0BvdyPO99Trw6Ae2d03orZgxvodTqOttNeendLGymirzbDehqvT/CdO9Tqp9hEgMZp9oKdJzSqs3rJY9q12RtfungrA352AlDilo7p3CSRwuePq8racW/xiFRCvFObxRgS6ch7Qf0f9Q+cUUbBdmepSQ3qmKKQLQ9LjLbDRopNEWEqyHUiijYkcCFWKKIYenO8T6sUUYiFW9ZfzL8RPeUiimLV+DbpfJFz7/lqv5G+E80iik9J9rK9X9yM3W4Hz+MocfGil8iiBU1YyRRTJkNuDsaIRRSk0mm2T9dvy/OXw5fzpHimzTfYYdX9/4JNOdRRS8yk7Of8Al8P41PgkoWjRQInEUUUAP//Z" class="rounded-full mx-auto mb-4 w-20 h-20 object-cover" alt="Review 2">
+                            <h5 class="font-bold text-xl mb-2">Jane Smith</h5>
+                            <p class="text-base mb-3">"Super convenient and hassle-free. Highly recommended!"</p>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="bg-white bg-opacity-80 p-6 rounded-lg shadow-md review-card-hover text-black">
+                        <div class="text-center">
+                            <img src="https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg" class="rounded-full mx-auto mb-4 w-20 h-20 object-cover" alt="Review 3">
+                            <h5 class="font-bold text-xl mb-2">Alex Johnson</h5>
+                            <p class="text-base mb-3">"Booking bus tickets has never been easier. Great experience!"</p>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-section mt-12">
+            <h2 class="text-center text-4xl font-bold mb-10 relative text-black animate-fade-in">Frequently Asked Questions</h2>
+            <div id="faqAccordion">
+                <div class="bg-gray-200 bg-opacity-90 rounded-lg mb-4">
+                    <h2 class="text-lg text-gray-800 transition-colors duration-300 hover:text-gray-700 py-3 px-4 cursor-pointer"
+                        onclick="document.getElementById('faqCollapseOne').classList.toggle('hidden'); document.getElementById('faqHeadingOneBtn').setAttribute('aria-expanded', document.getElementById('faqCollapseOne').classList.contains('hidden') ? 'false' : 'true')"
+                        id="faqHeadingOneBtn" aria-expanded="true" aria-controls="faqCollapseOne">
+                        How do I book a bus ticket?
+                    </h2>
+                    <div id="faqCollapseOne" class="bg-white bg-opacity-95 p-4 rounded-b-lg">
+                        <div class="text-gray-800">
+                            Booking a bus ticket is simple. Visit our homepage, select your route and travel date, choose a bus, and proceed with payment.
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-200 bg-opacity-90 rounded-lg mb-4">
+                    <h2 class="text-lg text-gray-800 transition-colors duration-300 hover:text-gray-700 py-3 px-4 cursor-pointer"
+                        onclick="document.getElementById('faqCollapseTwo').classList.toggle('hidden'); document.getElementById('faqHeadingTwoBtn').setAttribute('aria-expanded', document.getElementById('faqCollapseTwo').classList.contains('hidden') ? 'false' : 'true')"
+                        id="faqHeadingTwoBtn" aria-expanded="false" aria-controls="faqCollapseTwo">
+                        Can I cancel my booking?
+                    </h2>
+                    <div id="faqCollapseTwo" class="hidden bg-white bg-opacity-95 p-4 rounded-b-lg">
+                        <div class="text-gray-800">
+                            Yes, you can cancel your booking. Visit the 'See Bookings' page, find your reservation, and follow the cancellation process.
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-200 bg-opacity-90 rounded-lg mb-4">
+                    <h2 class="text-lg text-gray-800 transition-colors duration-300 hover:text-gray-700 py-3 px-4 cursor-pointer"
+                        onclick="document.getElementById('faqCollapseThree').classList.toggle('hidden'); document.getElementById('faqHeadingThreeBtn').setAttribute('aria-expanded', document.getElementById('faqCollapseThree').classList.contains('hidden') ? 'false' : 'true')"
+                        id="faqHeadingThreeBtn" aria-expanded="false" aria-controls="faqCollapseThree">
+                        Is my payment secure?
+                    </h2>
+                    <div id="faqCollapseThree" class="hidden bg-white bg-opacity-95 p-4 rounded-b-lg">
+                        <div class="text-gray-800">
+                            Absolutely. We use secure encryption technology to protect your payment and personal details.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    <footer class="text-center py-5 footer-custom mt-12 text-sm relative z-10 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap -mx-4 mb-4">
+                <div class="w-full md:w-1/3 px-4 mb-4 md:mb-0">
+                    <h5 class="text-base uppercase mb-2 relative footer-title-underline">About Us</h5>
+                    <p>
+                        We provide the best bus reservation system to make your travel easy and convenient. Book your bus
+                        tickets with us and enjoy a hassle-free experience.
+                    </p>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-4 md:mb-0">
+                    <h5 class="text-base uppercase mb-2 relative footer-title-underline">Quick Links</h5>
+                    <ul class="list-none p-0">
+                        <li class="mb-1"><a href="{% url 'home' %}" class="text-white hover:text-yellow-400 flex items-center justify-center md:justify-start"><i class="fas fa-home mr-2"></i> Home</a></li>
+                        <li class="mb-1"><a href="{% url 'findbus' %}" class="text-white hover:text-yellow-400 flex items-center justify-center md:justify-start"><i class="fas fa-bus mr-2"></i> Find Bus</a></li>
+                        <li class="mb-1"><a href="{% url 'seebookings' %}" class="text-white hover:text-yellow-400 flex items-center justify-center md:justify-start"><i class="fas fa-list mr-2"></i> See Bookings</a></li>
+                        <li class="mb-1"><a href="{% url 'signup' %}" class="text-white hover:text-yellow-400 flex items-center justify-center md:justify-start"><i class="fas fa-user-plus mr-2"></i> Registration</a></li>
+                    </ul>
+                </div>
+
+                <div class="w-full md:w-1/3 px-4">
+                    <h5 class="text-base uppercase mb-2 relative footer-title-underline">Address</h5>
+                    <div class="rounded-md overflow-hidden">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.471459563627!2d78.48667101511766!3d17.38504478807065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e37e99d84d%3A0x1b1db9d44bcd58d!2sHyderabad%2C%20Telangana%2C%20India!5e0!3m2!1sen!2sus!4v1639641717397!5m2!1sen!2sus"
+                            width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" class="rounded-md"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-6 border-white border-opacity-30">
+            <p class="text-center text-white text-sm">© 2024 Bus Reservation System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple JavaScript for Navbar Toggle (replaces Bootstrap's JS for this specific component)
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('[aria-label="Toggle navigation"]');
+            const navbarNav = document.getElementById('navbarNavAltMarkup');
+
+            if (navbarToggler && navbarNav) {
+                navbarToggler.addEventListener('click', function() {
+                    navbarNav.classList.toggle('hidden');
+                });
+            }
+
+            // Simple JavaScript for FAQ Accordion (replaces Bootstrap's JS for this specific component)
+            const faqButtons = document.querySelectorAll('.accordion-header');
+            faqButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('aria-controls');
+                    const targetCollapse = document.getElementById(targetId);
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                    if (isExpanded) {
+                        targetCollapse.classList.add('hidden');
+                        this.setAttribute('aria-expanded', 'false');
+                    } else {
+                        // Close all other open accordion items
+                        document.querySelectorAll('.accordion-collapse:not(.hidden)').forEach(openCollapse => {
+                            openCollapse.classList.add('hidden');
+                            document.querySelector(`[aria-controls="${openCollapse.id}"]`).setAttribute('aria-expanded', 'false');
+                        });
+                        targetCollapse.classList.remove('hidden');
+                        this.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
