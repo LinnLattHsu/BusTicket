@@ -460,6 +460,7 @@ footer {
                     </div>
 
                     <button type="submit" class="search-btn">Search Now</button>
+                </form>
 
 
             </div>
@@ -467,8 +468,7 @@ footer {
     </div>
 </div>
 
-</body>
-</html>
+
 
     <!-- Bootstrap JS and Popper.js -->
     <div class="container-fluid mt-5 review-container">
@@ -620,6 +620,27 @@ footer {
     <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script>
+  function increaseSeat() {
+    const seatInput = document.getElementById('seatInput');
+    let current = parseInt(seatInput.value);
+    const max = parseInt(seatInput.max);
+
+    if (current < max) {
+      seatInput.value = current + 1;
+    }
+  }
+
+  function decreaseSeat() {
+    const seatInput = document.getElementById('seatInput');
+    let current = parseInt(seatInput.value);
+    const min = parseInt(seatInput.min);
+
+    if (current > min) {
+      seatInput.value = current - 1;
+    }
+  }
+</script>
 
 </body>
 
