@@ -5,6 +5,8 @@ from django.shortcuts import render
 from decimal import Decimal
 from django.db import IntegrityError
 from django.contrib.auth import login
+from django.template.context_processors import request
+
 from .models import Feedback
 # Create your views here.
 from django.shortcuts import render, redirect
@@ -360,5 +362,20 @@ def FeedbackList(request):
     feedback_list = Feedback.objects.all()
     return render(request, 'feedback_list.html', {'feedbacks': feedback_list})
 
-def seat_selection(request):
-    return render(request, 'seat_selection.html')
+def seat_selection(request,bus_id):
+    selected_bus = Bus.objects.get(id=bus_id)
+    source = request.GET.get('from')
+    dest = request.GET.get('to')
+    date = request.GET.get('departure_date')
+    seats = request.GET.get('number_of_seats')
+    seats = int(seats)
+    total_price=Decimal(seats)*selected_bus.price
+    context={
+        'bus':selected_bus,
+        'source':source,
+        'dest':dest,
+        'date':date,
+        'seats':seats,
+        'total_price':total_price,
+    }
+    return render(request, 'seat_selection.html',context)

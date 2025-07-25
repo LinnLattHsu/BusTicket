@@ -197,7 +197,7 @@
 
                     <!-- Action -->
                     <div class="col-md-3 text-end">
-                        <a href="#" class="btn btn-select">Select Trip</a>
+                        <a href="{%url 'select_trip' bus_id=route.id %}?from={{selected_source}}&to={{ selected_dest }}&departure_date={{ selected_date }}&number_of_seats={{ selected_seat }}" class="btn btn-select">Select Trip</a>
                     </div>
                 </div>
             {% endfor %}
