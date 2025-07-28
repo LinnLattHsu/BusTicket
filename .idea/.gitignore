@@ -1,3 +1,31 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+/media
+/staticfiles
+
+# Environment files
+.env
+*.env
+
+# VS Code settings (if you use it)
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
