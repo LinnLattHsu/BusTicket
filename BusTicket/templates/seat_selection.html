@@ -1,238 +1,510 @@
-{# seat_selection.html #}
-{% extends 'base_tailwind.html' %} {# This MUST be the very first line in the file #}
 
-{% block head_css %}
-    {# Styles specific to the seat map, making the 'class="seat"' visually apparent #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Flowbite CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
+    <!-- Flowbite JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <style>
-        .seat {
-            /* These styles are applied because of 'class="seat"' */
-            @apply w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center font-bold text-gray-700 transition-colors duration-200;
-        }
-        .seat:not(.unavailable):hover {
-            @apply bg-gray-300;
-        }
-        .seat.selected {
-            /* This style changes the appearance when 'class="selected"' is added by JS */
-            @apply bg-blue-500 text-white border-blue-500;
-        }
-        .seat.unavailable {
-            /* This style changes the appearance when 'class="unavailable"' is added by JS */
-            @apply bg-gray-400 text-white cursor-not-allowed;
-        }
-    </style>
-{% endblock %}
+        /* Custom styles for seat buttons */
+<!--        .seat-btn {-->
+<!--            @apply flex items-center justify-center w-16 h-12 rounded-md font-semibold text-lg cursor-pointer transition-all duration-200 ease-in-out;-->
+<!--        }-->
+<!--        .seat-btn.available {-->
+<!--            @apply bg-gray-200 text-gray-800 hover:bg-blue-200 hover:text-blue-800;-->
+<!--        }-->
+<!--        .seat-btn.selected {-->
+<!--            @apply bg-blue-600 text-white shadow-md;-->
+<!--        }-->
+<!--        .seat-btn.locked {-->
+<!--            @apply bg-gray-400 text-gray-600 cursor-not-allowed opacity-70;-->
+<!--        }-->
+.seat-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #ccc;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-{% block content %}
-    <div class="w-3/4 bg-white p-8 rounded-lg shadow-lg mx-auto mt-6">
+.seat-btn.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.seat-btn.locked {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+        /* Custom styles for the trip summary line */
+        .trip-summary-line::before {
+            content: '';
+            position: absolute;
+            left: 8px; /* Adjust to align with circles */
+            top: 20px; /* Start below the first circle */
+            height: calc(100% - 40px); /* Adjust height to end above last circle */
+            width: 2px;
+            background-color: #d1d5db; /* gray-300 */
+            z-index: 0;
+        }
+        .trip-summary-dot {
+            @apply w-4 h-4 rounded-full bg-blue-500 absolute z-10;
+        }
+        .trip-summary-dot.top { top: 12px; left: 2px; }
+        .trip-summary-dot.bottom { bottom: 12px; left: 2px; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+    {% extends 'base_tailwind.html' %}
+    {% block content %}
+
+<!--    progress bar-->
+    <div class="w-full bg-white p-8 rounded-lg shadow-lg mx-auto">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Booking Progress</h2>
 
         <div class="relative mb-8">
+            <!-- Progress Line -->
             <div class="absolute inset-0 flex items-center">
                 <div class="w-full h-1 bg-gray-300 rounded-full"></div>
             </div>
 
+            <!-- Steps Container -->
             <div class="relative flex justify-between z-10">
+                <!-- Step 1: Seat Selection (Active) -->
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold shadow-md">1</div>
                     <div class="text-sm mt-2 text-blue-600 font-semibold text-center">Seat Selection</div>
                 </div>
 
+                <!-- Step 2: Traveller Info -->
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold">2</div>
                     <div class="text-sm mt-2 text-gray-500 text-center">Traveller Info</div>
                 </div>
 
+                <!-- Step 3: Payment -->
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold">3</div>
                     <div class="text-sm mt-2 text-gray-500 text-center">Payment</div>
                 </div>
 
+                <!-- Step 4: Confirm -->
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold">4</div>
                     <div class="text-sm mt-2 text-gray-500 text-center">Confirm</div>
                 </div>
             </div>
         </div>
+
     </div>
 
-    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row gap-8 mt-8">
+<!--    seat selection & amount calculation-->
+    <div class="container mx-auto flex flex-col lg:flex-row gap-8 py-8">
+        <!-- Left Section: Seat Selection -->
+        <div class="lg:w-2/3 bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Please select <span id="maxSeatsAllowed">2</span> Seat(s).</h3>
 
-        <div class="flex-1">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Select Your Seats</h2>
-
-            <div id="seat-map" class="grid grid-cols-5 gap-4 justify-center">
-                <div class="col-span-2 flex justify-center items-center p-2 border border-gray-300 rounded bg-gray-200 font-semibold text-gray-700">
-                    Driver
+            <!-- Driver Section -->
+            <div class="mb-6">
+                <div class="text-gray-700 font-semibold mb-2">Driver</div>
+                <div class="flex gap-4">
+                    <div class="seat-btn locked">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
+                    <div class="seat-btn locked">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
                 </div>
-                <div class="col-span-3"></div>
             </div>
+
+            <!-- Seat Grid -->
+            <div id="seatGrid" class="grid grid-cols-5 gap-4">
+                <!-- Example Seat Layout (adjust as needed) -->
+                <!-- Row A -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="A1">A1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="A2">A2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="A3">A3</button>
+                </div>
+
+                <!-- Row B -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="B1">B1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="B2">B2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="B3">B3</button>
+                </div>
+
+                <!-- Row C -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="C1">C1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="C2">C2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="C3">C3</button>
+                </div>
+
+                <!-- Row D -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="D1">D1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="D2">D2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="D3">D3</button>
+                </div>
+
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="E1">E1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="E2">E2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="E3">E3</button>
+                </div>
+
+                <!-- Row F -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="F1">F1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="F2">F2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+<!--                    <button class="seat-btn available" data-seat="F3">F3</button>-->
+                </div>
+
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="G1">G1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="G2">G2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+<!--                    <button class="seat-btn available" data-seat="G3">G3</button>-->
+                </div>
+
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="H1">H1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="H2">H2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="H3">H3</button>
+                </div>
+
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="I1">I1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="I2">I2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="I3">I3</button>
+                </div>
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="J1">J1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="J2">J2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="J3">J3</button>
+                </div>
+                <!-- Row E -->
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="K1">K1</button>
+                </div>
+                <div class="col-span-1 flex justify-end">
+                    <button class="seat-btn available" data-seat="K2">K2</button>
+                </div>
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1"></div> <!-- Aisle -->
+                <div class="col-span-1 flex justify-start">
+                    <button class="seat-btn available" data-seat="K3">K3</button>
+                </div>
+
+<!--                &lt;!&ndash; Row D (D1 and D2 are selected by default as per image) &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn selected" data-seat="D1">D1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn selected" data-seat="D2">D2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row E &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="E1">E1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="E2">E2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row F &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="F1">F1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="F2">F2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row G &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="G1">G1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="G2">G2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row H &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="H1">H1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="H2">H2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row I &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="I1">I1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="I2">I2</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row J &ndash;&gt;-->
+<!--                <div class="col-span-2 flex justify-end">-->
+<!--                    <button class="seat-btn available" data-seat="J1">J1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div>-->
+<!--                <div class="col-span-2 flex justify-start">-->
+<!--                    <button class="seat-btn available" data-seat="J2">J2</button>-->
+<!--                </div>-->
+
+                <!-- Rightmost Column (B3, C3, D3, E3, etc.) -->
+<!--                <div class="col-start-5 row-start-2 flex flex-col gap-4">-->
+<!--                    <button class="seat-btn locked" data-seat="B3"><i class="fas fa-lock text-gray-500"></i></button>-->
+<!--                    <button class="seat-btn available" data-seat="C3">C3</button>-->
+<!--                    <button class="seat-btn available" data-seat="D3">D3</button>-->
+<!--                    <button class="seat-btn available" data-seat="E3">E3</button>-->
+<!--                    <button class="seat-btn available" data-seat="F3">F3</button>-->
+<!--                    <button class="seat-btn available" data-seat="G3">G3</button>-->
+<!--                    <button class="seat-btn available" data-seat="H3">H3</button>-->
+<!--                    <button class="seat-btn available" data-seat="I3">I3</button>-->
+<!--                    <button class="seat-btn available" data-seat="J3">J3</button>-->
+<!--                </div>-->
+            </div>
+            <p id="selectionMessage" class="text-red-500 mt-4 hidden">You can only select a maximum of <span id="maxSeatsMsg">2</span> seats.</p>
         </div>
 
-        <div class="flex-1 bg-gray-50 p-6 rounded-lg border border-gray-200">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Booking Summary</h2>
+        <!-- Right Section: Trip Summary -->
+        <div class="lg:w-1/3 bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Trip Summary</h3>
 
-            <div class="mb-4 text-gray-700">
-                <p><span class="font-semibold">Route:</span> Yangon to Mandalay</p>
-                <p><span class="font-semibold">Departure:</span> Jul 09, 07:30 AM</p>
-                <p><span class="font-semibold">Arrival:</span> Jul 09, 04:00 PM</p>
-                <p class="mt-2 text-sm text-gray-600">Arrival times are estimates and may be subject to change.</p>
+            <div class="relative pl-6 mb-4 trip-summary-line">
+                <div class="trip-summary-dot top"></div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700 font-medium">{{source}}</span>
+                    <span class="text-gray-500 text-sm">{{date}}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700 font-medium">{{dest}}</span>
+                    <span class="text-gray-500 text-sm">{{date}}</span>
+                </div>
+                <div class="trip-summary-dot bottom"></div>
+            </div>
+            <p class="text-gray-500 text-xs mb-4">* Arrival times provided are estimates and may be subject to change.</p>
+
+            <div class="mb-4">
+                <button class="text-blue-600 font-semibold flex items-center hover:underline">
+                    <i class="fas fa-chevron-right text-sm mr-2"></i> Full Itinerary
+                </button>
             </div>
 
-            <div class="border-t border-gray-200 pt-4 mb-4">
-                <p><span class="font-semibold">Bus Operator:</span> Mandarlar Minn Express</p>
-                <p><span class="font-semibold">Bus Type:</span> Marcopollo Scania VIP (2+1)</p>
-                <p><span class="font-semibold">Unit Ticket Price:</span> MMK 43,000</p>
-                <p><span class="font-semibold">Number of Seats:</span> <span id="num-selected-seats">0</span> seats</p>
-                <p class="text-xl font-bold mt-2 text-green-600">Total Ticket Price: MMK <span id="total-price">0</span></p>
+            <div class="text-gray-700 mb-4">
+                <div class="flex justify-between py-1 border-b border-gray-200">
+                    <span>Bus Operator</span>
+                    <span class="font-medium">Mandalar Minn Express</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-200">
+                    <span>Bus Type</span>
+                    <span class="font-medium">Marcopolo Scania VIP (2+1)</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-200">
+                    <span>Unit Ticket Price</span>
+                    <span class="font-medium">MMK <span id="unitTicketPrice">{{bus.price}}</span></span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-200">
+                    <span>Number of Seats</span>
+                    <span class="font-medium" id="numberOfSeats">{{seats}}</span>
+                </div>
             </div>
 
-            <div class="border-t border-gray-200 pt-4 mb-4">
-                <h3 class="font-semibold text-lg mb-2 text-gray-800">Notices by Mandarlar Minn Express</h3>
-                <ul class="list-disc list-inside text-sm text-gray-600">
-                    <li>NRC+Letter of Endorsement from Ward+Letter of Endorsement from Police</li>
-                    <li>Road Passenger Not Allow Before 20 Mile</li>
-                    <li>Foreigner: Immigration Form C</li>
+            <div class="flex justify-between items-center py-2 text-lg font-bold text-gray-800 border-t-2 border-gray-300 pt-4">
+                <span>Total Ticket Price</span>
+                <span>MMK <span id="totalTicketPrice">{{total_price}}</span></span>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg text-blue-800 text-sm">
+                <h4 class="font-semibold mb-2">Notices by Mandalar Minn Express</h4>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>NRC+Letter of Endorsement from ward+Letter of Endorsement from Police</li>
                 </ul>
             </div>
-
-            <div class="border-t border-gray-200 pt-4">
-                <p class="text-lg font-semibold text-gray-800">Please Select <span id="required-seats">2</span> Seat(s).</p>
-                <div id="selected-seats-display" class="mt-2 text-gray-700">
-                    {# Selected seats will be displayed here by JavaScript #}
-                </div>
-            </div>
-
-            <button id="proceed-button" class="mt-6 w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                Proceed to Payment
-            </button>
         </div>
     </div>
-{% endblock %}
 
-{% block extra_js %} {# Your page-specific script should be within this block #}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const seatMap = document.getElementById('seat-map');
-        const numSelectedSeatsDisplay = document.getElementById('num-selected-seats');
-        const totalPriceDisplay = document.getElementById('total-price');
-        const selectedSeatsDisplay = document.getElementById('selected-seats-display');
-        const proceedButton = document.getElementById('proceed-button');
-        const requiredSeatsSpan = document.getElementById('required-seats');
 
+
+
+
+    {% endblock %}
+
+    <script>
         const unitPrice = 43000; // MMK
-        const maxSeatsToSelect = 2; // As per "Please Select 2 Seat(s)"
+        const maxSeatsToSelect = 2;
 
-        let selectedSeats = new Set(); // Use a Set to store unique selected seat IDs
+        const seatGrid = document.getElementById('seatGrid');
+        const seatButtons = seatGrid.querySelectorAll('button[data-seat]');
+        const numberOfSeatsSpan = document.getElementById('numberOfSeats');
+        const totalTicketPriceSpan = document.getElementById('totalTicketPrice');
+        const selectionMessage = document.getElementById('selectionMessage');
+        const maxSeatsMsg = document.getElementById('maxSeatsMsg');
+        const maxSeatsAllowed = document.getElementById('maxSeatsAllowed');
 
-        // Define the layout of seats and which ones are unavailable
-        const seatLayoutConfig = [
-            { left: 2, right: 2, locked: [] },
-            { left: 2, right: 2, locked: [7] },
-            { left: 2, right: 2, locked: [12] },
-            { left: 2, right: 2, locked: [] },
-            { left: 2, right: 2, locked: [] },
-            { left: 2, right: 1, locked: [] },
-            { left: 2, right: 1, locked: [] },
-            { left: 2, right: 1, locked: [] },
-        ];
+        let selectedSeats = []; // Stores data-seat values of selected seats
 
-        let seatCounter = 1;
+        // Initialize max seats allowed message
+        maxSeatsMsg.textContent = maxSeatsToSelect;
+        maxSeatsAllowed.textContent = maxSeatsToSelect;
 
-        function generateSeats() {
-            seatLayoutConfig.forEach(rowConfig => {
-                for (let i = 0; i < rowConfig.left; i++) {
-                    createAndAppendSeat(seatCounter++, rowConfig.locked);
-                }
-                const aisleDiv = document.createElement('div');
-                aisleDiv.className = 'col-span-1'; // Aisle element
-                seatMap.appendChild(aisleDiv);
+        /**
+         * Updates the UI based on the current selection.
+         */
+        function updateUI() {
+            numberOfSeatsSpan.textContent = selectedSeats.length;
+            totalTicketPriceSpan.textContent = (selectedSeats.length * unitPrice).toLocaleString('en-US'); // Format with commas
 
-                for (let i = 0; i < rowConfig.right; i++) {
-                    const seatElement = createAndAppendSeat(seatCounter++, rowConfig.locked);
-                    if (rowConfig.right === 1 && i === 0) {
-                         // This makes the single right seat span 2 columns to fill the gap
-                         seatElement.classList.add('col-span-2');
-                    }
+            // Update seat button classes
+            seatButtons.forEach(button => {
+                const seatId = button.dataset.seat;
+                if (button.classList.contains('locked')) {
+                    // Do nothing for locked seats
+                } else if (selectedSeats.includes(seatId)) {
+                    button.classList.remove('available');
+                    button.classList.add('selected');
+                } else {
+                    button.classList.remove('selected');
+                    button.classList.add('available');
                 }
             });
-        }
 
-        function createAndAppendSeat(seatNumber, lockedSeatsInRow) {
-            const seatButton = document.createElement('button');
-            // Directly apply Tailwind classes
-            seatButton.className = 'w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center font-bold text-gray-700 transition-colors duration-200';
-            seatButton.dataset.seat = seatNumber;
-            seatButton.textContent = seatNumber;
-
-            if (lockedSeatsInRow.includes(seatNumber)) {
-                seatButton.classList.add('bg-gray-400', 'text-white', 'cursor-not-allowed');
-                seatButton.innerHTML += ' <span class="ml-1">&#128274;</span>';
+            // Show/hide selection message
+            if (selectedSeats.length >= maxSeatsToSelect) {
+                selectionMessage.classList.remove('hidden');
             } else {
-                seatButton.addEventListener('click', handleSeatClick);
+                selectionMessage.classList.add('hidden');
             }
-            seatMap.appendChild(seatButton);
-            return seatButton;
         }
 
+        /**
+         * Handles a seat click event.
+         * @param {Event} event - The click event.
+         */
         function handleSeatClick(event) {
-            const seat = event.target;
-            const seatId = parseInt(seat.dataset.seat);
+            const clickedSeat = event.target;
+            const seatId = clickedSeat.dataset.seat;
 
-            if (seat.classList.contains('bg-gray-400')) { // Check for unavailable based on direct class
+            // Prevent selection of locked seats
+            if (clickedSeat.classList.contains('locked')) {
                 return;
             }
 
-            if (seat.classList.contains('bg-blue-500')) { // Check for selected based on direct class
-                seat.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
-                seat.classList.add('bg-gray-200', 'text-gray-700'); // Revert to default seat style
-                selectedSeats.delete(seatId);
+            if (selectedSeats.includes(seatId)) {
+                // Seat is already selected, deselect it
+                selectedSeats = selectedSeats.filter(seat => seat !== seatId);
             } else {
-                if (selectedSeats.size < maxSeatsToSelect) {
-                    seat.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
-                    seat.classList.remove('bg-gray-200', 'text-gray-700'); // Remove default seat style
-                    selectedSeats.add(seatId);
+                // Seat is available, attempt to select it
+                if (selectedSeats.length < maxSeatsToSelect) {
+                    selectedSeats.push(seatId);
                 } else {
-                    alert(`You can select a maximum of ${maxSeatsToSelect} seats.`);
+                    // Max seats already selected, show message
+                    selectionMessage.classList.remove('hidden');
+                    return; // Do not select the new seat
                 }
             }
-            updateSummary();
+            updateUI();
         }
 
-        function updateSummary() {
-            numSelectedSeatsDisplay.textContent = selectedSeats.size;
-
-            const totalPrice = selectedSeats.size * unitPrice;
-            totalPriceDisplay.textContent = totalPrice.toLocaleString('en-US');
-
-            if (selectedSeats.size > 0) {
-                const sortedSeats = Array.from(selectedSeats).sort((a, b) => a - b);
-                selectedSeatsDisplay.textContent = `Selected: ${sortedSeats.join(', ')}`;
-            } else {
-                selectedSeatsDisplay.textContent = '';
-            }
-
-            // The button's disabled state (seen by client) is controlled here
-            if (selectedSeats.size === maxSeatsToSelect) {
-                proceedButton.disabled = false;
-            } else {
-                proceedButton.disabled = true;
-            }
-        }
-
-        // --- Initialization ---
-        generateSeats();
-
-        requiredSeatsSpan.textContent = maxSeatsToSelect;
-
-        updateSummary();
-
-        proceedButton.addEventListener('click', () => {
-            if (selectedSeats.size === maxSeatsToSelect) {
-                alert(`Proceeding with selected seats: ${Array.from(selectedSeats).sort((a, b) => a - b).join(', ')}. Total: MMK ${totalPriceDisplay.textContent}`);
-            } else {
-                alert(`Please select exactly ${maxSeatsToSelect} seats before proceeding.`);
-            }
+        // Add event listeners to all seat buttons
+        seatButtons.forEach(button => {
+            button.addEventListener('click', handleSeatClick);
         });
-    });
-</script>
-{% endblock %}
+
+        // Initial UI update on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pre-select D1 and D2 as per the image
+            selectedSeats.push('D1', 'D2');
+            updateUI();
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+

@@ -1,3 +1,6 @@
+
+
+
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib import messages
@@ -379,4 +382,3 @@ def seat_selection(request,bus_id):
         'total_price':total_price,
     }
     return render(request, 'seat_selection.html',context)
-
