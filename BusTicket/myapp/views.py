@@ -382,3 +382,10 @@ def seat_selection(request,bus_id):
         'total_price':total_price,
     }
     return render(request, 'seat_selection.html',context)
+
+
+
+
+# Admin Dashboard
+def admin_dashboard(request):
+    return render(request,'admin/dashboard.html')

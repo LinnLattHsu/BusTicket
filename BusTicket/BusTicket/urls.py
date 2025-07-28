@@ -46,4 +46,8 @@ urlpatterns = [
 
     path('seatselection',views.seat_selection),
     path('select-trip/<int:bus_id>/',views.seat_selection,name='select_trip'),
+
+
+    # admin url call
+    path('admindashboard/',views.admin_dashboard),
 ]
