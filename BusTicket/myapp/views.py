@@ -11,8 +11,9 @@ from django.template.context_processors import request
 # from .models import Feedback
 # Create your views here.
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import User, Operator, Bus, Route, Schedule
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm
@@ -445,3 +446,13 @@ def admin_dashboard(request):
 def user_home(request):
     users = User.objects.all().order_by('name')
     return render(request,'admin/user_home.html',{'users' : users})
+
+def soft_delete_user(request,user_id):
+    user_info = User.objects.get(user_id = user_id)
+    user_info.del_flag = 1
+    user_info.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({"status": "success", "message": f"User {user_id} soft-deleted successfully."})
+    else:
+        return redirect(reverse('user_home'))

@@ -50,5 +50,6 @@ urlpatterns = [
 
     # admin url call
     path('admindashboard/',views.admin_dashboard),
-    path('admindashboard/user_home/',views.user_home),
+    path('admindashboard/user_home/',views.user_home,name='user_home'),
+    path('admindashboard/user_home/users/<int:user_id>/soft-delete/', views.soft_delete_user, name='soft_delete_user')
 ]
