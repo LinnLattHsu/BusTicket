@@ -50,4 +50,5 @@ urlpatterns = [
 
     # admin url call
     path('admindashboard/',views.admin_dashboard),
+    path('admindashboard/user_home/',views.user_home),
 ]

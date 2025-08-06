@@ -14,9 +14,9 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import User,Booking
+from .models import User,Bus
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
@@ -389,5 +389,14 @@ def user_login(request):
 
 # Admin Dashboard
 def admin_dashboard(request):
-    no_of_users = User.objects.all().count()
-    return render(request,'admin/dashboard.html',{'no_of_users' : no_of_users})
+    no_of_users = User.objects.filter(del_flag = 0).count()
+    no_of_buses = Bus.objects.filter(del_flag = 0).count()
+
+    return render(request,'admin/dashboard.html',{
+        'no_of_users' : no_of_users,
+        'no_of_buses' : no_of_buses
+    })
+
+def user_home(request):
+    users = User.objects.all().order_by('name')
+    return render(request,'admin/user_home.html',{'users' : users})

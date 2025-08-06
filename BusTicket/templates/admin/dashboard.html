@@ -1,127 +1,147 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Admin Dashboard</title>
-   <!-- <link rel="stylesheet" href="../View/resources/css/styleHome.css"> -->
-   <!-- <link rel="stylesheet" href="./output.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- <link rel="stylesheet" href="../View/resources/css/styleHome.css"> -->
+    <!-- <link rel="stylesheet" href="./output.css"> -->
 
-   <!-- for flowbite -->
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.css" rel="stylesheet" />
+    <!-- for flowbite -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js" defer></script>
 
-   <!-- for tailwindcss -->
-   <script src="https://cdn.tailwindcss.com"></script>
+    <!-- for tailwindcss -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-   <!-- for icon -->
-   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
-   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
+    <!-- for icon -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
 
-   <script src="https://kit.fontawesome.com/44d44949c5.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/44d44949c5.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
 
 </head>
 
 <body class="bg-gray-300">
 
-   <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-      <span class="sr-only">Open sidebar</span>
-      <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-         <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-      </svg>
-   </button>
+<button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button"
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+    <span class="sr-only">Open sidebar</span>
+    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path clip-rule="evenodd" fill-rule="evenodd"
+              d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+    </svg>
+</button>
 
-   <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-      <div class="h-full px-3 py-4 overflow-y-auto bg-blue-900 dark:bg-gray-500 ">
-         <div class="flex justify-center items-center mb-4">
-            <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl" alt=""
-                    style="height:50px;width:50px;">
-         </div>
+<aside id="logo-sidebar"
+       class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+       aria-label="Sidebar">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-blue-900 dark:bg-gray-500 ">
+        <div class="flex justify-center items-center mb-4">
+            <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl"
+                 alt=""
+                 style="height:50px;width:50px;">
+        </div>
 
 
-         <ul class="space-y-2 font-medium">
+        <ul class="space-y-2 font-medium">
             <li>
-               <a href="" class="flex items-center p-2  rounded-lg  dark:text-white bg-white group text-blue-900">
-                  <ion-icon name="grid-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="ms-3">Dashboard</span>
-               </a>
+                <a href="" class="flex items-center p-2  rounded-lg  dark:text-white bg-white group text-blue-900">
+                    <ion-icon name="grid-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="ms-3">Dashboard</span>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="person-circle-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class=" ms-3">Users</span>
+                <a href="user_home"
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="person-circle-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class=" ms-3">Users</span>
 
-               </a>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="bus-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="bus-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span>
 
-               </a>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="navigate-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Routes</span>
-               </a>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="navigate-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Routes</span>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="car-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Operators</span>
-               </a>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="business-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Operators</span>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="list-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Schedules</span>
-               </a>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="list-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Schedules</span>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="calendar-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Bookings</span>
-               </a>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="calendar-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Bookings</span>
+                </a>
             </li>
             <li>
-               <a href="" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                  <ion-icon name="time-outline" class="text-3xl mr-3"></ion-icon>
-                  <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
-                  <span class="flex-1 ms-3 whitespace-nowrap">History</span>
-               </a>
+                <a href=""
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="time-outline" class="text-3xl mr-3"></ion-icon>
+                    <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
+                    <span class="flex-1 ms-3 whitespace-nowrap">History</span>
+                </a>
             </li>
 
             <li>
-               <a href="/logout" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-               <!-- Ionicon for logout. You can choose 'log-out-outline' for an outlined icon or 'log-out' for a filled one. -->
-                  <ion-icon name="log-out-outline" class="text-3xl mr-3"></ion-icon>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Logout</span>
-               </a>
+                <a href="/logout"
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <!-- Ionicon for logout. You can choose 'log-out-outline' for an outlined icon or 'log-out' for a filled one. -->
+                    <ion-icon name="log-out-outline" class="text-3xl mr-3"></ion-icon>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Logout</span>
+                </a>
             </li>
-         </ul>
-      </div>
-   </aside>
+        </ul>
+    </div>
+</aside>
 
 <!--   for right side-->
-   <div class="p-4 sm:ml-64 bg-gray-300 min-h-screen">
+<div class="p-4 sm:ml-64 bg-gray-300 min-h-screen">
 
+    <!-- Header -->
     <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Welcome, Liam Moore</h1>
-
+        <h1 class="text-3xl font-bold text-gray-800">Welcome From MyBus Ticket</h1>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <!-- Responsive Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 
+        <!-- Users Card -->
         <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-500">Users</h3>
                     <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_users}}</p>
                 </div>
-                <div class="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full">
+                <div class="flex items-center justify-center w-12 h-12 text-white bg-[#0050A4] rounded-full">
                     <ion-icon name="person-circle-outline" class="text-3xl"></ion-icon>
                 </div>
             </div>
@@ -130,28 +150,101 @@
             </div>
         </div>
 
+        <!-- Buses Info Card -->
         <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-red-500">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-500">Buses Info</h3>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">11</p>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_buses}}</p>
                 </div>
                 <div class="flex items-center justify-center w-12 h-12 text-white bg-red-500 rounded-full">
                     <ion-icon name="bus-outline" class="text-3xl"></ion-icon>
                 </div>
             </div>
-            <div class="mt-4 text-sm font-medium text-red-500">
+            <div class="mt-4 text-sm font-medium text-blue-500">
                 <a href="#" class="hover:underline">View More →</a>
             </div>
         </div>
 
+        <!-- Operators Card -->
+        <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-[#657788]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500">Operators</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">number of operator</p>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 text-white bg-[#657788] rounded-full">
+                    <ion-icon name="business-outline" class="text-3xl"></ion-icon>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-medium text-[#48526eB]">
+                <a href="#" class="hover:underline">View More →</a>
+            </div>
         </div>
 
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+        <!-- Route Infos -->
+        <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-[#00BCD4]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500">Routes</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_routes}}</p>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 text-white bg-[#00BCD4] rounded-full">
+                    <ion-icon name="navigate-outline" class="text-3xl"></ion-icon>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-medium text-[#00BCD4]">
+                <a href="#" class="hover:underline">View More →</a>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-[#20B2AA]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500">Schedules</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">number of Schedules</p>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 text-white bg-[#20B2AA] rounded-full">
+                    <ion-icon name="list-outline" class="text-3xl"></ion-icon>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-medium text-[#20B2AA]">
+                <a href="#" class="hover:underline">View More →</a>
+            </div>
+        </div>
+
+        <!-- Booking History -->
+        <div class="p-6 bg-white rounded-lg shadow-md border-t-4 border-[#9370DB]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500">Booking History</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_bookings}}</p>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 text-white bg-[#9370DB] rounded-full">
+                    <ion-icon name="calendar-outline" class="text-3xl"></ion-icon>
+                </div>
+            </div>
+            <div class="mt-4 text-sm font-medium text-[#9370DB]">
+                <a href="#" class="hover:underline">View More →</a>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!-- Seat Status Section -->
     <div class="p-6 bg-white rounded-lg shadow-md">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
             <h2 class="text-xl font-bold text-gray-800">Seat Status</h2>
             <div class="flex items-center space-x-2">
-                <input type="text" id="bus-number" placeholder="Bus Number" class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="bus-number" placeholder="Bus Number"
+                       class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button class="px-4 py-2 text-sm text-white bg-gray-700 rounded-lg shadow hover:bg-gray-800 transition">
                     Search
                 </button>
@@ -159,10 +252,10 @@
         </div>
 
         <div class="grid grid-cols-10 gap-2">
-            <button class="w-10 h-10 text-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">1</button>
+            <button class="w-10 h-10 text-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">1
+            </button>
             <button class="w-10 h-10 text-white bg-red-500 rounded-lg hover:bg-red-600 transition">2</button>
-            </div>
-
+        </div>
     </div>
 
 </div>
