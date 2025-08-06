@@ -390,12 +390,13 @@ footer {
                         <i class="fas fa-home"></i>Login
                     </a>
                     {% endif %}
-                    <a class="nav-item nav-link" href="{% url 'findbus' %}"> <!-- to correct -->
+                    <a class="nav-item nav-link" href=""> <!-- to correct -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
-                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
-                        <i class="fas fa-list"></i> See Bookings
-                    </a>
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
 <!--                    {% if request.user.is_active %}-->
 <!--                    <a class="nav-item nav-link" href="{% url 'signout' %}">-->
 <!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
@@ -423,43 +424,44 @@ footer {
         <div class="col-md-6">
             <div class="search-card text-start">
                 <h4>Book Your Ticket Now</h4>
+                <div>origins length: {{ origins|length }}</div>
 
-                <form method="get" action= "{% url 'search_routes'%}">
+                <form method="get" action="{% url 'search_routes' %}">
                     <div class="mb-3">
-                        <label for="from">From</label>
-                        <select name="from" id="from" class="form-select">
-                            <option value="">-- Select --</option>
-                            {% for booking in bookings %}
-                            <option value="{{ booking.source }}">{{ booking.source }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
+        <label for="origin">From</label>
+        <select name="origin" id="origin" class="form-select">
+            <option value="">-- Select --</option>
+            {% for origin in origins %}
+            <option value="{{ origin }}">{{ origin }}</option>
+            {% endfor %}
+        </select>
+    </div>
                     <div class="mb-3">
-                        <label for="to">To</label>
-                        <select name="to" id="to" class="form-select">
-                            <option value="">-- Select --</option>
-                            {% for booking in bookings %}
-                            <option value="{{ booking.dest }}">{{ booking.dest }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="departure_date">Departure Date</label>
-                        <input type="date" name="departure_date" id="departure_date" class="form-control" min="" required>
-                    </div>
+        <label for="to">To</label>
+        <select name="to" id="to" class="form-select">
+            <option value="">-- Select --</option>
+            {% for destination in destinations %}
+            <option value="{{ destination }}">{{ destination }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
                     <div class="mb-3">
-                    <label>Seats</label>
-                        <div class="seat-control">
-                            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
-                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">
-                            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
-                        </div>
-                    </div>
+        <label for="departure_date">Departure Date</label>
+        <input type="date" name="departure_date" id="departure_date" class="form-control" required>
+    </div>
+
+                    <div class="mb-3">
+        <label>Seats</label>
+        <div class="seat-control">
+            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
+            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">
+            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
+        </div>
+    </div>
 
                     <button type="submit" class="search-btn">Search Now</button>
+
                 </form>
 
 
@@ -596,8 +598,8 @@ footer {
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="{% url 'findbus' %}"><i class="fas fa-bus"></i> Find Bus</a></li>
-                        <li><a href="{% url 'seebookings' %}"><i class="fas fa-list"></i> See Bookings</a></li>
+                        <li><a href=""><i class="fas fa-bus"></i> Find Bus</a></li>
+                        <li><a href=""><i class="fas fa-list"></i> See Bookings</a></li>
                         <li><a href="{% url 'signup' %}"><i class="fas fa-user-plus"></i> Registration</a></li>
                     </ul>
                 </div>

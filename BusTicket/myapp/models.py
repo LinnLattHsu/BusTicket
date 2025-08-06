@@ -9,9 +9,8 @@ from django.utils import timezone
 
 # Create your models here.
 class Operator(models.Model):
-    operator_id = models.CharField(primary_key=True, max_length=10)
     operator_name = models.CharField(max_length=50,default='')
-    del_flag = models.IntegerField(default=0)
+    del_flag = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -19,11 +18,10 @@ class Operator(models.Model):
         return self.operator_name
 
 class Bus(models.Model):
-    bus_id = models.CharField(primary_key=True,max_length=10)
     license_no = models.CharField(max_length=15,default='')
     seat_capacity = models.IntegerField(default=30)
     bus_type = models.CharField(max_length = 10,default='Standard')
-    del_flag = models.IntegerField(default=0)
+    del_flag = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     operator = models.ForeignKey(Operator,on_delete=models.CASCADE)
@@ -35,10 +33,9 @@ class Bus(models.Model):
         return self.license_no
 
 class Route(models.Model):
-    route_id = models.CharField(primary_key=True,max_length=20)
     origin = models.CharField(max_length=30)
     destination = models.CharField(max_length=30)
-    del_flag = models.IntegerField(default=0)
+    del_flag = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     class Meta:
@@ -48,20 +45,19 @@ class Route(models.Model):
         return f"{self.origin} -> {self.destination}"
 
 class Schedule(models.Model):
-    schedule_id = models.CharField(primary_key=True,max_length=20)
     bus = models.ForeignKey(Bus,on_delete=models.CASCADE)
     route = models.ForeignKey(Route,on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
     price = models.DecimalField(max_digits=5,decimal_places=0)
-    del_flag = models.IntegerField(default=0)
+    del_flag = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name_plural = "Schedules"
 
-    def __str__(self):
-        return self.schedule_id
+    # def __str__(self):
+    #     return self.date
 
 
 class Seat_Status(models.Model):
@@ -72,7 +68,7 @@ class Seat_Status(models.Model):
     class Meta:
         unique_together = ('schedule','seat_no')
     def __str__(self):
-        return f"{self.schedule.schedule_id} - {self.seat_no} ({self.seat_status})"
+        return f"{self.schedule.id} - {self.seat_no} ({self.seat_status})"
 
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)
@@ -94,35 +90,32 @@ class User(models.Model):
         return self.name
 
 class Booking(models.Model):
-    booking_id = models.CharField(max_length=20,primary_key=True)
     schedule = models.ForeignKey(Schedule,on_delete=models.CASCADE)
     customer = models.ForeignKey(User,on_delete=models.CASCADE)
     seat_numbers = models.CharField(max_length=100)
     booked_time = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        self.booking_id
+        self.id
 
 class Ticket(models.Model):
-    ticket_id = models.CharField(max_length=20,primary_key=True)
     booking = models.OneToOneField(Booking,on_delete=models.CASCADE)
     total_seat = models.IntegerField()
     total_amount = models.DecimalField(max_digits=6,decimal_places=0)
     created_date = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.ticket_id
+        return self.id
 
 class Payment(models.Model):
     PAYMENT_METHODS = [
         ('KP','KPay'),
         ('WP','WavePay'),
     ]
-    payment_id = models.CharField(max_length=20,primary_key=True)
     ticket = models.OneToOneField(Ticket,on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=2,choices=PAYMENT_METHODS)
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.payment_id
+        return self.id
 
 class Admin(models.Model):
     email = models.EmailField()

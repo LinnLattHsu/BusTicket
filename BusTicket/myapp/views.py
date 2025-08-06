@@ -1,6 +1,4 @@
 
-
-
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib import messages
@@ -14,7 +12,7 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import User,Bus
+from .models import User, Operator, Bus, Route, Schedule
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm
@@ -46,52 +44,99 @@ def user_login(request):
     else:
         return render(request, 'signin.html')
 
-#
-#
+
+
 # @login_required(login_url='signin')
 # def findbus(request):
 #     context = {}
 #     if request.method == 'POST':
-#         source_r = request.POST.get('source')
+#         origin_r = request.POST.get('origin')
 #         dest_r = request.POST.get('destination')
 #         date_r = request.POST.get('date')
 #         date_r = datetime.strptime(date_r,"%Y-%m-%d").date()
 #         year = date_r.strftime("%Y")
 #         month = date_r.strftime("%m")
 #         day = date_r.strftime("%d")
-#         #  needs to correct
-#         # bus_list = Bus.objects.filter(source=source_r, dest=dest_r, date__year=year, date__month=month, date__day=day)
-#         # if bus_list:
-#         #     return render(request, 'list.html', locals())
-#         # else:
-#         #     context['data'] = request.POST
-#         #     context["error"] = "No available Bus Schedule for entered Route and Date"
-#         #     return render(request, 'findbus.html', context)
+#         schedules = Schedule.objects.filter(
+#             route__origin__iexact=origin_r,
+#             route__destination__iexact=dest_r,
+#             date=date_r,
+#             del_flag=False,  # schedule is active
+#             route__del_flag=False,  # route is active
+#             bus__del_flag=False  # bus is active
+#
+#         )
+# #         #  needs to correct
+# #         route_list = Route.objects.filter(origin=origin_r, destination=dest_r)
+# #         bus_list = route_list_set.filter(date__year=year, date__month=month, date__day=day)
+# #         # bus_list = Bus.objects.filter(source=source_r, dest=dest_r, date__year=year, date__month=month, date__day=day)
+#         if schedules:
+#             return render(request, 'list.html', locals())
+#         else:
+#             context['data'] = request.POST
+#             context["error"] = "No available Bus Schedule for entered Route and Date"
+#             return render(request, 'findbus.html', context)
 #     else:
 #         return render(request, 'findbus.html')
-#
-# def home(request):
-#     bookings = Bus.objects.all()
-#     return render(request,'base.html',{'bookings':bookings})
-#
-# def search_routes(request):
-#     source_r = request.GET.get('from')
-#     dest_r = request.GET.get('to')
-#     date_r = request.GET.get('departure_date')
-#     seat_r = request.GET.get('number_of_seats')
-#     available_routes = Bus.objects.filter(
-#         source__iexact = source_r,
-#         dest__iexact = dest_r,
-#         date__exact = date_r)
-#     bookings = Bus.objects.all()
-#     return render(request,'available_routes.html',{
-#         'available_routes':available_routes,
-#         'selected_source': source_r,
-#         'selected_dest': dest_r,
-#         'selected_date': date_r,
-#         'selected_seat': seat_r,
-#         'bookings':bookings,
-#     })
+
+def home(request):
+    bookings = Bus.objects.all()
+    return render(request,'base.html',{'bookings':bookings})
+
+from django.shortcuts import render
+from datetime import datetime
+from .models import Route, Schedule
+
+def search_routes(request):
+    # Always provide dropdown lists
+    origins = Route.objects.values_list('origin', flat=True).distinct()
+    destinations = Route.objects.values_list('destination', flat=True).distinct()
+
+    context = {'origins': origins, 'destinations': destinations}
+
+    # Accept both GET and POST (GET useful for header quick-search)
+    data = request.GET if request.method == 'GET' and request.GET else request.POST
+
+    if data:
+        origin_r = data.get('origin', '').strip()
+        dest_r = data.get('destination', '').strip()
+        # allow either 'date' (findbus) or 'departure_date' (header)
+        date_r = data.get('date') or data.get('departure_date')
+
+        # If the form came from header and used 'to' param, support that:
+        if not dest_r and data.get('to'):
+            dest_r = data.get('to').strip()
+
+        # Validate required fields
+        if not (origin_r and dest_r and date_r):
+            context.update({'error': 'Please enter origin, destination and date.', 'data': data})
+            return render(request, 'findbus.html', context)
+
+        try:
+            date_obj = datetime.strptime(date_r, "%Y-%m-%d").date()
+        except ValueError:
+            context.update({'error': 'Invalid date format.', 'data': data})
+            return render(request, 'findbus.html', context)
+
+        schedules = Schedule.objects.filter(
+            route__origin__iexact=origin_r,
+            route__destination__iexact=dest_r,
+            date=date_obj,
+            del_flag=False,
+            route__del_flag=False,
+            bus__del_flag=False
+        )
+
+        if schedules.exists():
+            return render(request, 'list.html', {'schedules': schedules})
+        else:
+            context.update({'error': 'No available Bus Schedule for entered Route and Date', 'data': data})
+            return render(request, 'findbus.html', {'context':context})
+
+    # GET with no query params -> show findbus form (empty)
+    return render(request, 'findbus.html', context)
+
+
 #
 #
 # @login_required(login_url='signin')
@@ -194,53 +239,53 @@ def user_login(request):
 #         return render(request, 'findbus.html', context)
 #
 #
-# def signup(request):
-#     context = {}
-#     if request.method == 'POST':
-#         email_r = request.POST.get('email')
-#         name_r = request.POST.get('name')
-#         password_r = request.POST.get('password')
-#
-#         # Check if the username already exists
-#         if User.objects.filter(username=name_r).exists():
-#             context["error"] = "Username already exists, please choose another one."
-#             return render(request, 'signup.html', context)
-#
-#         # Check if the email already exists
-#         if User.objects.filter(email=email_r).exists():
-#             context["error"] = "Email is already registered, please choose another one."
-#             return render(request, 'signup.html', context)
-#
-#         try:
-#             user = User.objects.create_user(username=name_r, email=email_r, password=password_r)
-#             if user:
-#                 login(request, user)
-#                 return render(request, 'thank.html')
-#         except IntegrityError:
-#             context["error"] = "An error occurred. Please try again."
-#             return render(request, 'signup.html', context)
-#
-#     return render(request, 'signup.html', context)
-#
-# def signin(request):
-#     context = {}
-#     if request.method == 'POST':
-#         name_r = request.POST.get('name')
-#         password_r = request.POST.get('password')
-#         user = authenticate(request, username=name_r, password=password_r)
-#         if user:
-#             login(request, user)
-#             # username = request.session['username']
-#             context["user"] = name_r
-#             context["id"] = request.user.id
-#             return render(request, 'success.html', context)
-#             # return HttpResponseRedirect('success')
-#         else:
-#             context["error"] = "Provide valid credentials"
-#             return render(request, 'signin.html', context)
-#     else:
-#         context["error"] = "You are not logged in"
-#         return render(request, 'signin.html', context)
+def signup(request):
+    context = {}
+    if request.method == 'POST':
+        email_r = request.POST.get('email')
+        name_r = request.POST.get('name')
+        password_r = request.POST.get('password')
+
+        # Check if the username already exists
+        if User.objects.filter(username=name_r).exists():
+            context["error"] = "Username already exists, please choose another one."
+            return render(request, 'signup.html', context)
+
+        # Check if the email already exists
+        if User.objects.filter(email=email_r).exists():
+            context["error"] = "Email is already registered, please choose another one."
+            return render(request, 'signup.html', context)
+
+        try:
+            user = User.objects.create_user(username=name_r, email=email_r, password=password_r)
+            if user:
+                login(request, user)
+                return render(request, 'thank.html')
+        except IntegrityError:
+            context["error"] = "An error occurred. Please try again."
+            return render(request, 'signup.html', context)
+
+    return render(request, 'signup.html', context)
+
+def signin(request):
+    context = {}
+    if request.method == 'POST':
+        name_r = request.POST.get('name')
+        password_r = request.POST.get('password')
+        user = authenticate(request, username=name_r, password=password_r)
+        if user:
+            login(request, user)
+            # username = request.session['username']
+            context["user"] = name_r
+            context["id"] = request.user.id
+            return render(request, 'success.html', context)
+            # return HttpResponseRedirect('success')
+        else:
+            context["error"] = "Provide valid credentials"
+            return render(request, 'signin.html', context)
+    else:
+        context["error"] = "You are not logged in"
+        return render(request, 'signin.html', context)
 # @login_required(login_url='signin')
 # def download_ticket(request, booking_id):
 #     booking = Book.objects.get(id=booking_id)
@@ -319,12 +364,12 @@ def user_login(request):
 #
 #     return response
 #
-# def signout(request):
-#     context = {}
-#     logout(request)
-#     context['error'] = "You have been logged out"
-#     return render(request, 'signin.html', context)
-#
+def signout(request):
+    context = {}
+    logout(request)
+    context['error'] = "You have been logged out"
+    return render(request, 'signin.html', context)
+
 # def success(request):
 #     context = {}
 #     context['user'] = request.user
