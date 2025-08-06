@@ -14,7 +14,7 @@ from .models import Feedback
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import User, Bus, Book
+from .models import User,Book
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm
@@ -388,4 +388,5 @@ def seat_selection(request,bus_id):
 
 # Admin Dashboard
 def admin_dashboard(request):
-    return render(request,'admin/dashboard.html')
+    no_of_users = User.objects.all().count()
+    return render(request,'admin/dashboard.html',{'no_of_users' : no_of_users})

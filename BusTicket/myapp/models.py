@@ -1,40 +1,53 @@
+from email.policy import default
+
 from django.db import models
 
 # Create your models here.
 # Create your models here.
 from django.db import models
-
+from django.utils import timezone
 
 # Create your models here.
+class Operator(models.Model):
+    name = models.CharField(max_length=50,default='')
+    del_flag = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
 class Bus(models.Model):
-    bus_name = models.CharField(max_length=30)
-    source = models.CharField(max_length=30)
-    dest = models.CharField(max_length=30)
-    nos = models.DecimalField(decimal_places=0, max_digits=2) #number of seats
-    rem = models.DecimalField(decimal_places=0, max_digits=2) #remaining
-    price = models.DecimalField(decimal_places=0, max_digits=5)
-    date = models.DateField()
-    time = models.TimeField()
+    license_no = models.CharField(max_length=15,default='')
+    seat_capacity = models.IntegerField(default=30)
+    bus_type = models.CharField(max_length = 10,default='Standard')
+    del_flag = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    operator_name = models.ForeignKey(Operator,on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "List of Busses"
+        verbose_name_plural = "Busses"
 
     def __str__(self):
-        return self.bus_name
+        return self.license_no
 
 
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)
-    email = models.EmailField()
     name = models.CharField(max_length=30)
+    email = models.EmailField(unique=True)
     password = models.CharField(max_length=30)
+    nrc = models.CharField(max_length=30,unique=True,null=True)
+    address = models.CharField(max_length=100,default='')
+    phone_no = models.CharField(max_length=11,null=True)
+    del_flag = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
 
     class Meta:
-        verbose_name_plural = "List of Users"
+        verbose_name_plural = "Users"
 
     def __str__(self):
-        return self.email
+        return self.name
 
 
 
