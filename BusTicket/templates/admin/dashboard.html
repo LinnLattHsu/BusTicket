@@ -53,7 +53,7 @@
 
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="" class="flex items-center p-2  rounded-lg  dark:text-white bg-white group text-blue-900">
+                <a href="{% url 'admin_dashboard' %}" class="flex items-center p-2  rounded-lg  dark:text-white bg-white group text-blue-900">
                     <ion-icon name="grid-outline" class="text-3xl mr-3"></ion-icon>
                     <span class="ms-3">Dashboard</span>
                 </a>
@@ -82,7 +82,7 @@
                 </a>
             </li>
             <li>
-                <a href=""
+                <a href="{% url 'operator_home' %}"
                    class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
                     <ion-icon name="business-outline" class="text-3xl mr-3"></ion-icon>
                     <span class="flex-1 ms-3 whitespace-nowrap">Operators</span>

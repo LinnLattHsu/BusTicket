@@ -10,7 +10,7 @@ from django.utils import timezone
 # Create your models here.
 class Operator(models.Model):
     operator_name = models.CharField(max_length=50,default='')
-    del_flag = models.BooleanField(default=False)
+    del_flag = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -21,7 +21,7 @@ class Bus(models.Model):
     license_no = models.CharField(max_length=15,default='')
     seat_capacity = models.IntegerField(default=30)
     bus_type = models.CharField(max_length = 10,default='Standard')
-    del_flag = models.BooleanField(default=False)
+    del_flag = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     operator = models.ForeignKey(Operator,on_delete=models.CASCADE)
@@ -35,7 +35,7 @@ class Bus(models.Model):
 class Route(models.Model):
     origin = models.CharField(max_length=30)
     destination = models.CharField(max_length=30)
-    del_flag = models.BooleanField(default=False)
+    del_flag = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     class Meta:
@@ -50,7 +50,7 @@ class Schedule(models.Model):
     date = models.DateField()
     time = models.TimeField()
     price = models.DecimalField(max_digits=5,decimal_places=0)
-    del_flag = models.BooleanField(default=False)
+    del_flag = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     class Meta:

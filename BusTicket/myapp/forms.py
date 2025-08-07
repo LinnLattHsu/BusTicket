@@ -6,8 +6,21 @@ from django.contrib.auth import (
     get_user_model
 
 )
+from .models import Operator
 from .models import Bus
 User = get_user_model()
+
+class OperatorForm(forms.ModelForm):
+    class Meta:
+        model = Operator
+        fields = ['operator_name']
+
+        widgets = {
+            'operator_name': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter operator name'
+            }),
+        }
 
 class BookingForm(forms.Form):
     model = Bus

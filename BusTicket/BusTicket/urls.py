@@ -49,7 +49,11 @@ urlpatterns = [
     #
 
     # admin url call
-    path('admindashboard/',views.admin_dashboard),
+    path('admindashboard/',views.admin_dashboard,name='admin_dashboard'),
     path('admindashboard/user_home/',views.user_home,name='user_home'),
-    path('admindashboard/user_home/users/<int:user_id>/soft-delete/', views.soft_delete_user, name='soft_delete_user')
+    path('admindashboard/user_home/users/<int:user_id>/soft-delete/', views.soft_delete_user, name='soft_delete_user'),
+    path('admindashboard/operator_home/',views.operator_home,name='operator_home'),
+    path('admindashboard/operator_home/add_new_operator/',views.add_operator,name='operator_add'),
+    path('admindashboard/operator_home/<int:operator_id>/update/',views.update_operator,name='operator_update'),
+    path('admindashboard/operator_home/<int:operator_id>/delete/',views.delete_operator,name='operator_delete'),
 ]

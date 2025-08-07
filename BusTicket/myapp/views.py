@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from django.db.models import Q
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
@@ -36,6 +37,7 @@ import qrcode
 from django.shortcuts import render, get_object_or_404
 from io import BytesIO
 from .forms import BookingForm
+from .forms import OperatorForm
 
 # Create your views here.
 
@@ -456,3 +458,50 @@ def soft_delete_user(request,user_id):
         return JsonResponse({"status": "success", "message": f"User {user_id} soft-deleted successfully."})
     else:
         return redirect(reverse('user_home'))
+
+def operator_home(request):
+
+    search_query = request.GET.get('search', '')
+
+    operators = Operator.objects.all()
+
+    if search_query:
+        operators = operators.filter(Q(operator_name__icontains=search_query))
+
+    context = {
+        'operators': operators,
+        'search_query': search_query,
+    }
+    return render(request, 'admin/operator_home.html', context)
+
+
+def add_operator(request):
+    if request.method == 'POST':
+        operator_form = OperatorForm(request.POST)
+        if operator_form.is_valid():
+            operator_form.save()
+            return HttpResponseRedirect('/admindashboard/operator_home/')
+    else:
+        operator_form = OperatorForm()
+
+    return render(request,'admin/operator_add_form.html',{'operator_form' : operator_form})
+
+def update_operator(request,operator_id):
+    operator_info = Operator.objects.get(pk = operator_id)
+
+    if request.method == 'POST':
+        operator_form = OperatorForm(request.POST, instance=operator_info)
+        if operator_form.is_valid():
+            operator_form.save()
+            return redirect('operator_home')
+    else:
+        operator_form = OperatorForm(instance=operator_info)
+
+    return render(request,'admin/operator_update.html',{'operator_form' : operator_form})
+
+def delete_operator(request,operator_id):
+    operator_info = Operator.objects.get(id=operator_id)
+    operator_info.del_flag = 1
+    operator_info.save()
+    return redirect('operator_home')
+
