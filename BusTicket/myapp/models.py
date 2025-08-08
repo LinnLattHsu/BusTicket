@@ -55,7 +55,11 @@ class Schedule(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name_plural = "Schedules"
-
+    @property
+    def rem(self):
+        total=self.bus.seat_capacity
+        booked = Ticket.objects.filter(booking__schedule=self).aggregate(total_seat_sum=models.Sum('total_seat'))['total_seat_sum'] or 0
+        return total-booked
     # def __str__(self):
     #     return self.date
 

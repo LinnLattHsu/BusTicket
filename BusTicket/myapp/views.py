@@ -38,57 +38,14 @@ from django.shortcuts import render, get_object_or_404
 from io import BytesIO
 from .forms import BookingForm
 from .forms import OperatorForm
-
-# Create your views here.
-
-def user_login(request):
-    if request.user.is_authenticated:
-        return render(request, 'home.html')
-    else:
-        return render(request, 'signin.html')
-
-
-
-# @login_required(login_url='signin')
-# def findbus(request):
-#     context = {}
-#     if request.method == 'POST':
-#         origin_r = request.POST.get('origin')
-#         dest_r = request.POST.get('destination')
-#         date_r = request.POST.get('date')
-#         date_r = datetime.strptime(date_r,"%Y-%m-%d").date()
-#         year = date_r.strftime("%Y")
-#         month = date_r.strftime("%m")
-#         day = date_r.strftime("%d")
-#         schedules = Schedule.objects.filter(
-#             route__origin__iexact=origin_r,
-#             route__destination__iexact=dest_r,
-#             date=date_r,
-#             del_flag=False,  # schedule is active
-#             route__del_flag=False,  # route is active
-#             bus__del_flag=False  # bus is active
-#
-#         )
-# #         #  needs to correct
-# #         route_list = Route.objects.filter(origin=origin_r, destination=dest_r)
-# #         bus_list = route_list_set.filter(date__year=year, date__month=month, date__day=day)
-# #         # bus_list = Bus.objects.filter(source=source_r, dest=dest_r, date__year=year, date__month=month, date__day=day)
-#         if schedules:
-#             return render(request, 'list.html', locals())
-#         else:
-#             context['data'] = request.POST
-#             context["error"] = "No available Bus Schedule for entered Route and Date"
-#             return render(request, 'findbus.html', context)
-#     else:
-#         return render(request, 'findbus.html')
-
-def home(request):
-    bookings = Bus.objects.all()
-    return render(request,'base.html',{'bookings':bookings})
-
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
+
+# Create your views here.
+
+
+# In home page, when you enter origin,destination and date this function will search for available routes
 
 def search_routes(request):
     # Always provide dropdown lists
@@ -103,41 +60,74 @@ def search_routes(request):
     if data:
         origin_r = data.get('origin', '').strip()
         dest_r = data.get('destination', '').strip()
-        # allow either 'date' (findbus) or 'departure_date' (header)
+        # allow either 'date' (base) or 'departure_date' (header)
         date_r = data.get('date') or data.get('departure_date')
+        number_of_seats = data.get('number_of_seats')
+
 
         # If the form came from header and used 'to' param, support that:
         if not dest_r and data.get('to'):
             dest_r = data.get('to').strip()
 
+        # Save selected values for repopulating form
+        context.update({
+            'data':data,
+            'selected_origin': origin_r,
+            'selected_destination': dest_r,
+            'selected_date': date_r,
+            'number_of_seats':number_of_seats,
+        })
+
         # Validate required fields
         if not (origin_r and dest_r and date_r):
             context.update({'error': 'Please enter origin, destination and date.', 'data': data})
-            return render(request, 'findbus.html', context)
+            return render(request, 'base.html', context)
 
         try:
             date_obj = datetime.strptime(date_r, "%Y-%m-%d").date()
         except ValueError:
             context.update({'error': 'Invalid date format.', 'data': data})
-            return render(request, 'findbus.html', context)
+            return render(request, 'base.html', context)
 
         schedules = Schedule.objects.filter(
             route__origin__iexact=origin_r,
             route__destination__iexact=dest_r,
             date=date_obj,
-            del_flag=False,
-            route__del_flag=False,
-            bus__del_flag=False
+            del_flag=0,
+            route__del_flag=0,
+            bus__del_flag=0
         )
 
         if schedules.exists():
-            return render(request, 'list.html', {'schedules': schedules})
+            return render(request, 'available_routes.html', {
+                'schedules': schedules,
+                'origins':origins,
+                'destinations':destinations,
+                'selected_origin':origin_r,
+                'selected_destination':dest_r,
+                'selected_date':date_r,
+                'selected_seat':number_of_seats,
+            })
         else:
             context.update({'error': 'No available Bus Schedule for entered Route and Date', 'data': data})
-            return render(request, 'findbus.html', {'context':context})
+            return render(request, 'base.html', {'context':context})
 
-    # GET with no query params -> show findbus form (empty)
-    return render(request, 'findbus.html', context)
+    # GET with no query params -> show base form (empty)
+    return render(request, 'base.html', context)
+
+
+
+def user_login(request):
+    if request.user.is_authenticated:
+        return render(request, 'home.html')
+    else:
+        return render(request, 'signin.html')
+
+
+
+def home(request):
+    bookings = Bus.objects.all()
+    return render(request,'base.html',{'bookings':bookings})
 
 
 #
@@ -414,24 +404,24 @@ def signout(request):
 #     feedback_list = Feedback.objects.all()
 #     return render(request, 'feedback_list.html', {'feedbacks': feedback_list})
 #
-# def seat_selection(request,bus_id):
-#     selected_bus = Bus.objects.get(id=bus_id)
-#     source = request.GET.get('from')
-#     dest = request.GET.get('to')
-#     date = request.GET.get('departure_date')
-#     seats = request.GET.get('number_of_seats')
-#     seats = int(seats)
-#     total_price=Decimal(seats)*selected_bus.price
-#     context={
-#         'bus':selected_bus,
-#         'source':source,
-#         'dest':dest,
-#         'date':date,
-#         'seats':seats,
-#         'total_price':total_price,
-#     }
-#     return render(request, 'seat_selection.html',context)
-#
+def seat_selection(request,bus_id):
+    selected_bus = Bus.objects.get(id=bus_id)
+    source = request.GET.get('from')
+    dest = request.GET.get('to')
+    date = request.GET.get('departure_date')
+    seats = request.GET.get('number_of_seats')
+    seats = int(seats)
+    total_price=Decimal(seats)*selected_bus.price
+    context={
+        'bus':selected_bus,
+        'source':source,
+        'dest':dest,
+        'date':date,
+        'seats':seats,
+        'total_price':total_price,
+    }
+    return render(request, 'seat_selection.html',context)
+
 
 
 

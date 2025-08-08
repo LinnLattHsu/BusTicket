@@ -427,38 +427,48 @@ footer {
                 <div>origins length: {{ origins|length }}</div>
 
                 <form method="get" action="{% url 'search_routes' %}">
-                    <div class="mb-3">
-        <label for="origin">From</label>
-        <select name="origin" id="origin" class="form-select">
-            <option value="">-- Select --</option>
-            {% for origin in origins %}
-            <option value="{{ origin }}">{{ origin }}</option>
-            {% endfor %}
-        </select>
-    </div>
-                    <div class="mb-3">
-        <label for="to">To</label>
-        <select name="to" id="to" class="form-select">
-            <option value="">-- Select --</option>
-            {% for destination in destinations %}
-            <option value="{{ destination }}">{{ destination }}</option>
-            {% endfor %}
-        </select>
-    </div>
+                    <!-- From (dropdown filled by context_processor -> origins) -->
+                        <div class="mb-3">
+                            <label for="origin" class="form-label text-black">From</label>
+                            <select name="origin" id="origin" class="form-control rounded-0 glass-input stylish-border" required>
+                                <option value="">-- Select --</option>
+                                {% for origin in origins %}
+                                    <option value="{{ origin }}"
+                                        {% if data.origin == origin or request.GET.origin == origin %}
+                                            selected
+                                        {% endif %}>
+                                        {{ origin }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Destination (dropdown filled by context_processor -> destinations) -->
+                        <div class="mb-3">
+                            <label for="destination" class="form-label text-black">Destination</label>
+                            <select name="destination" id="destination" class="form-control rounded-0 glass-input stylish-border" required>
+                                <option value="">-- Select --</option>
+                                {% for destination in destinations %}
+                                    <option value="{{ destination }}" {% if data.destination == destination or request.GET.to == destination %}selected{% endif %}>{{ destination }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="mb-3">
+                            <label for="date" class="form-label text-black">Date</label>
+                            <input name="date" id="date" class="form-control rounded-0 glass-input stylish-border" type="date"
+                                   value="{% if data.date %}{{ data.date }}{% elif request.GET.departure_date %}{{ request.GET.departure_date }}{% endif %}" required>
+                        </div>
 
                     <div class="mb-3">
-        <label for="departure_date">Departure Date</label>
-        <input type="date" name="departure_date" id="departure_date" class="form-control" required>
-    </div>
-
-                    <div class="mb-3">
-        <label>Seats</label>
-        <div class="seat-control">
-            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
-            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">
-            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
-        </div>
-    </div>
+                        <label>Seats</label>
+                        <div class="seat-control">
+                            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
+                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">
+                            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
+                        </div>
+                    </div>
 
                     <button type="submit" class="search-btn">Search Now</button>
 
@@ -469,6 +479,7 @@ footer {
         </div>
     </div>
 </div>
+{% endblock %}
 
 
 
@@ -579,7 +590,7 @@ footer {
     </div>
 </div>
 
-    {% endblock %}
+
 
     <!-- Footer -->
     <footer class="text-center text-lg-start">
