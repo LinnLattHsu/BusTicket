@@ -75,7 +75,7 @@
                 </a>
             </li>
             <li>
-                <a href=""
+                <a href="{% url 'route_home' %}"
                    class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
                     <ion-icon name="navigate-outline" class="text-3xl mr-3"></ion-icon>
                     <span class="flex-1 ms-3 whitespace-nowrap">Routes</span>
@@ -171,7 +171,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-500">Operators</h3>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">number of operator</p>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_operators}}</p>
                 </div>
                 <div class="flex items-center justify-center w-12 h-12 text-white bg-[#657788] rounded-full">
                     <ion-icon name="business-outline" class="text-3xl"></ion-icon>
@@ -207,7 +207,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-500">Schedules</h3>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">number of Schedules</p>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{no_of_schedules}}</p>
                 </div>
                 <div class="flex items-center justify-center w-12 h-12 text-white bg-[#20B2AA] rounded-full">
                     <ion-icon name="list-outline" class="text-3xl"></ion-icon>

@@ -8,8 +8,10 @@ from django.contrib.auth import (
 )
 from .models import Operator
 from .models import Bus
+from .models import Route
 User = get_user_model()
 
+# for operator form
 class OperatorForm(forms.ModelForm):
     class Meta:
         model = Operator
@@ -21,6 +23,24 @@ class OperatorForm(forms.ModelForm):
                 'placeholder': 'Enter operator name'
             }),
         }
+
+# for route form
+class RouteForm(forms.ModelForm):
+    class Meta:
+        model = Route
+        fields = ['origin','destination']
+
+        widgets = {
+            'origin': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter origin city'
+            }),
+            'destination': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter destination city'
+            }),
+        }
+
 
 class BookingForm(forms.Form):
     model = Bus

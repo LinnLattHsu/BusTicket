@@ -13,7 +13,7 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -38,6 +38,7 @@ from django.shortcuts import render, get_object_or_404
 from io import BytesIO
 from .forms import BookingForm
 from .forms import OperatorForm
+from .forms import RouteForm
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
@@ -429,10 +430,21 @@ def seat_selection(request,bus_id):
 def admin_dashboard(request):
     no_of_users = User.objects.filter(del_flag = 0).count()
     no_of_buses = Bus.objects.filter(del_flag = 0).count()
+    no_of_routes = Route.objects.filter(del_flag=0).count()
+    no_of_operators = Operator.objects.filter(del_flag=0).count()
+    no_of_schedules = Schedule.objects.filter(del_flag=0).count()
+    no_of_bookings = Booking.objects.all().count()
+    no_of_tickets = Ticket.objects.all().count()
 
     return render(request,'admin/dashboard.html',{
         'no_of_users' : no_of_users,
-        'no_of_buses' : no_of_buses
+        'no_of_buses' : no_of_buses,
+        'no_of_routes' : no_of_routes,
+        'no_of_operators' : no_of_operators,
+        'no_of_schedules' : no_of_schedules,
+        'no_of_bookings' : no_of_bookings,
+        'no_of_tickets' : no_of_tickets
+
     })
 
 def user_home(request):
@@ -440,30 +452,50 @@ def user_home(request):
     return render(request,'admin/user_home.html',{'users' : users})
 
 def soft_delete_user(request,user_id):
-    user_info = User.objects.get(user_id = user_id)
-    user_info.del_flag = 1
-    user_info.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({"status": "success", "message": f"User {user_id} soft-deleted successfully."})
+    user_info = User.objects.get(user_id=user_id)
+    if user_info.del_flag == 0:
+        user_info.del_flag = 1
+        user_info.save()
     else:
-        return redirect(reverse('user_home'))
+        user_info.del_flag = 0
+        user_info.save()
 
+    return redirect('user_home')
+
+
+# operator home page in admin
 def operator_home(request):
-
     search_query = request.GET.get('search', '')
-
     operators = Operator.objects.all()
-
     if search_query:
         operators = operators.filter(Q(operator_name__icontains=search_query))
-
     context = {
-        'operators': operators,
-        'search_query': search_query,
+    'operators': operators,
+    'search_query': search_query,
     }
     return render(request, 'admin/operator_home.html', context)
 
+
+
+# route home page in admin
+def route_home(request):
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
+
+    routes = Route.objects.all()
+
+    if origin_query:
+        routes = routes.filter(Q(origin__icontains=origin_query))
+
+    if destination_query:
+        routes = routes.filter(Q(destination__icontains=destination_query))
+
+    context = {
+        'routes': routes,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
+    }
+    return render(request, 'admin/route_home.html', context)
 
 def add_operator(request):
     if request.method == 'POST':
@@ -491,7 +523,66 @@ def update_operator(request,operator_id):
 
 def delete_operator(request,operator_id):
     operator_info = Operator.objects.get(id=operator_id)
-    operator_info.del_flag = 1
-    operator_info.save()
+    if operator_info.del_flag == 0:
+        operator_info.del_flag = 1
+        operator_info.save()
+    else:
+        operator_info.del_flag = 0
+        operator_info.save()
+
     return redirect('operator_home')
 
+# route home page in admin
+def route_home(request):
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
+
+    routes = Route.objects.all()
+
+    if origin_query:
+        routes = routes.filter(Q(origin__icontains=origin_query))
+
+    if destination_query:
+        routes = routes.filter(Q(destination__icontains=destination_query))
+
+    context = {
+        'routes': routes,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
+    }
+    return render(request, 'admin/route_home.html', context)
+
+
+def add_route(request):
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST)
+        if route_form.is_valid():
+            route_form.save()
+            return redirect('route_home')
+    else:
+        route_form = RouteForm()
+    return render(request, 'admin/route_add_form.html', {'form': route_form})
+
+def update_route(request,route_id):
+    route_info = Route.objects.get(pk = route_id)
+
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST, instance=route_info)
+        if route_form.is_valid():
+            route_form.save()
+            return redirect('route_home')
+    else:
+        route_form = RouteForm(instance=route_info)
+
+    return render(request,'admin/route_update.html',{'route_form' : route_form})
+
+def delete_route(request,route_id):
+    route_info = Route.objects.get(id=route_id)
+    if route_info.del_flag == 0:
+        route_info.del_flag = 1
+        route_info.save()
+    else:
+        route_info.del_flag = 0
+        route_info.save()
+
+    return redirect('route_home')
