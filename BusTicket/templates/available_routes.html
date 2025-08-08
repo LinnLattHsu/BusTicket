@@ -124,10 +124,11 @@
   {% load humanize %}
   <div class="container">
         <form method="get" action= "{% url 'search_routes'%}" class="route-summary">
+            <input type="hidden" name="source" value="available">
                     <div class="row align-items-end g-3">
                         <div class="col-md-3">
                           <label for="from" class="form-label">From</label>
-                          <select name="from" id="from" class="form-select">
+                          <select name="origin" id="from" class="form-select">
                               <option value="">-- Select --</option>
                               {% for origin in origins %}
                               <option value="{{ origin }}" {% if origin == selected_origin %}selected{% endif %}>{{ origin }}</option>
@@ -137,7 +138,7 @@
 
                         <div class="col-md-3">
                           <label for="to" class="form-label">To</label>
-                          <select name="to" id="to" class="form-select">
+                          <select name="destination" id="to" class="form-select">
                             <option value="">-- Select --</option>
                             {% for destination in destinations %}
                             <option value="{{ destination }}" {% if destination == selected_destination %}selected{% endif %}>{{ destination }}</option>
@@ -197,6 +198,9 @@
                     </div>
 
                     <!-- Action -->
+                    <div class="col-md-3 text-end">
+                        <a href="{% url 'select_trip' schedule_id=schedule.id %}?number_of_seats={{ selected_seat }}" class="btn btn-select">Select Trip</a>
+                    </div>
 
                 </div>
             {% endfor %}

@@ -427,6 +427,7 @@ footer {
                 <div>origins length: {{ origins|length }}</div>
 
                 <form method="get" action="{% url 'search_routes' %}">
+                    <input type="hidden" name="source" value="home">
                     <!-- From (dropdown filled by context_processor -> origins) -->
                         <div class="mb-3">
                             <label for="origin" class="form-label text-black">From</label>

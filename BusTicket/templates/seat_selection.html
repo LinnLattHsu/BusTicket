@@ -5,8 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JavaScript Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- Flowbite CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
@@ -14,37 +18,66 @@
     <!-- Flowbite JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <style>
-        /* Custom styles for seat buttons */
-<!--        .seat-btn {-->
-<!--            @apply flex items-center justify-center w-16 h-12 rounded-md font-semibold text-lg cursor-pointer transition-all duration-200 ease-in-out;-->
-<!--        }-->
-<!--        .seat-btn.available {-->
-<!--            @apply bg-gray-200 text-gray-800 hover:bg-blue-200 hover:text-blue-800;-->
-<!--        }-->
-<!--        .seat-btn.selected {-->
-<!--            @apply bg-blue-600 text-white shadow-md;-->
-<!--        }-->
-<!--        .seat-btn.locked {-->
-<!--            @apply bg-gray-400 text-gray-600 cursor-not-allowed opacity-70;-->
-<!--        }-->
-.seat-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  background-color: #ccc;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.seat-btn.selected {
-  background-color: #007bff;
-  color: white;
-}
-
-.seat-btn.locked {
-  background-color: #999;
-  cursor: not-allowed;
-}
+        /* Custom styles for seat buttons */.seat-btn {
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      user-select: none;
+      transition: background-color 0.2s, color 0.2s;
+      min-width: 40px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .seat-btn.available {
+      background-color: #f0f9ff;
+      color: #0369a1;
+    }
+    .seat-btn.available:hover {
+      background-color: #bae6fd;
+    }
+    .seat-btn.booked {
+      background-color: #ddd;
+      color: #999;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .seat-btn.selected {
+      background-color: #0369a1;
+      color: white;
+      font-weight: bold;
+    }
+    #seatGrid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      max-width: 300px;
+      margin-bottom: 16px;
+    }
+    #resetSeatsBtn {
+      margin-right: 8px;
+      padding: 8px 16px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    #resetSeatsBtn:hover {
+      background-color: #aaa;
+    }
+    #submitSeatsBtn {
+      padding: 8px 16px;
+      background-color: #0369a1;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #submitSeatsBtn:hover {
+      background-color: #024f72;
+    }
 
         /* Custom styles for the trip summary line */
         .trip-summary-line::before {
@@ -65,7 +98,7 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans">
-    {% extends 'base_tailwind.html' %}
+<!--    {% extends 'base_tailwind.html' %}-->
     {% block content %}
 
 <!--    progress bar-->
@@ -112,242 +145,215 @@
     <div class="container mx-auto flex flex-col lg:flex-row gap-8 py-8">
         <!-- Left Section: Seat Selection -->
         <div class="lg:w-2/3 bg-white p-6 rounded-lg shadow-lg">
-            <h3 class="text-xl font-bold text-gray-800 mb-6">Please select <span id="maxSeatsAllowed">2</span> Seat(s).</h3>
+            <h2>Please select up to <span id="maxSeatsAllowed">3</span> seat(s):</h2>
 
-            <!-- Driver Section -->
-            <div class="mb-6">
-                <div class="text-gray-700 font-semibold mb-2">Driver</div>
-                <div class="flex gap-4">
-                    <div class="seat-btn locked">
-                        <i class="fas fa-lock text-gray-500"></i>
-                    </div>
-                    <div class="seat-btn locked">
-                        <i class="fas fa-lock text-gray-500"></i>
-                    </div>
-                </div>
-            </div>
+  <form method="post" action="{% url 'submit_seats' schedule_id %}">
+    {% csrf_token %}
+    <input type="hidden" id="selectedSeatsInput" name="selected_seats" value="" />
 
-            <!-- Seat Grid -->
-            <div id="seatGrid" class="grid grid-cols-5 gap-4">
-                <!-- Example Seat Layout (adjust as needed) -->
-                <!-- Row A -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="A1">A1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="A2">A2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="A3">A3</button>
-                </div>
+    <div id="seatGrid">
+      <button type="button" class="seat-btn available" data-seat="A1">A1</button>
+      <button type="button" class="seat-btn available" data-seat="A2">A2</button>
+      <div></div> <!-- Aisle -->
+      <div></div> <!-- Aisle -->
+      <button type="button" class="seat-btn booked" data-seat="A3">A3</button>
 
-                <!-- Row B -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="B1">B1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="B2">B2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="B3">B3</button>
-                </div>
+      <button type="button" class="seat-btn available" data-seat="B1">B1</button>
+      <button type="button" class="seat-btn available" data-seat="B2">B2</button>
+      <div></div>
+      <div></div>
+      <button type="button" class="seat-btn available" data-seat="B3">B3</button>
 
-                <!-- Row C -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="C1">C1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="C2">C2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="C3">C3</button>
-                </div>
+      <button type="button" class="seat-btn available" data-seat="C1">C1</button>
+      <button type="button" class="seat-btn booked" data-seat="C2">C2</button>
+      <div></div>
+      <div></div>
+      <button type="button" class="seat-btn available" data-seat="C3">C3</button>
+    </div>
 
-                <!-- Row D -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="D1">D1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="D2">D2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="D3">D3</button>
-                </div>
+    <button type="button" id="resetSeatsBtn">Reset Seats</button>
+    <button type="submit" id="submitSeatsBtn">Submit Seats</button>
+  </form>
+<!--            <h3 class="text-xl font-bold text-gray-800 mb-6">Please select <span id="maxSeatsAllowed">{{seats}}</span> Seat(s).</h3>-->
 
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="E1">E1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="E2">E2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="E3">E3</button>
-                </div>
-
-                <!-- Row F -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="F1">F1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="F2">F2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-<!--                    <button class="seat-btn available" data-seat="F3">F3</button>-->
-                </div>
-
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="G1">G1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="G2">G2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-<!--                    <button class="seat-btn available" data-seat="G3">G3</button>-->
-                </div>
-
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="H1">H1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="H2">H2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="H3">H3</button>
-                </div>
-
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="I1">I1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="I2">I2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="I3">I3</button>
-                </div>
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="J1">J1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="J2">J2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="J3">J3</button>
-                </div>
-                <!-- Row E -->
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="K1">K1</button>
-                </div>
-                <div class="col-span-1 flex justify-end">
-                    <button class="seat-btn available" data-seat="K2">K2</button>
-                </div>
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1"></div> <!-- Aisle -->
-                <div class="col-span-1 flex justify-start">
-                    <button class="seat-btn available" data-seat="K3">K3</button>
-                </div>
-
-<!--                &lt;!&ndash; Row D (D1 and D2 are selected by default as per image) &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn selected" data-seat="D1">D1</button>-->
+<!--            &lt;!&ndash; Driver Section &ndash;&gt;-->
+<!--            <div class="mb-6">-->
+<!--                <div class="text-gray-700 font-semibold mb-2">Driver</div>-->
+<!--                <div class="flex gap-4">-->
+<!--                    <div class="seat-btn locked">-->
+<!--                        <i class="fas fa-lock text-gray-500"></i>-->
+<!--                    </div>-->
+<!--                    <div class="seat-btn locked">-->
+<!--                        <i class="fas fa-lock text-gray-500"></i>-->
+<!--                    </div>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn selected" data-seat="D2">D2</button>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Seat Grid &ndash;&gt;-->
+<!--            <form method="post" action="{% url 'submit_seats' schedule_id %}">-->
+<!--                {% csrf_token %}-->
+<!--                <div id="seatGrid" class="grid grid-cols-5 gap-4">-->
+<!--                    <input type="hidden" id="selectedSeatsInput" name="selected_seats" value="">-->
+
+<!--                &lt;!&ndash; Example Seat Layout (adjust as needed) &ndash;&gt;-->
+<!--                &lt;!&ndash; Row A &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'A1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="A1">A1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'A2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="A2">A2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'A3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="A3">A3</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row B &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'B1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="B1">B1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'B2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="B2">B2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'B3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="B3">B3</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row C &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'C1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="C1">C1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'C2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="C2">C2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'C3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="C3">C3</button>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Row D &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'D1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="D1">D1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'D2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="D2">D2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'D3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="D3">D3</button>-->
 <!--                </div>-->
 
 <!--                &lt;!&ndash; Row E &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="E1">E1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'E1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="E1">E1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="E2">E2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'E2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="E2">E2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'E3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="E3">E3</button>-->
 <!--                </div>-->
 
 <!--                &lt;!&ndash; Row F &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="F1">F1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'F1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="F1">F1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="F2">F2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'F2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="F2">F2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--&lt;!&ndash;                    <button class="seat-btn available" data-seat="F3">F3</button>&ndash;&gt;-->
 <!--                </div>-->
 
 <!--                &lt;!&ndash; Row G &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="G1">G1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'G1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="G1">G1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="G2">G2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'G2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="G2">G2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--&lt;!&ndash;                    <button class="seat-btn available" data-seat="G3">G3</button>&ndash;&gt;-->
 <!--                </div>-->
 
 <!--                &lt;!&ndash; Row H &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="H1">H1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'H1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="H1">H1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="H2">H2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'H2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="H2">H2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'H3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="H3">H3</button>-->
 <!--                </div>-->
 
 <!--                &lt;!&ndash; Row I &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="I1">I1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'I1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="I1">I1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="I2">I2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'I2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="I2">I2</button>-->
 <!--                </div>-->
-
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'I3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="I3">I3</button>-->
+<!--                </div>-->
 <!--                &lt;!&ndash; Row J &ndash;&gt;-->
-<!--                <div class="col-span-2 flex justify-end">-->
-<!--                    <button class="seat-btn available" data-seat="J1">J1</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'J1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="J1">J1</button>-->
 <!--                </div>-->
-<!--                <div class="col-span-1"></div>-->
-<!--                <div class="col-span-2 flex justify-start">-->
-<!--                    <button class="seat-btn available" data-seat="J2">J2</button>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'J2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="J2">J2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'J3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="J3">J3</button>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Row K &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'K1' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="K1">K1</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1 flex justify-end">-->
+<!--                    <button type="button" class="seat-btn {% if 'K2' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="K2">K2</button>-->
+<!--                </div>-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1"></div> &lt;!&ndash; Aisle &ndash;&gt;-->
+<!--                <div class="col-span-1 flex justify-start">-->
+<!--                    <button type="button" class="seat-btn {% if 'K3' in booked_seat_list %}booked{% else %}available{% endif %}" data-seat="K3">K3</button>-->
 <!--                </div>-->
 
-                <!-- Rightmost Column (B3, C3, D3, E3, etc.) -->
-<!--                <div class="col-start-5 row-start-2 flex flex-col gap-4">-->
-<!--                    <button class="seat-btn locked" data-seat="B3"><i class="fas fa-lock text-gray-500"></i></button>-->
-<!--                    <button class="seat-btn available" data-seat="C3">C3</button>-->
-<!--                    <button class="seat-btn available" data-seat="D3">D3</button>-->
-<!--                    <button class="seat-btn available" data-seat="E3">E3</button>-->
-<!--                    <button class="seat-btn available" data-seat="F3">F3</button>-->
-<!--                    <button class="seat-btn available" data-seat="G3">G3</button>-->
-<!--                    <button class="seat-btn available" data-seat="H3">H3</button>-->
-<!--                    <button class="seat-btn available" data-seat="I3">I3</button>-->
-<!--                    <button class="seat-btn available" data-seat="J3">J3</button>-->
+
 <!--                </div>-->
-            </div>
-            <p id="selectionMessage" class="text-red-500 mt-4 hidden">You can only select a maximum of <span id="maxSeatsMsg">2</span> seats.</p>
+<!--                <button type="button" id="resetSeatsBtn" class="mt-4 px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold">-->
+<!--                    Reset Seats-->
+<!--                </button>-->
+<!--                <button type="submit" class="mt-4 px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold">-->
+<!--                    Submit Seats-->
+<!--                </button>-->
+
+
+
+
+
+
+
+<!--                <p id="selectionMessage" class="text-red-500 mt-4 hidden">You can only select a maximum of <span id="maxSeatsMsg">{{seats}}</span> seats.</p>-->
+<!--            </form>-->
         </div>
 
         <!-- Right Section: Trip Summary -->
@@ -357,11 +363,11 @@
             <div class="relative pl-6 mb-4 trip-summary-line">
                 <div class="trip-summary-dot top"></div>
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-gray-700 font-medium">{{source}}</span>
+                    <span class="text-gray-700 font-medium">{{origin}}</span>
                     <span class="text-gray-500 text-sm">{{date}}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-700 font-medium">{{dest}}</span>
+                    <span class="text-gray-700 font-medium">{{destination}}</span>
                     <span class="text-gray-500 text-sm">{{date}}</span>
                 </div>
                 <div class="trip-summary-dot bottom"></div>
@@ -377,15 +383,15 @@
             <div class="text-gray-700 mb-4">
                 <div class="flex justify-between py-1 border-b border-gray-200">
                     <span>Bus Operator</span>
-                    <span class="font-medium">Mandalar Minn Express</span>
+                    <span class="font-medium">{{selected_bus.bus.operator.operator_name}} Express</span>
                 </div>
                 <div class="flex justify-between py-1 border-b border-gray-200">
                     <span>Bus Type</span>
-                    <span class="font-medium">Marcopolo Scania VIP (2+1)</span>
+                    <span class="font-medium">{{selected_bus.bus.bus_type}}</span>
                 </div>
                 <div class="flex justify-between py-1 border-b border-gray-200">
                     <span>Unit Ticket Price</span>
-                    <span class="font-medium">MMK <span id="unitTicketPrice">{{bus.price}}</span></span>
+                    <span class="font-medium">MMK <span id="unitTicketPrice">{{selected_bus.price}}</span></span>
                 </div>
                 <div class="flex justify-between py-1 border-b border-gray-200">
                     <span>Number of Seats</span>
@@ -399,7 +405,7 @@
             </div>
 
             <div class="mt-6 p-4 bg-blue-50 rounded-lg text-blue-800 text-sm">
-                <h4 class="font-semibold mb-2">Notices by Mandalar Minn Express</h4>
+                <h4 class="font-semibold mb-2">Notices by {{selected_bus.bus.operator.operator_name}} Express</h4>
                 <ul class="list-disc list-inside space-y-1">
                     <li>NRC+Letter of Endorsement from ward+Letter of Endorsement from Police</li>
                 </ul>
@@ -412,96 +418,40 @@
 
 
     {% endblock %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const maxSeats = parseInt(document.getElementById('maxSeatsAllowed').textContent, 10);
+      const selectedSeats = [];
+      const seatButtons = document.querySelectorAll('.seat-btn.available');
+      const selectedSeatsInput = document.getElementById('selectedSeatsInput');
 
-    <script>
-        const unitPrice = 43000; // MMK
-        const maxSeatsToSelect = 2;
+      seatButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const seat = button.dataset.seat;
 
-        const seatGrid = document.getElementById('seatGrid');
-        const seatButtons = seatGrid.querySelectorAll('button[data-seat]');
-        const numberOfSeatsSpan = document.getElementById('numberOfSeats');
-        const totalTicketPriceSpan = document.getElementById('totalTicketPrice');
-        const selectionMessage = document.getElementById('selectionMessage');
-        const maxSeatsMsg = document.getElementById('maxSeatsMsg');
-        const maxSeatsAllowed = document.getElementById('maxSeatsAllowed');
-
-        let selectedSeats = []; // Stores data-seat values of selected seats
-
-        // Initialize max seats allowed message
-        maxSeatsMsg.textContent = maxSeatsToSelect;
-        maxSeatsAllowed.textContent = maxSeatsToSelect;
-
-        /**
-         * Updates the UI based on the current selection.
-         */
-        function updateUI() {
-            numberOfSeatsSpan.textContent = selectedSeats.length;
-            totalTicketPriceSpan.textContent = (selectedSeats.length * unitPrice).toLocaleString('en-US'); // Format with commas
-
-            // Update seat button classes
-            seatButtons.forEach(button => {
-                const seatId = button.dataset.seat;
-                if (button.classList.contains('locked')) {
-                    // Do nothing for locked seats
-                } else if (selectedSeats.includes(seatId)) {
-                    button.classList.remove('available');
-                    button.classList.add('selected');
-                } else {
-                    button.classList.remove('selected');
-                    button.classList.add('available');
-                }
-            });
-
-            // Show/hide selection message
-            if (selectedSeats.length >= maxSeatsToSelect) {
-                selectionMessage.classList.remove('hidden');
+          if (selectedSeats.includes(seat)) {
+            // Unselect seat
+            selectedSeats.splice(selectedSeats.indexOf(seat), 1);
+            button.classList.remove('selected');
+          } else {
+            if (selectedSeats.length < maxSeats) {
+              selectedSeats.push(seat);
+              button.classList.add('selected');
             } else {
-                selectionMessage.classList.add('hidden');
+              alert(`You can only select ${maxSeats} seat(s).`);
             }
-        }
-
-        /**
-         * Handles a seat click event.
-         * @param {Event} event - The click event.
-         */
-        function handleSeatClick(event) {
-            const clickedSeat = event.target;
-            const seatId = clickedSeat.dataset.seat;
-
-            // Prevent selection of locked seats
-            if (clickedSeat.classList.contains('locked')) {
-                return;
-            }
-
-            if (selectedSeats.includes(seatId)) {
-                // Seat is already selected, deselect it
-                selectedSeats = selectedSeats.filter(seat => seat !== seatId);
-            } else {
-                // Seat is available, attempt to select it
-                if (selectedSeats.length < maxSeatsToSelect) {
-                    selectedSeats.push(seatId);
-                } else {
-                    // Max seats already selected, show message
-                    selectionMessage.classList.remove('hidden');
-                    return; // Do not select the new seat
-                }
-            }
-            updateUI();
-        }
-
-        // Add event listeners to all seat buttons
-        seatButtons.forEach(button => {
-            button.addEventListener('click', handleSeatClick);
+          }
+          selectedSeatsInput.value = selectedSeats.join(',');
         });
+      });
 
-        // Initial UI update on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            // Pre-select D1 and D2 as per the image
-            selectedSeats.push('D1', 'D2');
-            updateUI();
-        });
-    </script>
-
+      document.getElementById('resetSeatsBtn').addEventListener('click', () => {
+        selectedSeats.length = 0;
+        selectedSeatsInput.value = '';
+        seatButtons.forEach(button => button.classList.remove('selected'));
+      });
+    });
+  </script>
 </body>
 </html>
 

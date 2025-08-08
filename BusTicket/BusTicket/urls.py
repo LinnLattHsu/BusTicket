@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name="home"),
     path('search/',views.search_routes, name='search_routes'),
+    path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),
+    path('select-seats/<int:schedule_id>/submit/', views.submit_seats, name='submit_seats'),
     # path('home', views.home, name="home"),
     path('login', views.user_login, name="login"),
     # path('findbus', views.findbus, name="findbus"),
@@ -45,7 +47,6 @@ urlpatterns = [
     # path('bookings/payement/success/<int:booking_id>/feedback/list/', views.FeedbackList, name='feedback_list'),
     #
     # path('seatselection',views.seat_selection),
-    path('select-trip/<int:bus_id>/',views.seat_selection,name='select_trip'),
     #
 
     # admin url call

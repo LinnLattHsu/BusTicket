@@ -13,7 +13,7 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule
+from .models import User, Operator, Bus, Route, Schedule,Ticket
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -87,7 +87,7 @@ def search_routes(request):
             date_obj = datetime.strptime(date_r, "%Y-%m-%d").date()
         except ValueError:
             context.update({'error': 'Invalid date format.', 'data': data})
-            return render(request, 'base.html', context)
+            return render(request, f'{"base" if source == "home" else "available_routes"}.html', context)
 
         schedules = Schedule.objects.filter(
             route__origin__iexact=origin_r,
@@ -107,6 +107,7 @@ def search_routes(request):
                 'selected_destination':dest_r,
                 'selected_date':date_r,
                 'selected_seat':number_of_seats,
+
             })
         else:
             context.update({'error': 'No available Bus Schedule for entered Route and Date', 'data': data})
@@ -115,6 +116,52 @@ def search_routes(request):
     # GET with no query params -> show base form (empty)
     return render(request, 'base.html', context)
 
+def seat_selection(request,schedule_id):
+    selected_bus = Schedule.objects.get(id=schedule_id)
+    # source = request.GET.get('from')
+    # dest = request.GET.get('to')
+    # date = request.GET.get('departure_date')
+    seats = request.GET.get('number_of_seats')
+    seats = int(seats)
+    total_price=Decimal(seats)*selected_bus.price
+
+    # Fetch already booked/locked seats for this schedule
+    booked = Booking.objects.filter(
+        schedule=selected_bus,
+        schedule__del_flag=False,
+    ).values_list('seat_numbers', flat=True)
+
+    # Convert CSV string to list of seat numbers
+    booked_seat_list = []
+    for seat_string in booked:
+        if seat_string:
+            booked_seat_list.extend(seat_string.split(','))
+
+    context={
+        'selected_bus':selected_bus,
+        'origin':selected_bus.route.origin,
+        'destination':selected_bus.route.destination,
+        'date':selected_bus.date,
+        'seats':seats,
+        'total_price':total_price,
+        'schedule_id':selected_bus.id,
+    }
+    return render(request, 'seat_selection.html',context)
+
+
+from django.http import HttpResponse
+
+
+def submit_seats(request, schedule_id):
+    if request.method == 'POST':
+        selected_seats = request.POST.get('selected_seats', '')  # e.g. "A1,A2"
+        seats_list = selected_seats.split(',') if selected_seats else []
+
+        print("Selected seats:", seats_list)  # Just print in server console
+
+        return HttpResponse(f"You selected these seats: {', '.join(seats_list)}")
+    else:
+        return HttpResponse("Invalid request method.")
 
 
 def user_login(request):
@@ -404,24 +451,6 @@ def signout(request):
 #     feedback_list = Feedback.objects.all()
 #     return render(request, 'feedback_list.html', {'feedbacks': feedback_list})
 #
-def seat_selection(request,bus_id):
-    selected_bus = Bus.objects.get(id=bus_id)
-    source = request.GET.get('from')
-    dest = request.GET.get('to')
-    date = request.GET.get('departure_date')
-    seats = request.GET.get('number_of_seats')
-    seats = int(seats)
-    total_price=Decimal(seats)*selected_bus.price
-    context={
-        'bus':selected_bus,
-        'source':source,
-        'dest':dest,
-        'date':date,
-        'seats':seats,
-        'total_price':total_price,
-    }
-    return render(request, 'seat_selection.html',context)
-
 
 
 
