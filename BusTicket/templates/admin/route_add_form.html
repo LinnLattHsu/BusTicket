@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Update Operator - MyBusTicket</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Admin - Add New Route - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -29,7 +27,6 @@
 </head>
 <body class="flex flex-col md:flex-row h-screen">
 
-    <!-- Sidebar -->
     <aside id="logo-sidebar"
            class="fixed inset-y-0 left-0 z-40 w-64 h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 bg-blue-900"
            aria-label="Sidebar">
@@ -42,8 +39,8 @@
                 <li><a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="grid-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Dashboard</span></a></li>
                 <li><a href="{% url 'user_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="person-circle-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Users</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="bus-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span></a></li>
-                <li><a href="{% url 'route_home'%}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
-                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
+                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
+                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
@@ -52,52 +49,55 @@
         </div>
     </aside>
 
-    <!-- Main Content Area -->
     <div class="flex-grow p-4 md:p-6 overflow-y-auto md:ml-64">
-        <!-- Mobile menu button -->
         <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
             <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
         </button>
 
-        <!-- Top Bar -->
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Update Operator: {{ operator.operator_name }}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Add New Route</h1>
         </div>
 
-        <!-- Operator Update Form Card -->
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Edit Operator Details</h2>
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Route Details</h2>
 
             <form method="POST" class="space-y-4">
                 {% csrf_token %}
 
-                <!-- This loop renders each field with pre-filled data -->
-                {% for field in operator_form %}
                 <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                        {{ field.label }}
-                    </label>
+                    <label for="id_origin" class="block text-sm font-medium text-gray-700">Origin</label>
                     <div class="mt-1">
-                        {{ field }}
+                        {{ form.origin }}
                     </div>
-                    {% if field.help_text %}
-                        <p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>
+                    {% if form.origin.help_text %}
+                        <p class="mt-2 text-sm text-gray-500">{{ form.origin.help_text }}</p>
                     {% endif %}
-                    {% for error in field.errors %}
+                    {% for error in form.origin.errors %}
                         <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
-                {% endfor %}
+
+                <div>
+                    <label for="id_destination" class="block text-sm font-medium text-gray-700">Destination</label>
+                    <div class="mt-1">
+                        {{ form.destination }}
+                    </div>
+                    {% if form.destination.help_text %}
+                        <p class="mt-2 text-sm text-gray-500">{{ form.destination.help_text }}</p>
+                    {% endif %}
+                    {% for error in form.destination.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
 
                 <button type="submit"
                         class="w-full md:w-auto px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md">
-                    <ion-icon name="save-outline" class="mr-2"></ion-icon> Update Operator
+                    <ion-icon name="add-circle-outline" class="mr-2"></ion-icon> Add New Route
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Ionicon Script Tags -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
     <script>

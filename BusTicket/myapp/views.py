@@ -13,7 +13,7 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Ticket
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -38,6 +38,7 @@ from django.shortcuts import render, get_object_or_404
 from io import BytesIO
 from .forms import BookingForm
 from .forms import OperatorForm
+from .forms import RouteForm
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
@@ -87,7 +88,7 @@ def search_routes(request):
             date_obj = datetime.strptime(date_r, "%Y-%m-%d").date()
         except ValueError:
             context.update({'error': 'Invalid date format.', 'data': data})
-            return render(request, f'{"base" if source == "home" else "available_routes"}.html', context)
+            return render(request, 'base.html', context)
 
         schedules = Schedule.objects.filter(
             route__origin__iexact=origin_r,
@@ -107,7 +108,6 @@ def search_routes(request):
                 'selected_destination':dest_r,
                 'selected_date':date_r,
                 'selected_seat':number_of_seats,
-
             })
         else:
             context.update({'error': 'No available Bus Schedule for entered Route and Date', 'data': data})
@@ -116,52 +116,14 @@ def search_routes(request):
     # GET with no query params -> show base form (empty)
     return render(request, 'base.html', context)
 
-def seat_selection(request,schedule_id):
-    selected_bus = Schedule.objects.get(id=schedule_id)
-    # source = request.GET.get('from')
-    # dest = request.GET.get('to')
-    # date = request.GET.get('departure_date')
-    seats = request.GET.get('number_of_seats')
-    seats = int(seats)
-    total_price=Decimal(seats)*selected_bus.price
-
-    # Fetch already booked/locked seats for this schedule
-    booked = Booking.objects.filter(
-        schedule=selected_bus,
-        schedule__del_flag=False,
-    ).values_list('seat_numbers', flat=True)
-
-    # Convert CSV string to list of seat numbers
-    booked_seat_list = []
-    for seat_string in booked:
-        if seat_string:
-            booked_seat_list.extend(seat_string.split(','))
-
-    context={
-        'selected_bus':selected_bus,
-        'origin':selected_bus.route.origin,
-        'destination':selected_bus.route.destination,
-        'date':selected_bus.date,
-        'seats':seats,
-        'total_price':total_price,
-        'schedule_id':selected_bus.id,
-    }
-    return render(request, 'seat_selection.html',context)
-
-
 from django.http import HttpResponse
 
-
 def submit_seats(request, schedule_id):
-    if request.method == 'POST':
-        selected_seats = request.POST.get('selected_seats', '')  # e.g. "A1,A2"
-        seats_list = selected_seats.split(',') if selected_seats else []
+    if request.method == "POST":
+        selected_seats = request.POST.getlist('selected_seats')
+        return HttpResponse(f"Selected seats: {', '.join(selected_seats)}")
+    return HttpResponse(status=405)
 
-        print("Selected seats:", seats_list)  # Just print in server console
-
-        return HttpResponse(f"You selected these seats: {', '.join(seats_list)}")
-    else:
-        return HttpResponse("Invalid request method.")
 
 
 def user_login(request):
@@ -451,6 +413,24 @@ def signout(request):
 #     feedback_list = Feedback.objects.all()
 #     return render(request, 'feedback_list.html', {'feedbacks': feedback_list})
 #
+def seat_selection(request,bus_id):
+    selected_bus = Bus.objects.get(id=bus_id)
+    source = request.GET.get('from')
+    dest = request.GET.get('to')
+    date = request.GET.get('departure_date')
+    seats = request.GET.get('number_of_seats')
+    seats = int(seats)
+    total_price=Decimal(seats)*selected_bus.price
+    context={
+        'bus':selected_bus,
+        'source':source,
+        'dest':dest,
+        'date':date,
+        'seats':seats,
+        'total_price':total_price,
+    }
+    return render(request, 'seat_selection.html',context)
+
 
 
 
@@ -458,10 +438,21 @@ def signout(request):
 def admin_dashboard(request):
     no_of_users = User.objects.filter(del_flag = 0).count()
     no_of_buses = Bus.objects.filter(del_flag = 0).count()
+    no_of_routes = Route.objects.filter(del_flag=0).count()
+    no_of_operators = Operator.objects.filter(del_flag=0).count()
+    no_of_schedules = Schedule.objects.filter(del_flag=0).count()
+    no_of_bookings = Booking.objects.all().count()
+    no_of_tickets = Ticket.objects.all().count()
 
     return render(request,'admin/dashboard.html',{
         'no_of_users' : no_of_users,
-        'no_of_buses' : no_of_buses
+        'no_of_buses' : no_of_buses,
+        'no_of_routes' : no_of_routes,
+        'no_of_operators' : no_of_operators,
+        'no_of_schedules' : no_of_schedules,
+        'no_of_bookings' : no_of_bookings,
+        'no_of_tickets' : no_of_tickets
+
     })
 
 def user_home(request):
@@ -469,30 +460,50 @@ def user_home(request):
     return render(request,'admin/user_home.html',{'users' : users})
 
 def soft_delete_user(request,user_id):
-    user_info = User.objects.get(user_id = user_id)
-    user_info.del_flag = 1
-    user_info.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({"status": "success", "message": f"User {user_id} soft-deleted successfully."})
+    user_info = User.objects.get(user_id=user_id)
+    if user_info.del_flag == 0:
+        user_info.del_flag = 1
+        user_info.save()
     else:
-        return redirect(reverse('user_home'))
+        user_info.del_flag = 0
+        user_info.save()
 
+    return redirect('user_home')
+
+
+# operator home page in admin
 def operator_home(request):
-
     search_query = request.GET.get('search', '')
-
     operators = Operator.objects.all()
-
     if search_query:
         operators = operators.filter(Q(operator_name__icontains=search_query))
-
     context = {
-        'operators': operators,
-        'search_query': search_query,
+    'operators': operators,
+    'search_query': search_query,
     }
     return render(request, 'admin/operator_home.html', context)
 
+
+
+# route home page in admin
+def route_home(request):
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
+
+    routes = Route.objects.all()
+
+    if origin_query:
+        routes = routes.filter(Q(origin__icontains=origin_query))
+
+    if destination_query:
+        routes = routes.filter(Q(destination__icontains=destination_query))
+
+    context = {
+        'routes': routes,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
+    }
+    return render(request, 'admin/route_home.html', context)
 
 def add_operator(request):
     if request.method == 'POST':
@@ -520,7 +531,66 @@ def update_operator(request,operator_id):
 
 def delete_operator(request,operator_id):
     operator_info = Operator.objects.get(id=operator_id)
-    operator_info.del_flag = 1
-    operator_info.save()
+    if operator_info.del_flag == 0:
+        operator_info.del_flag = 1
+        operator_info.save()
+    else:
+        operator_info.del_flag = 0
+        operator_info.save()
+
     return redirect('operator_home')
 
+# route home page in admin
+def route_home(request):
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
+
+    routes = Route.objects.all()
+
+    if origin_query:
+        routes = routes.filter(Q(origin__icontains=origin_query))
+
+    if destination_query:
+        routes = routes.filter(Q(destination__icontains=destination_query))
+
+    context = {
+        'routes': routes,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
+    }
+    return render(request, 'admin/route_home.html', context)
+
+
+def add_route(request):
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST)
+        if route_form.is_valid():
+            route_form.save()
+            return redirect('route_home')
+    else:
+        route_form = RouteForm()
+    return render(request, 'admin/route_add_form.html', {'form': route_form})
+
+def update_route(request,route_id):
+    route_info = Route.objects.get(pk = route_id)
+
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST, instance=route_info)
+        if route_form.is_valid():
+            route_form.save()
+            return redirect('route_home')
+    else:
+        route_form = RouteForm(instance=route_info)
+
+    return render(request,'admin/route_update.html',{'route_form' : route_form})
+
+def delete_route(request,route_id):
+    route_info = Route.objects.get(id=route_id)
+    if route_info.del_flag == 0:
+        route_info.del_flag = 1
+        route_info.save()
+    else:
+        route_info.del_flag = 0
+        route_info.save()
+
+    return redirect('route_home')

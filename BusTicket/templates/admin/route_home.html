@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Manage Operators - MyBusTicket</title>
+    <title>Admin - Manage Routes - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -39,8 +39,8 @@
                 <li><a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="grid-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Dashboard</span></a></li>
                 <li><a href="{% url 'user_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="person-circle-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Users</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="bus-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span></a></li>
-                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
-                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
+                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
+                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
@@ -55,34 +55,37 @@
         </button>
 
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-0">Manage Operators</h1>
-            <a href="{% url 'operator_add' %}"
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-0">Manage Routes</h1>
+            <a href="{% url 'route_add' %}"
                class="px-4 py-2 md:px-6 md:py-3 bg-green-500 text-white rounded-lg font-semibold text-center hover:bg-green-600 transition-colors duration-200 shadow-md flex items-center justify-center w-full md:w-auto">
-                <ion-icon name="add-circle-outline" class="mr-2"></ion-icon> Add New Operator
+                <ion-icon name="add-circle-outline" class="mr-2"></ion-icon> Add New Route
             </a>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Filter Operators</h2>
-            <form action="{% url 'operator_home' %}" method="get" class="flex flex-col md:flex-row gap-4">
-                <input type="text" name="search" placeholder="Search by Operator Name"
-                       class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       value="{{ search_query }}"> <!-- This is the key change -->
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Filter Routes</h2>
+            <form action="{% url 'route_home' %}" method="get" class="flex flex-col md:flex-row gap-4">
+                <input type="text" name="origin" placeholder="Search by Origin"
+               class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+               value="{{ origin_query }}">
+                <input type="text" name="destination" placeholder="Search by Destination"
+               class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+               value="{{ destination_query }}">
                 <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 w-full md:w-auto">
-                    Search
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 w-full md:w-auto"> Search
                 </button>
             </form>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">All Operators</h2>
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">All Routes</h2>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operator Name</th>
+                            <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Origin</th>
+                            <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
                             <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created Date</th>
                             <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated Date</th>
                             <th scope="col" class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -90,37 +93,37 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        {% if operators %}
-                            {% for operator in operators %}
+                        {% if routes %}
+                            {% for route in routes %}
                             <tr>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ operator.id }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ operator.operator_name }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ operator.created_date }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ operator.updated_date }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ route.id }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ route.origin }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ route.destination }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ route.created_date }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ route.updated_date }}</td>
                                 <td class="px-3 md:px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if operator.del_flag == 0 %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
-                                        {% if operator.del_flag == 0 %}Active{% else %}Inactive{% endif %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if route.del_flag == 0 %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if route.del_flag == 0 %}Active{% else %}Inactive{% endif %}
                                     </span>
                                 </td>
                                 <td class="px-3 md:px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                                     <div class="flex space-x-2">
-                                        <a href="{{operator.id}}/update/" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Edit Operator">
+                                        <a href="{{route.id}}/update/" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Edit Route">
                                             <ion-icon name="create-outline" class="text-lg"></ion-icon>
                                         </a>
-                                        <a href="{{operator.id}}/delete/" class="text-red-600 hover:text-red-900 transition-colors duration-200" >
-                                            {% if operator.del_flag == 0 %}
+                                        <a href="{{route.id}}/delete/" class="text-red-600 hover:text-red-900 transition-colors duration-200" >
+                                            {% if route.del_flag == 0 %}
                                             <ion-icon name="trash-outline" class="text-lg"></ion-icon>
                                             {% else %}
                                             <ion-icon name="arrow-undo-outline" class="text-lg"></ion-icon>
                                             {% endif %}
-
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             {% endfor %}
                         {% else %}
-                            <tr><td colspan="6" class="px-3 md:px-6 py-4 text-center text-gray-500">No operators found.</td></tr>
+                            <tr><td colspan="8" class="px-3 md:px-6 py-4 text-center text-gray-500">No routes found.</td></tr>
                         {% endif %}
                     </tbody>
                 </table>
