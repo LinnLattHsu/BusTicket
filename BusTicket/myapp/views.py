@@ -542,6 +542,11 @@ def delete_operator(request,operator_id):
     return redirect('operator_home')
 
 # route home page in admin
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Route  # Assuming your model is named Route
+
+
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -553,6 +558,9 @@ def route_home(request):
 
     if destination_query:
         routes = routes.filter(Q(destination__icontains=destination_query))
+
+    # This is the correct way to order the queryset
+    routes = routes.order_by('-updated_date')
 
     context = {
         'routes': routes,
