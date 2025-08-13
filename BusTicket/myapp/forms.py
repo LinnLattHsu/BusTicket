@@ -41,6 +41,27 @@ class RouteForm(forms.ModelForm):
             }),
         }
 
+# for bus form
+class BusForm(forms.ModelForm):
+    class Meta:
+        model = Bus
+        fields = ['license_no', 'seat_capacity', 'bus_type', 'operator']
+        widgets = {
+            'license_no': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter bus license number'
+            }),
+            'seat_capacity': forms.NumberInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter bus seat capacity'
+            }),
+            'bus_type': forms.Select(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+            }),
+            'operator': forms.Select(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+            }),
+        }
 
 class BookingForm(forms.Form):
     model = Bus

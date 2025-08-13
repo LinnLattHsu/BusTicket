@@ -18,9 +18,13 @@ class Operator(models.Model):
         return self.operator_name
 
 class Bus(models.Model):
+    BUS_TYPES = [
+        ('Standard' , 'Standard'),
+        ('VIP' , 'VIP')
+    ]
     license_no = models.CharField(max_length=15,default='')
     seat_capacity = models.IntegerField(default=30)
-    bus_type = models.CharField(max_length = 10,default='Standard')
+    bus_type = models.CharField(max_length = 10,choices=BUS_TYPES)
     del_flag = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
