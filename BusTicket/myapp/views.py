@@ -40,6 +40,7 @@ from .forms import BookingForm
 from .forms import OperatorForm
 from .forms import RouteForm
 from .forms import BusForm
+from .forms import ScheduleForm
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
@@ -529,7 +530,7 @@ def add_operator(request):
     else:
         operator_form = OperatorForm()
 
-    return render(request,'admin/operator_add_form.html',{'operator_form' : operator_form})
+    return render(request,'admin/operator_add_form.html',{'form' : operator_form})
 
 def update_operator(request,operator_id):
     operator_info = Operator.objects.get(pk = operator_id)
@@ -677,3 +678,46 @@ def delete_bus(request,bus_id):
         bus_info.save()
 
     return redirect('bus_home')
+
+
+# Admin Schedule Section
+def schedule_home(request):
+
+    date_query = request.GET.get('date', '')
+    route_query = request.GET.get('route', '')
+
+    schedules = Schedule.objects.all()
+
+    if date_query:
+        schedules = schedules.filter(date__icontains=date_query)
+
+    if route_query:
+        schedules = schedules.filter(
+            Q(route__origin__icontains=route_query) | Q(route__destination__icontains=route_query)
+        )
+
+    schedules = schedules.order_by('-updated_date')
+
+    buses = Bus.objects.all()
+    routes = Route.objects.all()
+
+    context = {
+        'schedules': schedules,
+        'buses': buses,
+        'routes': routes,
+        'date_query': date_query,
+        'route_query': route_query,
+    }
+
+    # Render the schedule_home template with the context
+    return render(request, 'admin/schedule_home.html', context)
+
+def add_schedule(request):
+    if request.method == 'POST':
+        schedule_form = ScheduleForm(request.POST)
+        if schedule_form.is_valid():
+            schedule_form.save()
+            return redirect('schedule_home')
+    else:
+        schedule_form = ScheduleForm()
+    return render(request,'admin/schedule_add_form.html',{'form' : schedule_form})

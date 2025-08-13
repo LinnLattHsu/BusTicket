@@ -9,6 +9,7 @@ from django.contrib.auth import (
 from .models import Operator
 from .models import Bus
 from .models import Route
+from .models import Schedule
 User = get_user_model()
 
 # for operator form
@@ -63,6 +64,31 @@ class BusForm(forms.ModelForm):
             }),
         }
 
+# for schedule form
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ['bus', 'route', 'date', 'time', 'price']
+        widgets = {
+            'bus': forms.Select(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+            }),
+            'route': forms.Select(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+            }),
+            'date': forms.DateInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'type': 'date'  # This ensures the date picker widget is used in HTML
+            }),
+            'time': forms.TimeInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'type': 'time'  # This ensures the time picker widget is used in HTML
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+                'placeholder': 'Enter ticket price'
+            }),
+        }
 class BookingForm(forms.Form):
     model = Bus
     source = forms.Select(attrs={'class':'form-select'})
