@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Update Operator - MyBusTicket</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Admin - Update Schedule - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -29,7 +27,6 @@
 </head>
 <body class="flex flex-col md:flex-row h-screen">
 
-    <!-- Sidebar -->
     <aside id="logo-sidebar"
            class="fixed inset-y-0 left-0 z-40 w-64 h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 bg-blue-900"
            aria-label="Sidebar">
@@ -42,9 +39,9 @@
                 <li><a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="grid-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Dashboard</span></a></li>
                 <li><a href="{% url 'user_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="person-circle-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Users</span></a></li>
                 <li><a href="{% url 'bus_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="bus-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span></a></li>
-                <li><a href="{% url 'route_home'%}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
-                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
-                <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
+                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
+                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
+                <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="#" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
                 <li><a href="/logout" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
@@ -52,27 +49,26 @@
         </div>
     </aside>
 
-    <!-- Main Content Area -->
     <div class="flex-grow p-4 md:p-6 overflow-y-auto md:ml-64">
-        <!-- Mobile menu button -->
         <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
             <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
         </button>
 
-        <!-- Top Bar -->
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Update Operator: {{ operator.operator_name }}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Update Schedule</h1>
+            <a href="{% url 'schedule_home' %}"
+               class="px-4 py-2 md:px-6 md:py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md flex items-center justify-center w-full md:w-auto">
+                <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon> Back to Schedules
+            </a>
         </div>
 
-        <!-- Operator Update Form Card -->
-        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Edit Operator Details</h2>
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 max-w-2xl mx-auto">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Edit Schedule Details</h2>
 
             <form method="POST" class="space-y-4">
                 {% csrf_token %}
 
-                <!-- This loop renders each field with pre-filled data -->
-                {% for field in operator_form %}
+                {% for field in form %}
                 <div>
                     <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
                         {{ field.label }}
@@ -91,13 +87,12 @@
 
                 <button type="submit"
                         class="w-full md:w-auto px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md">
-                    <ion-icon name="save-outline" class="mr-2"></ion-icon> Update Operator
+                    <ion-icon name="save-outline" class="mr-2"></ion-icon> Update Schedule
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Ionicon Script Tags -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
     <script>

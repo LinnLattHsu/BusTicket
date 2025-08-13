@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Add Schedule - MyBusTicket</title>
+    <title>Admin - Add New Schedule - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -63,17 +63,32 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 max-w-2xl mx-auto">
-            <form method="post">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Schedule Details</h2>
+
+            <form method="POST" class="space-y-4">
                 {% csrf_token %}
-                <div class="space-y-4">
-                    {{ form.as_p }}
+
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                        <p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
                 </div>
-                <div class="flex justify-end mt-6">
-                    <button type="submit"
-                            class="px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200">
-                        Create Schedule
-                    </button>
-                </div>
+                {% endfor %}
+
+                <button type="submit"
+                        class="w-full md:w-auto px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md">
+                    <ion-icon name="add-circle-outline" class="mr-2"></ion-icon> Add New Schedule
+                </button>
             </form>
         </div>
     </div>

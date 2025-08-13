@@ -13,7 +13,7 @@ from django.template.context_processors import request
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Status
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -716,8 +716,45 @@ def add_schedule(request):
     if request.method == 'POST':
         schedule_form = ScheduleForm(request.POST)
         if schedule_form.is_valid():
+            print("Form is valid! Saving schedule...")
+            new_schedule = schedule_form.save()
+            bus = new_schedule.bus
+            seat_capacity = bus.seat_capacity
+            for seat_no in range(1, seat_capacity + 1):
+                Seat_Status.objects.create(
+                    schedule=new_schedule,
+                    seat_no=f"{seat_no:02d}"
+
+                )
+            return redirect('schedule_home')
+        else:
+            # This is the key change to debug the issue
+            print("Form is NOT valid! Errors:", schedule_form.errors)
+    else:
+        schedule_form = ScheduleForm()
+    return render(request, 'admin/schedule_add_form.html', {'form': schedule_form})
+
+def update_schedule(request,schedule_id):
+    schedule_info = Schedule.objects.get(id=schedule_id)
+
+    if request.method == 'POST':
+        schedule_form = ScheduleForm(request.POST, instance=schedule_info)
+        if schedule_form.is_valid():
             schedule_form.save()
             return redirect('schedule_home')
     else:
-        schedule_form = ScheduleForm()
-    return render(request,'admin/schedule_add_form.html',{'form' : schedule_form})
+        schedule_form = ScheduleForm(instance=schedule_info)
+
+    return render(request,'admin/schedule_update.html',{'form':schedule_form})
+
+
+def delete_schedule(request,schedule_id):
+    schedule_info = Schedule.objects.get(id=schedule_id)
+    if schedule_info.del_flag == 0:
+        schedule_info.del_flag = 1
+        schedule_info.save()
+    else:
+        schedule_info.del_flag = 0
+        schedule_info.save()
+
+    return redirect('schedule_home')
