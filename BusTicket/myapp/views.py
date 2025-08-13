@@ -616,3 +616,63 @@ def delete_route(request,route_id):
         route_info.save()
 
     return redirect('route_home')
+
+# Admin Bus Section
+def bus_home(request):
+    license_query = request.GET.get('license_no', '')
+    operator_query = request.GET.get('operator', '')
+
+    buses = Bus.objects.all()
+
+    if license_query:
+        buses = buses.filter(Q(license_no__icontains=license_query))
+
+    if operator_query:
+        buses = buses.filter(Q(operator__id=operator_query))
+
+    buses = buses.order_by('-updated_date')
+    operators = Operator.objects.all()
+
+    context = {
+        'buses': buses,
+        'operators': operators,
+        'license_query': license_query,
+        'operator_query': operator_query,
+    }
+
+    return render(request, 'admin/bus_home.html', context)
+
+def add_bus(request):
+    if request.method == 'POST':
+        bus_form = BusForm(request.POST)
+        if bus_form.is_valid():
+            bus_form.save()
+            return redirect('bus_home')
+    else:
+        bus_form = BusForm()
+    return render(request,'admin/bus_add_form.html',{'form' : bus_form})
+
+
+def update_bus(request,bus_id):
+    bus_info = Bus.objects.get(pk= bus_id)
+
+    if request.method == 'POST':
+        bus_form = BusForm(request.POST, instance=bus_info)
+        if bus_form.is_valid():
+            bus_form.save()
+            return redirect('bus_home')
+    else:
+        bus_form = BusForm(instance=bus_info)
+
+    return render(request,'admin/bus_update.html',{'bus_form':bus_form})
+
+def delete_bus(request,bus_id):
+    bus_info = Bus.objects.get(id=bus_id)
+    if bus_info.del_flag == 0:
+        bus_info.del_flag = 1
+        bus_info.save()
+    else:
+        bus_info.del_flag = 0
+        bus_info.save()
+
+    return redirect('bus_home')

@@ -64,4 +64,8 @@ urlpatterns = [
     path('admindashboard/route_home/add_new_route/',views.add_route,name='route_add'),
     path('admindashboard/route_home/<int:route_id>/update/',views.update_route,name='route_update'),
     path('admindashboard/route_home/<int:route_id>/delete/',views.delete_route,name='route_delete'),
+    path('admindashboard/bus_home/',views.bus_home,name='bus_home'),
+    path('admindashboard/bus_home/add_new_route/',views.add_bus,name='bus_add'),
+    path('admindashboard/bus_home/<int:bus_id>/update/',views.update_bus,name='bus_update'),
+    path('admindashboard/bus_home/<int:bus_id>/delete/',views.delete_bus,name='bus_delete'),
 ]
