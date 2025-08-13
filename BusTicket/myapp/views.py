@@ -244,12 +244,15 @@ def home(request):
 def signup(request):
     context = {}
     if request.method == 'POST':
-        email_r = request.POST.get('email')
         name_r = request.POST.get('name')
+        email_r = request.POST.get('email')
         password_r = request.POST.get('password')
+        nrc_r = request.POST.get('nrc')
+        address_r = request.POST.get('address')
+        phone_no_r = request.POST.get('phone_no')
 
         # Check if the username already exists
-        if User.objects.filter(username=name_r).exists():
+        if User.objects.filter(name=name_r).exists():
             context["error"] = "Username already exists, please choose another one."
             return render(request, 'signup.html', context)
 
@@ -257,9 +260,19 @@ def signup(request):
         if User.objects.filter(email=email_r).exists():
             context["error"] = "Email is already registered, please choose another one."
             return render(request, 'signup.html', context)
+        if nrc_r and User.objects.filter(nrc=nrc_r).exists():
+            context['error'] = "NRC already exists."
+            return render(request, 'signup.html', context)
 
         try:
-            user = User.objects.create_user(username=name_r, email=email_r, password=password_r)
+            user = User.objects.create(
+                name=name_r,
+                email=email_r,
+                password=make_password(password_r),
+                nrc=nrc_r,
+                address=address_r,
+                phone_no=phone_no_r
+            )
             if user:
                 login(request, user)
                 return render(request, 'thank.html')

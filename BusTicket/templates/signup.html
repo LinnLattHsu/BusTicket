@@ -1,4 +1,4 @@
-{% extends 'myapp/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -11,17 +11,30 @@
                     <div class="container-fluid">
                         <form action="{% url 'signup' %}" method="post" id="registration-form">
                             {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="name" class="control-label">Name:</label>
+                                <input name="name" id="name" class="form-control input-glass rounded-pill" type="text" required>
+                            </div>
                             <div class="mb-3">
                                 <label for="email" class="control-label">Email:</label>
                                 <input name="email" class="form-control input-glass rounded-pill" type="text" id="email" required>
                             </div>
                             <div class="mb-3">
-                                <label for="name" class="control-label">Username:</label>
-                                <input name="name" id="name" class="form-control input-glass rounded-pill" type="text" required>
-                            </div>
-                            <div class="mb-3">
                                 <label for="password" class="control-label">Password:</label>
                                 <input name="password" id="password" class="form-control input-glass rounded-pill" type="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nrc" class="control-label">NRC:</label>
+                                <input name="text" id="nrc" class="form-control input-glass rounded-pill" type="text" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="control-label">Address:</label>
+                                <input name="address" id="address" class="form-control input-glass rounded-pill" type="text" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone_no" class="control-label">Phone Number:</label>
+                                <input name="phone_no" id="phone_no" class="form-control input-glass rounded-pill" type="text" required>
                             </div>
                         </form>
                     </div>
