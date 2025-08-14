@@ -242,20 +242,44 @@
     <div class="p-6 bg-white rounded-lg shadow-md">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
             <h2 class="text-xl font-bold text-gray-800">Seat Status</h2>
-            <div class="flex items-center space-x-2">
-                <input type="text" id="bus-number" placeholder="Bus Number"
-                       class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button class="px-4 py-2 text-sm text-white bg-gray-700 rounded-lg shadow hover:bg-gray-800 transition">
-                    Search
-                </button>
-            </div>
+            <form method="GET" action="{% url 'admin_dashboard' %}">
+                <div class="flex items-center space-x-2">
+                    <input type="text" name="bus_number" placeholder="Bus Number" value="{{ bus_query }}"
+                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="route" placeholder="Origin or Destination" value="{{ route_query }}"
+                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="px-4 py-2 text-sm text-white bg-gray-700 rounded-lg shadow hover:bg-gray-800 transition">
+                        Search
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="grid grid-cols-10 gap-2">
-            <button class="w-10 h-10 text-center text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">1
-            </button>
-            <button class="w-10 h-10 text-white bg-red-500 rounded-lg hover:bg-red-600 transition">2</button>
+        {% if selected_schedule %}
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">
+                Seat Status for Bus: {{ selected_schedule.bus.license_no }} on Route: {{ selected_schedule.route.origin }} to {{ selected_schedule.route.destination }}
+            </h3>
+            <div class="grid grid-cols-5 gap-4">
+                {% for seat in seat_status_list %}
+                <div class="w-16 h-16 flex items-center justify-center rounded-lg shadow-lg text-white font-bold text-xl
+                    {% if seat.seat_status == 'Available' %}
+                        bg-green-500
+                    {% elif seat.seat_status == 'Booked' %}
+                        bg-red-500
+                    {% else %}
+                        bg-gray-400
+                    {% endif %}">
+                    {{ seat.seat_no }}
+                </div>
+                {% endfor %}
+            </div>
         </div>
+        {% elif bus_query or route_query %}
+        <div class="mt-8 text-center text-gray-500">
+            No schedule found for the given criteria.
+        </div>
+        {% endif %}
     </div>
 
 </div>
