@@ -172,7 +172,7 @@
                 <div class="col-lg-10 bg-white p-4 rounded-lg shadow-lg">
     <h2 class="text-xl font-weight-bold mb-4">Please select up to <span id="maxSeatsAllowed">{{seats}}</span> seat(s):</h2>
 
-    <form method="post" action="{% url 'submit_seats' schedule_id %}">
+    <form method="post" action="{% url 'submit_seats' schedule_id=schedule_id %}">
         {% csrf_token %}
         <input type="hidden" id="selectedSeatsInput" name="selected_seats" value="" />
 
@@ -290,7 +290,8 @@
 
         <div class="d-flex flex-column flex-sm-row justify-content-center mt-4">
             <button type="button" id="resetSeatsBtn" class="btn btn-secondary me-sm-2 mb-2 mb-sm-0">Reset Seats</button>
-            <button type="submit" class="btn btn-primary">Submit Seats</button>
+            <br>
+            <button type="submit" class="btn btn-primary">Continue To Payment</button>
         </div>
 
         <p id="selectionMessage" class="text-danger mt-3 text-center d-none">You can only select a maximum of <span id="maxSeatsMsg">{{seats}}</span> seats.</p>
@@ -339,7 +340,9 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center py-2 text-lg font-weight-bold text-gray-800 border-top border-secondary pt-4">
                         <span>Total Ticket Price</span>
-                        <span>MMK <span id="totalTicketPrice">{{total_price}}</span></span>
+<!--                        <span>MMK <span id="totalTicketPrice">{{total_price}}</span></span>-->
+                         <input type="hidden" name="total_amount_data" id="totalTicketPrice" value="{{ total_price }}">
+
                     </div>
                     <div class="mt-4 p-4 bg-primary-subtle rounded-lg text-primary text-sm">
                         <h4 class="font-weight-semibold mb-2">Notices by {{selected_bus.bus.operator.operator_name}} Express</h4>

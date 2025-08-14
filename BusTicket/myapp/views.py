@@ -1,4 +1,4 @@
-
+import json
 from django.shortcuts import render
 from django.db.models import Q
 from datetime import datetime
@@ -137,11 +137,91 @@ def seat_selection(request,schedule_id):
     }
     return render(request, 'seat_selection.html',context)
 
-def submit_seats(request, schedule_id):
-    if request.method == "POST":
-        selected_seats = request.POST.getlist('selected_seats')
-        return HttpResponse(f"Selected seats: {', '.join(selected_seats)}")
-    return HttpResponse(status=405)
+# def submit_seats(request, schedule_id):
+#     # ... (code to retrieve booking_data from session) ...
+#
+#     booking_data = request.session.get('booking_in_progress')
+#     if not booking_data:
+#         # Handle case where session data is missing
+#         return redirect(reverse('some_bus_search_page_name_here'))
+#
+#     schedule_id = booking_data.get('schedule_id')
+#     selected_seats = booking_data.get('selected_seats')  # This will be the list or count
+#     total_amount_from_session = booking_data.get('total_amount')  # This is a float
+#
+#     confirmed_total_price = Decimal(total_amount_from_session)
+#
+#     # User info (if login is enabled, these would come from request.user)
+#     # For now, as per your request, these are placeholders:
+#     user_id = request.user.id if request.user.is_authenticated else 'guest_user_id_for_test'
+#     user_email = request.user.email if request.user.is_authenticated else 'guest@example.com'
+#
+#     context = {
+#         'schedule_id': schedule_id,
+#         'selected_seats': selected_seats,
+#         'total_amount': int(confirmed_total_price),  # Use the Decimal version
+#         'user_id': user_id,
+#         'user_email': user_email,
+#         # You might also add other details if needed for display, e.g.:
+#         # 'bus_operator_name': booking_data.get('bus_operator_name'),
+#         # 'route_description': booking_data.get('route_description'),
+#     }
+#     return render(request, 'payment.html', context)
+#
+# def payment(request):
+#     """
+#         Displays the payment page, retrieving booking details from the session.
+#         """
+#     print("\n--- payment_page_view START ---")
+#     print(f"DEBUG: payment_page_view accessed. Current session key: {request.session.session_key}")
+#
+#     # Retrieve the booking details stored in the session
+#     booking_data = request.session.get('booking_in_progress')
+#
+#     print(f"DEBUG: Retrieved booking_data from session: {booking_data}")
+#
+#     if not booking_data:
+#         # If session data is missing, redirect to a starting page
+#         print("DEBUG: booking_data is None. Redirecting to bus search page.")
+#         print("--- payment_page_view END (Redirect - No Data) ---")
+#         # Replace 'some_bus_search_page_name_here' with the actual name of your search URL
+#         return redirect(reverse('some_bus_search_page_name_here'))
+#
+#         # Extract details from the session data
+#     schedule_id = booking_data.get('schedule_id')
+#     selected_seats = booking_data.get('selected_seats')
+#     total_amount = booking_data.get('total_amount')
+#
+#     print(f"DEBUG: Extracted schedule_id: {schedule_id}")
+#     print(f"DEBUG: Extracted selected_seats: {selected_seats}")
+#     print(f"DEBUG: Extracted total_amount: {total_amount}")
+#
+#     # Dummy user info for testing (since login is commented out)
+#     user_id = 'guest_user_id_for_test'
+#     user_email = 'guest@example.com'
+#
+#     # Prepare context to pass to the HTML template
+#     context = {
+#         'user_id': user_id,
+#         'user_email': user_email,
+#         'schedule_id': schedule_id,
+#         'selected_seats': selected_seats,
+#         'total_amount': total_amount,  # Convert float back to Decimal for template
+#     }
+#
+#     print("--- payment_page_view END (Render) ---")
+#     return render(request, 'payment.html', context)
+#     # schedule_id = request.POST.get('schedule_id')
+#     # selected_seats = request.POST.get('selected_seats')
+#     # total_amount = request.POST.get('total_amount')
+#     # context = {
+#     #     # 'user_id': user_id,
+#     #     # 'user_email': user_email,
+#     #     'schedule_id': schedule_id,
+#     #     'selected_seats': selected_seats,
+#     #     'total_amount': total_amount, # Convert back to Decimal for precise display in template if needed
+#     # }
+#     # return render(request, 'payment.html', context)
 
 
 
