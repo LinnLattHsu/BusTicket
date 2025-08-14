@@ -1,6 +1,6 @@
 
 from django.shortcuts import render
-from django.db.models import Q
+from django.db.models import Q,Count
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
@@ -682,7 +682,6 @@ def delete_bus(request,bus_id):
 
 # Admin Schedule Section
 def schedule_home(request):
-
     date_query = request.GET.get('date', '')
     route_query = request.GET.get('route', '')
 
@@ -695,6 +694,10 @@ def schedule_home(request):
         schedules = schedules.filter(
             Q(route__origin__icontains=route_query) | Q(route__destination__icontains=route_query)
         )
+
+    schedules = schedules.annotate(
+        available_seats_count=Count('seat_status', filter=Q(seat_status__seat_status='Available'))
+    )
 
     schedules = schedules.order_by('-updated_date')
 
@@ -709,9 +712,7 @@ def schedule_home(request):
         'route_query': route_query,
     }
 
-    # Render the schedule_home template with the context
     return render(request, 'admin/schedule_home.html', context)
-
 def add_schedule(request):
     if request.method == 'POST':
         schedule_form = ScheduleForm(request.POST)
