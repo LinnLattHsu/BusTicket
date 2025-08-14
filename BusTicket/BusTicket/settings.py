@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'django.contrib.humanize',
+    'widget_tweaks',
 
 ]
+
+AUTH_USER_MODEL = 'myapp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

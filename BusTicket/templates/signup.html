@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load widget_tweaks %}
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-5 col-md-7 col-sm-10 col-xs-12">
@@ -11,30 +12,42 @@
                     <div class="container-fluid">
                         <form action="{% url 'signup' %}" method="post" id="registration-form">
                             {% csrf_token %}
+                            {{ form.non_field_errors }}
 
                             <div class="mb-3">
-                                <label for="name" class="control-label">Name:</label>
-                                <input name="name" id="name" class="form-control input-glass rounded-pill" type="text" required>
+                                <label class="control-label" for="id_name">Name</label>
+                                {{ form.name|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.name.errors }}
                             </div>
+
                             <div class="mb-3">
-                                <label for="email" class="control-label">Email:</label>
-                                <input name="email" class="form-control input-glass rounded-pill" type="text" id="email" required>
+                                <label class="control-label" for="id_email">Email</label>
+                                {{ form.email|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.email.errors }}
                             </div>
+
                             <div class="mb-3">
-                                <label for="password" class="control-label">Password:</label>
-                                <input name="password" id="password" class="form-control input-glass rounded-pill" type="password" required>
+                                <label class="control-label" for="id_password">Password</label>
+                                {{ form.password|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.password.errors }}
                             </div>
+
                             <div class="mb-3">
-                                <label for="nrc" class="control-label">NRC:</label>
-                                <input name="text" id="nrc" class="form-control input-glass rounded-pill" type="text" required>
+                                <label class="control-label" for="id_nrc">NRC</label>
+                                {{ form.nrc|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.nrc.errors }}
                             </div>
+
                             <div class="mb-3">
-                                <label for="address" class="control-label">Address:</label>
-                                <input name="address" id="address" class="form-control input-glass rounded-pill" type="text" required>
+                                <label class="control-label" for="id_address">Address</label>
+                                {{ form.address|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.address.errors }}
                             </div>
+
                             <div class="mb-3">
-                                <label for="phone_no" class="control-label">Phone Number:</label>
-                                <input name="phone_no" id="phone_no" class="form-control input-glass rounded-pill" type="text" required>
+                                <label class="control-label" for="id_phone_no">Phone Number</label>
+                                {{ form.phone_no|add_class:"form-control input-glass rounded-pill" }}
+                                {{ form.phone_no.errors }}
                             </div>
                         </form>
                     </div>
@@ -47,14 +60,56 @@
     </div>
 </div>
 
+
+
+
+<!--                            {% for field in form %}-->
+<!--                                Name: {{ form.name }} {{ form.name.errors }}-->
+<!--                                Email: {{ form.email }} {{ form.email.errors }}-->
+<!--                                Password: {{ form.password }} {{ form.password.errors }}-->
+<!--                                NRC: {{ form.nrc }} {{ form.nrc.errors }}-->
+<!--                                Address: {{ form.address }} {{ form.address.errors }}-->
+<!--                                Phone Number: {{ form.phone_no }} {{ form.phone_no.errors }}-->
+<!--                            {% endfor %}-->
+
+
+<!--                            {{ field.label }}: {{ field }} {{ field.errors }}-->
+
+<!--                            <div class="mb-3">-->
+<!--                                <label for="name" class="control-label">Name:</label>-->
+<!--&lt;!&ndash;                                <input name="name" id="name" class="form-control input-glass rounded-pill" type="text" required>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="email" class="control-label">Email:</label>-->
+<!--&lt;!&ndash;                                <input name="email" class="form-control input-glass rounded-pill" type="text" id="email" required>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="password" class="control-label">Password:</label>-->
+<!--&lt;!&ndash;                                <input name="password" id="password" class="form-control input-glass rounded-pill" type="password" required>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="nrc" class="control-label">NRC:</label>-->
+<!--&lt;!&ndash;                                <input name="nrc" id="nrc" class="form-control input-glass rounded-pill" type="text" required>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="address" class="control-label">Address:</label>-->
+<!--&lt;!&ndash;                                <input name="address" id="address" class="form-control input-glass rounded-pill" type="text" required>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="phone_no" class="control-label">Phone Number:</label>-->
+<!--&lt;!&ndash;                                <input name="phone_no" id="phone_no" class="form-control input-glass rounded-pill" type="text" required>&ndash;&gt;-->
+<!--                            </div>-->
+
+
+
 <style>
     /* Glassmorphism effect for the card */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-        backdrop-filter: blur(15px); /* Blurring the background */
-        border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    }
+   .glass-card {
+       background: rgba(255, 255, 255, 0.1);
+       backdrop-filter: blur(15px); /* Blurring the background */-->
+       border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */-->
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Soft shadow */-->
+   }
 
     /* Glassmorphism effect for header */
     .glass-header {

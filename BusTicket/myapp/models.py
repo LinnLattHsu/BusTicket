@@ -1,11 +1,66 @@
 from email.policy import default
-
-from django.db import models
-
-# Create your models here.
-# Create your models here.
-from django.db import models
 from django.utils import timezone
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+# Create your models here.
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, name, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        return self.create_user(email, name, password, **extra_fields)
+
+# Custom User model
+class User(AbstractBaseUser):
+    user_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30)
+    email = models.EmailField(unique=True)
+    # AbstractBaseUser already includes a password field
+    nrc = models.CharField(max_length=30, unique=True, null=True)
+    address = models.CharField(max_length=100, default='')
+    phone_no = models.CharField(max_length=11, null=True)
+    del_flag = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    # Required fields for AbstractBaseUser
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    # The field that will be used for authentication (e.g., login)
+    USERNAME_FIELD = 'email'
+    # List of field names that are required to create a user via 'createsuperuser'
+    REQUIRED_FIELDS = ['name']
+
+    def __str__(self):
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
+
+
 
 # Create your models here.
 class Operator(models.Model):
@@ -78,24 +133,24 @@ class Seat_Status(models.Model):
     def __str__(self):
         return f"{self.schedule.id} - {self.seat_no} ({self.seat_status})"
 
-class User(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=30)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=30)
-    nrc = models.CharField(max_length=30,unique=True,null=True)
-    address = models.CharField(max_length=100,default='')
-    phone_no = models.CharField(max_length=11,null=True)
-    del_flag = models.IntegerField(default=0)
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
-
-    class Meta:
-        verbose_name_plural = "Users"
-
-    def __str__(self):
-        return self.name
+# class User(models.Model):
+#     user_id = models.AutoField(primary_key=True)
+#     name = models.CharField(max_length=30)
+#     email = models.EmailField(unique=True)
+#     password = models.CharField(max_length=30)
+#     nrc = models.CharField(max_length=30,unique=True,null=True)
+#     address = models.CharField(max_length=100,default='')
+#     phone_no = models.CharField(max_length=11,null=True)
+#     del_flag = models.IntegerField(default=0)
+#     created_date = models.DateTimeField(auto_now_add=True)
+#     updated_date = models.DateTimeField(auto_now=True)
+#
+#
+#     class Meta:
+#         verbose_name_plural = "Users"
+#
+#     def __str__(self):
+#         return self.name
 
 class Booking(models.Model):
     schedule = models.ForeignKey(Schedule,on_delete=models.CASCADE)

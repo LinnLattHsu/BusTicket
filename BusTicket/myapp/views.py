@@ -120,45 +120,166 @@ def home(request):
     bookings = Bus.objects.all()
     return render(request, 'base.html', {'bookings': bookings})
 
+
+
+#
+#
+# @login_required(login_url='signin')
+# def bookings(request):
+#     context = {}
+#     if request.method == 'POST':
+#         id_r = request.POST.get('bus_id')
+#         seats_r = int(request.POST.get('no_seats'))
+#         bus = Bus.objects.get(id=id_r)
+#         if bus:
+#             if bus.rem > int(seats_r):
+#                 seat_numbers = [str(i) for i in range(int(bus.nos) - int(bus.rem) + 1, int(bus.nos) - int(bus.rem) + seats_r + 1)]
+#                 seat_numbers_str = ', '.join(seat_numbers)
+#                 name_r = bus.bus_name
+#                 cost = int(seats_r) * bus.price
+#                 source_r = bus.source
+#                 dest_r = bus.dest
+#                 nos_r = Decimal(bus.nos)
+#                 price_r = bus.price
+#                 date_r = bus.date
+#                 time_r = bus.time
+#                 username_r = request.user.username
+#                 email_r = request.user.email
+#                 userid_r = request.user.id
+#                 rem_r = bus.rem - seats_r
+#                 Bus.objects.filter(id=id_r).update(rem=rem_r)
+#                 book = Book.objects.create(name=username_r, email=email_r, userid=userid_r, bus_name=name_r,
+#                                            source=source_r, busid=id_r,
+#                                            dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
+#                                            status='BOOKED',seat_numbers=seat_numbers_str)
+#                 print('------------book id-----------', book.id)
+#                 # book.save()
+#                 return render(request, 'bookings.html', locals())
+#             else:
+#                 context["error"] = "Sorry select fewer number of seats"
+#                 return render(request, 'findbus.html', context)
+#
+#     else:
+#         return render(request, 'findbus.html')
+# def booking_confirmation(request, booking_id):
+#     booking = Book.objects.get(id=booking_id)
+#     return render(request, 'confirmation.html', {'book': booking})
+#
+#
+#
+# @login_required(login_url='signin')
+# def cancellings(request):
+#     context = {}
+#     if request.method == 'POST':
+#         id_r = request.POST.get('bus_id')
+#         seats_r = int(request.POST.get('no_seats'))
+#
+#         try:
+#             book = Book.objects.get(id=id_r)
+#             bus = Bus.objects.get(id=book.busid)
+#             rem_r = bus.rem + book.nos
+#             Bus.objects.filter(id=book.busid).update(rem=rem_r)
+#             #nos_r = book.nos - seats_r
+#             Book.objects.filter(id=id_r).update(status='CANCELLED')
+#             Book.objects.filter(id=id_r).update(nos=0)
+#             messages.success(request, "Booked Bus has been cancelled successfully.")
+#             return redirect(seebookings)
+#         except Book.DoesNotExist:
+#             context["error"] = "Sorry You have not booked that bus"
+#             return render(request, 'error.html', context)
+#     else:
+#         return render(request, 'findbus.html')
+#
+# def payment_process(request, booking_id):
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         card_number = request.POST.get('card_number')
+#         expiry_date = request.POST.get('expiry_date')
+#         cvv = request.POST.get('cvv')
+#         insurance = request.POST.get('insurance', 'no')
+#
+#         # Validate the fields (You can add more sophisticated validation as needed)
+#         if not (name and email and card_number and expiry_date and cvv):
+#             messages.error(request, "All fields are mandatory.")
+#             return render(request, 'payment.html', {'total_amount': total_amount, 'booking_id': booking_id})
+#
+#
+#         return redirect('payment_success', booking_id=booking_id)
+#
+#     # If GET request, just render the payment page
+#     return render(request, 'payment.html', {'total_amount': total_amount, 'booking_id': booking_id})
+#
+#
+#
+# @login_required(login_url='signin')
+# def seebookings(request,new={}):
+#     context = {}
+#     id_r = request.user.id
+#     book_list = Book.objects.filter(userid=id_r)
+#     if book_list:
+#         return render(request, 'booklist.html', locals())
+#     else:
+#         context["error"] = "Sorry no buses booked"
+#         return render(request, 'findbus.html', context)
+#
+#
+# def signup(request):
+#     context = {}
+#     if request.method == 'POST':
+#         name_r = request.POST.get('name')
+#         email_r = request.POST.get('email')
+#         password_r = request.POST.get('password')
+#         nrc_r = request.POST.get('nrc')
+#         address_r = request.POST.get('address')
+#         phone_no_r = request.POST.get('phone_no')
+#
+#         # Check if the username already exists
+#         if User.objects.filter(name=name_r).exists():
+#             context["error"] = "Username already exists, please choose another one."
+#             return render(request, 'signup.html', context)
+#
+#         # Check if the email already exists
+#         if User.objects.filter(email=email_r).exists():
+#             context["error"] = "Email is already registered, please choose another one."
+#             return render(request, 'signup.html', context)
+#         if nrc_r and User.objects.filter(nrc=nrc_r).exists():
+#             context['error'] = "NRC already exists."
+#             return render(request, 'signup.html', context)
+#
+#         try:
+#             user = User.objects.create(
+#                 name=name_r,
+#                 email=email_r,
+#                 password=make_password(password_r),
+#                 nrc=nrc_r,
+#                 address=address_r,
+#                 phone_no=phone_no_r
+#             )
+#             if user:
+#                 login(request, user)
+#                 return render(request, 'thank.html')
+#         except IntegrityError:
+#             context["error"] = "An error occurred. Please try again."
+#             return render(request, 'signup.html', context)
+#
+#     return render(request, 'signup.html', context)
+
+# User Registration
+
 def signup(request):
-    context = {}
-    if request.method == 'POST':
-        name_r = request.POST.get('name')
-        email_r = request.POST.get('email')
-        password_r = request.POST.get('password')
-        nrc_r = request.POST.get('nrc')
-        address_r = request.POST.get('address')
-        phone_no_r = request.POST.get('phone_no')
+    if request.method =="POST":
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'signup.html', {'form':form})
 
-        if User.objects.filter(name=name_r).exists():
-            context["error"] = "Username already exists, please choose another one."
-            return render(request, 'signup.html', context)
 
-        if User.objects.filter(email=email_r).exists():
-            context["error"] = "Email is already registered, please choose another one."
-            return render(request, 'signup.html', context)
-
-        if nrc_r and User.objects.filter(nrc=nrc_r).exists():
-            context['error'] = "NRC already exists."
-            return render(request, 'signup.html', context)
-
-        try:
-            user = User.objects.create(
-                name=name_r,
-                email=email_r,
-                password=make_password(password_r),
-                nrc=nrc_r,
-                address=address_r,
-                phone_no=phone_no_r
-            )
-            if user:
-                login(request, user)
-                return render(request, 'thank.html')
-        except IntegrityError:
-            context["error"] = "An error occurred. Please try again."
-            return render(request, 'signup.html', context)
-
-    return render(request, 'signup.html', context)
 
 def signin(request):
     context = {}
