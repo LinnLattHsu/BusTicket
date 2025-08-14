@@ -321,19 +321,30 @@ def delete_route(request, route_id):
 def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
+
+
     buses = Bus.objects.all()
+
     if license_query:
         buses = buses.filter(Q(license_no__icontains=license_query))
+
     if operator_query:
-        buses = buses.filter(Q(operator__id=operator_query))
+        try:
+            operator = Operator.objects.get(operator_name__icontains=operator_query)
+            buses = buses.filter(Q(operator=operator))
+        except Operator.DoesNotExist:
+            buses = buses.none()
+
     buses = buses.order_by('-updated_date')
     operators = Operator.objects.all()
+
     context = {
         'buses': buses,
         'operators': operators,
         'license_query': license_query,
         'operator_query': operator_query,
     }
+
     return render(request, 'admin/bus_home.html', context)
 
 def add_bus(request):
