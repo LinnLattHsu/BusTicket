@@ -118,7 +118,24 @@ def search_routes(request):
     # GET with no query params -> show base form (empty)
     return render(request, 'base.html', context)
 
-from django.http import HttpResponse
+def seat_selection(request,schedule_id):
+    selected_bus = Schedule.objects.get(id=schedule_id)
+    # source = request.GET.get('from')
+    # dest = request.GET.get('to')
+    # date = request.GET.get('departure_date')
+    seats = request.GET.get('number_of_seats')
+    seats = int(seats)
+    total_price=Decimal(seats)*selected_bus.price
+    context={
+        'selected_bus':selected_bus,
+        'origin':selected_bus.route.origin,
+        'destination':selected_bus.route.destination,
+        'date':selected_bus.date,
+        'seats':seats,
+        'total_price':total_price,
+        'schedule_id':selected_bus.id,
+    }
+    return render(request, 'seat_selection.html',context)
 
 def submit_seats(request, schedule_id):
     if request.method == "POST":
@@ -428,24 +445,7 @@ def signout(request):
 #     feedback_list = Feedback.objects.all()
 #     return render(request, 'feedback_list.html', {'feedbacks': feedback_list})
 #
-def seat_selection(request,schedule_id):
-    selected_bus = Schedule.objects.get(id=schedule_id)
-    # source = request.GET.get('from')
-    # dest = request.GET.get('to')
-    # date = request.GET.get('departure_date')
-    seats = request.GET.get('number_of_seats')
-    seats = int(seats)
-    total_price=Decimal(seats)*selected_bus.price
-    context={
-        'bus':selected_bus,
-        'origin':selected_bus.route.origin,
-        'destination':selected_bus.route.destination,
-        'date':selected_bus.date,
-        'seats':seats,
-        'total_price':total_price,
-        'schedule_id':selected_bus.id,
-    }
-    return render(request, 'seat_selection.html',context)
+
 
 
 
