@@ -119,11 +119,14 @@ def search_routes(request):
     return render(request, 'base.html', context)
 
 def seat_selection(request,schedule_id):
+    # print("DEBUG request.GET:", request.GET)
+    # print("DEBUG request.POST:", request.POST)
     selected_bus = Schedule.objects.get(id=schedule_id)
     # source = request.GET.get('from')
     # dest = request.GET.get('to')
     # date = request.GET.get('departure_date')
     seats = request.GET.get('number_of_seats')
+    # print("DEBUG seats (raw):", seats)
     seats = int(seats)
     total_price=Decimal(seats)*selected_bus.price
     context={
@@ -137,37 +140,61 @@ def seat_selection(request,schedule_id):
     }
     return render(request, 'seat_selection.html',context)
 
-# def submit_seats(request, schedule_id):
-#     # ... (code to retrieve booking_data from session) ...
-#
-#     booking_data = request.session.get('booking_in_progress')
-#     if not booking_data:
-#         # Handle case where session data is missing
-#         return redirect(reverse('some_bus_search_page_name_here'))
-#
-#     schedule_id = booking_data.get('schedule_id')
-#     selected_seats = booking_data.get('selected_seats')  # This will be the list or count
-#     total_amount_from_session = booking_data.get('total_amount')  # This is a float
-#
-#     confirmed_total_price = Decimal(total_amount_from_session)
-#
-#     # User info (if login is enabled, these would come from request.user)
-#     # For now, as per your request, these are placeholders:
-#     user_id = request.user.id if request.user.is_authenticated else 'guest_user_id_for_test'
-#     user_email = request.user.email if request.user.is_authenticated else 'guest@example.com'
-#
-#     context = {
-#         'schedule_id': schedule_id,
-#         'selected_seats': selected_seats,
-#         'total_amount': int(confirmed_total_price),  # Use the Decimal version
-#         'user_id': user_id,
-#         'user_email': user_email,
-#         # You might also add other details if needed for display, e.g.:
-#         # 'bus_operator_name': booking_data.get('bus_operator_name'),
-#         # 'route_description': booking_data.get('route_description'),
-#     }
-#     return render(request, 'payment.html', context)
-#
+
+def submit_seats(request, schedule_id):
+    # 1️⃣ Get the schedule
+    selected_bus = Schedule.objects.get(id=schedule_id)
+
+    # 2️⃣ Get seats from POST or GET (depending on how you passed it)
+    selected_seats = request.POST.get('selected_seats') or request.GET.get('selected_seats')
+
+    # 3️⃣ Count number of seats (assuming comma-separated or space-separated)
+    number_of_seats = len(selected_seats.split(','))  # adjust if your format is different
+
+    # 4️⃣ Calculate total price
+    total_price = Decimal(number_of_seats) * selected_bus.price
+
+    # 5️⃣ Pass to template
+    context = {
+        'selected_bus': selected_bus,
+        'selected_seats': selected_seats,
+        'number_of_seats': number_of_seats,
+        'total_price': total_price
+    }
+    return render(request, 'payment.html', context)
+
+
+# if request.method == 'POST':
+    #     schedule = get_object_or_404(Schedule, pk=schedule_id, del_flag=0)
+    #     selected_seat_nos = request.POST.getlist('selected_seats')
+    #
+    #     if not selected_seat_nos:
+    #         messages.error(request, "Please select at least one seat.")
+    #         return redirect('select_trip', schedule_id=schedule_id)
+    #
+    #     # Validate seat availability
+    #     available_selected_seats_status = Seat_Status.objects.filter(
+    #         schedule=schedule,
+    #         seat_no__in=selected_seat_nos,
+    #         seat_status='Available'
+    #     )
+    #
+    #     if len(available_selected_seats_status) != len(selected_seat_nos):
+    #         messages.error(request, "Some of the selected seats are no longer available.")
+    #         return redirect('select_trip', schedule_id=schedule_id)
+    #
+    #     total_price = len(selected_seat_nos) * schedule.price
+    #
+    #     # Save all necessary booking details in the session
+    #     request.session['schedule_id'] = schedule.pk
+    #     request.session['selected_seat_nos'] = selected_seat_nos
+    #     request.session['total_price'] = float(total_price)
+    #
+    #     # Redirect directly to the payment page
+    #     return redirect('payment')  # make sure 'payment' URL works without login
+    # else:
+    #     return redirect('select_trip', schedule_id=schedule_id)
+
 # def payment(request):
 #     """
 #         Displays the payment page, retrieving booking details from the session.
