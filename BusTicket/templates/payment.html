@@ -4,104 +4,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment</title>
+    <title>Bus Ticket</title>
+    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        .payment-option-icon {
+        width: 60px; /* Example: Changed from 40px to 60px for larger size */
+        height: 60px; /* Example: Changed from 40px to 60px for larger size */
+        margin-right: 0.5rem;
+        border-radius: 0.25rem;
+        object-fit: contain; /* Ensures the image fits well within the new size */
+    }
+        /* Custom styles for the ticket appearance */
+        .ticket-container {
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            overflow: hidden;
+        }
+        .ticket-header {
+            background-image: linear-gradient(to right, #2196f3, #0d47a1); /* Blue gradient */
+            color: white;
+            padding: 1.5rem;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.875rem; /* Equivalent to Bootstrap h3/h2 */
+            font-weight: 700; /* font-bold */
+        }
+        .ticket-body {
+            padding: 2rem;
+        }
+        .ticket-section {
+            background-color: #f8f9fa; /* Lighter background for sections */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem; /* Added margin for spacing */
+        }
+        .ticket-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #dee2e6; /* Dashed line for separation */
+        }
+        .ticket-info-item:last-child {
+            border-bottom: none;
+        }
+        .ticket-punch {
+            position: absolute;
+            top: 50%;
+            left: -15px; /* Adjust to control how much it overlaps */
+            width: 30px;
+            height: 30px;
+            background-color: #f0f2f5; /* Match body background */
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1; /* Ensure it's above other elements */
+        }
+        .ticket-punch-right {
+            left: auto;
+            right: -15px; /* Adjust to control how much it overlaps */
+        }
+        /* Mobile adjustments */
+        @media (max-width: 767px) {
+            .ticket-container {
+                border-radius: 1rem;
+            }
+            .ticket-header {
+                font-size: 1.5rem;
+                padding: 1rem;
+            }
+            .ticket-body {
+                padding: 1.5rem;
+            }
+            .ticket-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            .ticket-punch, .ticket-punch-right {
+                display: none; /* Hide punches on small screens for cleaner layout */
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
+<div class="row">
+<div class="col-12">
+    <div class="container mt-4">
+        <div class="bg-white p-4 p-md-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Booking Progress</h2>
+                <div class="position-relative mb-4">
+                    <div class="position-absolute w-100 h-1 bg-secondary opacity-50 rounded-pill" style="top: 50%; transform: translateY(-50%);"></div>
 
-<!--    <p>{{schedule_id}}</p>-->
-<!--        <p>{{total_price}}</p>-->
-<!--    <p>{{selected_seats}}</p>-->
+                    <div class="d-flex justify-content-between position-relative z-1">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-primary text-white font-weight-bold shadow-sm d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">1</div>
+                            <div class="text-sm mt-2 text-primary text-center">Seat Selection</div>
+                        </div>
 
+<!--                        <div class="d-flex flex-column align-items-center">-->
+<!--                            <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">2</div>-->
+<!--                            <div class="text-sm mt-2 text-secondary text-center">Traveller Info</div>-->
+<!--                        </div>-->
 
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-primary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">2</div>
+                            <div class="text-sm mt-2 text-primary text-center">Payment</div>
+                        </div>
 
-<div class="container py-5">
-    <!-- Page Title -->
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Confirm & Pay</h2>
-        <p class="text-muted">Please review your booking details before making payment.</p>
-    </div>
-
-    <!-- Booking Summary -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Booking Summary</h5>
-        </div>
-        <div class="card-body">
-            <div class="row mb-2">
-                <div class="col-6"><strong>Bus:</strong></div>
-                <div class="col-6">{{ selected_bus.bus.name }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6"><strong>From:</strong></div>
-                <div class="col-6">{{ selected_bus.origin }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6"><strong>To:</strong></div>
-                <div class="col-6">{{ selected_bus.destination }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6"><strong>Date:</strong></div>
-                <div class="col-6">{{ selected_bus.departure_date }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6"><strong>Time:</strong></div>
-                <div class="col-6">{{ selected_bus.departure_time }}</div>
-            </div>
-            <hr>
-            <div class="row mb-2">
-                <div class="col-6"><strong>Selected Seats:</strong></div>
-                <div class="col-6">{{ selected_seats }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6"><strong>Number of Seats:</strong></div>
-                <div class="col-6">{{ number_of_seats }}</div>
-            </div>
-            <div class="row">
-                <div class="col-6"><strong>Total Price:</strong></div>
-                <div class="col-6 fw-bold text-success">{{ total_price }} Ks</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment Form -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
-            <h5 class="mb-0">Payment Information</h5>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="">
-                {% csrf_token %}
-                <input type="hidden" name="schedule_id" value="{{ selected_bus.id }}">
-                <input type="hidden" name="selected_seats" value="{{ selected_seats }}">
-                <input type="hidden" name="total_price" value="{{ total_price }}">
-
-                <div class="mb-3">
-                    <label class="form-label">Cardholder Name</label>
-                    <input type="text" class="form-control" name="card_name" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Card Number</label>
-                    <input type="text" class="form-control" name="card_number" maxlength="16" required>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Expiry Date</label>
-                        <input type="text" class="form-control" name="expiry" placeholder="MM/YY" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">CVV</label>
-                        <input type="text" class="form-control" name="cvv" maxlength="3" required>
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">3</div>
+                            <div class="text-sm mt-2 text-secondary text-center">Confirm</div>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-success w-100">Confirm & Pay</button>
-            </form>
+            </div>
         </div>
     </div>
+<div class="col-12 mt-5">
+<div class="container-md ticket-container">
+    <!-- Ticket Header -->
+    <div class="ticket-header">
+        <i class="fas fa-ticket-alt me-3"></i> {{selected_bus.bus.operator.operator_name}} Express
+    </div>
+
+    <!-- Main Ticket Body -->
+    <div class="ticket-body row g-4">
+        <!-- Booking Details Section -->
+        <div class="col-12 col-md-6">
+            <div class="ticket-section">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-info-circle me-3 text-primary"></i> Booking Details</h3>
+                <div class="space-y-2 text-dark">
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-bus me-2 text-success"></i>Bus:</span>
+                        <span>{{ bus_name }}</span>
+                    </div>
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-calendar-alt me-2 text-info"></i>Date:</span>
+                        <span>{{ departure_date }}</span>
+                    </div>
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-clock me-2 text-secondary"></i>Time:</span>
+                        <span>{{ departure_time }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route & Seat Section -->
+        <div class="col-12 col-md-6">
+            <div class="ticket-section">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-route me-3 text-danger"></i> Route & Seats</h3>
+                <div class="space-y-2 text-dark">
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>From:</span>
+                        <span>{{ origin }}</span>
+                    </div>
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>To:</span>
+                        <span>{{ destination }}</span>
+                    </div>
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-chair me-2 text-warning"></i>Seats:</span>
+                        <span>{{ selected_seats }}</span>
+                    </div>
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-users me-2 text-info"></i>Qty:</span>
+                        <span>{{ number_of_seats }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Price Section (full width) -->
+        <div class="col-12">
+            <div class="ticket-section text-center">
+                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center justify-content-center"><i class="fas fa-dollar-sign me-3 text-success"></i> Total Price</h3>
+                <span class="display-5 fw-bold text-success">{{ total_price }} Ks</span>
+            </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Choose Payment Method:</label>
+                        <div class="d-flex flex-column gap-3">
+<!--                            <div class="form-check">-->
+<!--                                <input class="form-check-input" type="radio" name="payment_method" id="paymentCreditCard" value="credit_card" checked>-->
+<!--                                <label class="form-check-label d-flex align-items-center" for="paymentCreditCard">-->
+<!--                                    <i class="fas fa-credit-card fa-2x text-primary me-2"></i>-->
+<!--                                    <span class="payment-option-label">Credit / Debit Card</span>-->
+<!--                                </label>-->
+<!--                            </div>-->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="paymentKpay" value="kpay">
+                                <label class="form-check-label d-flex align-items-center" for="paymentKpay">
+                                    <img src="https://play-lh.googleusercontent.com/cnKJYzzHFAE5ZRepCsGVhv7ZnoDfK8Wu5z6lMefeT-45fTNfUblK_gF3JyW5VZsjFc4=w240-h480-rw" alt="Kpay Logo" class="payment-option-icon">
+                                    <span class="payment-option-label">Kpay</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="paymentWaveMoney" value="wave_money">
+                                <label class="form-check-label d-flex align-items-center" for="paymentWaveMoney">
+                                    <img src="https://play-lh.googleusercontent.com/rPq4GMCZy12WhwTlanEu7RzxihYCgYevQHVHLNha1VcY5SU1uLKHMd060b4VEV1r-OQ" alt="Wave Money Logo" class="payment-option-icon">
+                                    <span class="payment-option-label">Wave Money</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-100 mt-4 d-flex align-items-center justify-content-center py-3 rounded-lg shadow-sm">
+                        <i class="fas fa-lock me-2"></i> Confirm & Pay
+                    </button>
+
+    </div>
+    <!-- Decorative punches for ticket tear-off effect (hidden on small screens) -->
+    <div class="d-none d-md-block ticket-punch"></div>
+    <div class="d-none d-md-block ticket-punch ticket-punch-right"></div>
+</div>
+</div>
 </div>
 
+<!-- Bootstrap JS CDN (Bundle includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

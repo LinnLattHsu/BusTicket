@@ -150,9 +150,21 @@ def submit_seats(request, schedule_id):
     # 4️⃣ Calculate total price
     total_price = Decimal(number_of_seats) * selected_bus.price
 
+    # Extract the required details for the template
+    bus_name = selected_bus.bus.license_no
+    departure_date = selected_bus.date
+    departure_time = selected_bus.time
+    origin = selected_bus.route.origin
+    destination = selected_bus.route.destination
+
     # 5️⃣ Pass to template
     context = {
         'selected_bus': selected_bus,
+        'bus_name':bus_name,
+        'departure_date':departure_date,
+        'departure_time':departure_time,
+        'origin': origin,
+        'destination': destination,
         'selected_seats': selected_seats,
         'number_of_seats': number_of_seats,
         'total_price': total_price

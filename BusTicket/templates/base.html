@@ -385,7 +385,7 @@ footer {
                     <a class="nav-item nav-link active" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link" href="{% url 'about_us' %}"> <!-- to correct -->
+                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
 
@@ -433,7 +433,7 @@ footer {
         <div class="col-md-6">
             <div class="search-card text-start">
                 <h4>Book Your Ticket Now</h4>
-                <div>origins length: {{ origins|length }}</div>
+<!--                <div>origins length: {{ origins|length }}</div>-->
 
                 <form method="get" action="{% url 'search_routes' %}">
                     <input type="hidden" name="source" value="home">
