@@ -8,12 +8,15 @@ from decimal import Decimal
 from django.db import IntegrityError
 from django.contrib.auth import login
 from django.template.context_processors import request
-
+from django.shortcuts import render, redirect  # Ensure 'redirect' is imported
+from decimal import Decimal
+# Make sure you import all your relevant models here:
+from .models import Schedule, Booking, Ticket  # Assuming Bus, Route are already in models.py
 # from .models import Feedback
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Status
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Status,Payment
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -171,6 +174,104 @@ def submit_seats(request, schedule_id):
     }
     return render(request, 'payment.html', context)
 
+
+
+
+
+def process_payment(request):
+    if request.method == 'POST':
+        schedule_id = request.POST.get('schedule_id')
+        selected_seats_str = request.POST.get('selected_seats')
+        total_price_str = request.POST.get('total_price')
+        payment_method_value = request.POST.get('payment_method')
+
+        try:
+            # Retrieve the Schedule object, ensuring del_flag is 0 (not deleted)
+            selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
+            current_user = request.user
+
+            total_price_decimal = Decimal(total_price_str)
+            number_of_seats = len(selected_seats_str.split(',')) if selected_seats_str else 0
+
+            # Map the payment_method value from form to the choices defined in Payment model
+            payment_method_code = ''
+            if payment_method_value == 'kpay':
+                payment_method_code = 'KP'
+            elif payment_method_value == 'wave_money':
+                payment_method_code = 'WP'
+            # elif payment_method_value == 'credit_card':
+            #     # Assuming 'CC' is a valid choice in your PAYMENT_METHODS if used
+            #     payment_method_code = 'CC'
+
+            booking = Booking.objects.create(
+                schedule=selected_bus_schedule,
+                customer=current_user,
+                seat_numbers=selected_seats_str,
+            )
+
+            ticket = Ticket.objects.create(
+                booking=booking,
+                total_seat=number_of_seats,
+                total_amount=total_price_decimal,
+            )
+
+            if payment_method_code:
+                Payment.objects.create(
+                    ticket=ticket,
+                    payment_method=payment_method_code,
+                )
+            else:
+                print("Warning: Payment method not recognized or missing.")
+
+            return redirect('process_payment', booking_id=booking.id)
+
+        except Schedule.DoesNotExist:
+            error_message = "Selected bus schedule not found or is no longer available."
+            print(f"Error: {error_message}")
+            return render(request, 'error.html', {'message': error_message})
+        except User.DoesNotExist:
+            error_message = "User not logged in or invalid user. Please log in to complete booking."
+            print(f"Error: {error_message}")
+            return render(request, 'error.html', {'message': error_message})
+        except ValueError as e:
+            error_message = f"Invalid data format received (e.g., price): {e}"
+            print(f"Error: {error_message}")
+            return render(request, 'error.html', {'message': error_message})
+        except Exception as e:
+            error_message = f"An unexpected error occurred during booking: {e}"
+            print(f"Error: {error_message}")
+            return render(request, 'error.html', {'message': "Booking failed due to an internal error. Please try again."})
+    else:
+        # This part handles the initial GET request to display the payment.html page
+        schedule_id = request.GET.get('schedule_id')
+        if not schedule_id:
+            return redirect('seat_selection')
+
+        # Retrieve the schedule for GET request, also checking del_flag
+        try:
+            selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
+        except Schedule.DoesNotExist:
+            return render(request, 'error.html', {'message': 'The selected bus schedule is unavailable.'})
+
+        selected_seats = request.GET.get('selected_seats')
+        if not selected_seats:
+            return redirect('seat_selection')
+
+        number_of_seats = len(selected_seats.split(','))
+        total_price = Decimal(number_of_seats) * selected_bus_schedule.price
+
+        context = {
+            'selected_bus': selected_bus_schedule,
+            'bus_name': selected_bus_schedule.bus.license_no,
+            'departure_date': selected_bus_schedule.date,
+            'departure_time': selected_bus_schedule.time,
+            'origin': selected_bus_schedule.route.origin,
+            'destination': selected_bus_schedule.route.destination,
+            'selected_seats': selected_seats,
+            'number_of_seats': number_of_seats,
+            'total_price': total_price
+        }
+        return render(request, 'payment.html', context)
 
 # if request.method == 'POST':
     #     schedule = get_object_or_404(Schedule, pk=schedule_id, del_flag=0)

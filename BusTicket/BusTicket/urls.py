@@ -29,7 +29,11 @@ urlpatterns = [
     path('search/',views.search_routes, name='search_routes'),
     path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),
     path('select-seats/<int:schedule_id>/submit/', views.submit_seats, name='submit_seats'),
-    # path('payment/',views.payment,name='payment'),
+    # URL to handle the payment form submission
+    path('process-payment/',views.process_payment,name='process_payment'),
+    # URL pattern for the booking confirmation page
+    # path('booking-confirmation/<int:booking_id>/', views.booking_confirmation, name='booking_confirmation'),
+
     path('home', views.home, name="home"),
     # path('about_us',views.about_us,name="about_us"),
     path('login/', views.user_login, name="login"),
