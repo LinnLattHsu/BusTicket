@@ -30,6 +30,7 @@ urlpatterns = [
     path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),
     path('select-seats/<int:schedule_id>/submit/', views.submit_seats, name='submit_seats'),
     path('home', views.home, name="home"),
+    path('about_us',views.about_us,name="about_us"),
     path('login/', views.user_login, name="login"),
     path('signup/', views.signup, name="signup"),
     path('signin/', views.signin, name="signin"),
