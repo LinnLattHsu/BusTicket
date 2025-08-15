@@ -120,6 +120,8 @@ def home(request):
     bookings = Bus.objects.all()
     return render(request, 'base.html', {'bookings': bookings})
 
+def about_us(request):
+    return render(request,'about_us.html')
 
 
 #
