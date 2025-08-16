@@ -9,19 +9,99 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+<!--            background-color: #f3f4f6;-->
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+<body class="bg-gray-100 flex flex-col min-h-screen">
 
-    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to the Home Page!</h1>
-        <p class="text-gray-600">You are logged in successfully.</p>
-        <p class="text-gray-600 mt-2">Your User ID is: <strong class="text-blue-600">{{ user_id }}</strong></p>
-        <p class="text-gray-600">Your email is: <strong class="text-blue-600">{{ user_email }}</strong></p>
-        <a href="" class="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Logout</a>
+    <!-- Navbar -->
+    <nav class="bg-blue-700 text-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="{% url 'home' %}" class="text-xl font-bold">
+                    <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg"
+                        alt="Logo" class="h-12 w-12 rounded-full">
+                </a>
+
+
+                <!-- Menu -->
+                <div class="space-x-6">
+                    <a href="{% url 'home' %}" class="hover:text-gray-200">Home</a>
+                    <a href="" class="hover:text-gray-200">Find Bus</a>
+
+                    {% if user.is_authenticated %}
+                        <a href="" class="hover:text-gray-200">See Bookings</a>
+                        <a href="{% url 'logout' %}"
+                           class="hover:text-gray-200">
+                           Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="hover:text-gray-200">Register</a>
+                        <a href="{% url 'login' %}"
+                           class="hover:text-gray-200">
+                           Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-grow flex items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center w-full max-w-md">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to Our Reservation system!</h1>
+
+            {% if user.is_authenticated %}
+                <p class="text-gray-600">You are logged in successfully.</p>
+<!--                <p class="text-gray-600 mt-2">-->
+<!--                    Your User ID is: <strong class="text-blue-600">{{ user.id }}</strong>-->
+<!--                </p>-->
+<!--                <p class="text-gray-600">-->
+<!--                    Your email is: <strong class="text-blue-600">{{ user.email }}</strong>-->
+<!--                </p>-->
+            {% else %}
+                <p class="text-gray-600">You are not logged in.</p>
+                <p class="mt-4">
+                    <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+                        Login Now
+                    </a>
+                </p>
+            {% endif %}
+        </div>
     </div>
 
-</body>
+    <!-- Footer -->
+    <footer class="bg-blue-700 text-white py-4 text-center">
+        <p class="text-sm">&copy; 2025 BusTicket. All Rights Reserved.</p>
+    </footer>
+    </body>
 </html>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out;
+  }
+</style>
+
+<!--    <div class="bg-white p-8 rounded-lg shadow-lg text-center">-->
+<!--        <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to the Home Page!</h1>-->
+<!--        <p class="text-gray-600">You are logged in successfully.</p>-->
+<!--        <p class="text-gray-600 mt-2">Your User ID is: <strong class="text-blue-600">{{ user_id }}</strong></p>-->
+<!--        <p class="text-gray-600">Your email is: <strong class="text-blue-600">{{ user_email }}</strong></p>-->
+<!--        <a href="" class="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Logout</a>-->
+<!--    </div>-->
+
+

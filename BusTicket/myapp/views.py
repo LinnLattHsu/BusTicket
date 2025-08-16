@@ -52,6 +52,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from .models import Admin
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CustomUserAuthenticationForm
+from django.contrib.auth import logout as auth_logout
 
 # Create your views here.
 
@@ -572,6 +573,7 @@ def user_login(request):
                 login(request, user, backend='myapp.backends.MyCustomAuthBackend')
                 messages.success(request, 'You have been logged in successfully!')
 
+
                 if isinstance(user, Admin):
                     return redirect('admin_dashboard')
                 else:
@@ -591,6 +593,15 @@ def logined_user_home(request):
         'user_email': request.user.email,
     }
     return render(request, 'register_user/login_user_home.html', context)
+
+def logout_view(request):
+    auth_logout(request)  # <-- use Django’s logout, not your view
+    storage = messages.get_messages(request)
+    list(storage)
+    messages.info(request, "You have been logged out")
+    return redirect('login')
+
+# login_user_home.html
 
 # @login_required(login_url='signin')
 # def download_ticket(request, booking_id):
