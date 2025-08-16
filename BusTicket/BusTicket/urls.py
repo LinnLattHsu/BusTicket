@@ -43,6 +43,7 @@ urlpatterns = [
     # sdwp
     path('register/',views.user_registration,name='register'),
     path('login/',views.user_login,name='login'),
+    path('login-home/',views.logined_user_home,name='logined_user'),
 
     # path('findbus', views.findbus, name="findbus"),
     # path('bookings', views.bookings, name="bookings"),

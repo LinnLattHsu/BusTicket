@@ -180,8 +180,49 @@ class Payment(models.Model):
     def __str__(self):
         return self.id
 
+
 class Admin(models.Model):
-    email = models.EmailField()
-    password = models.CharField(max_length=30)
+    email = models.EmailField(unique=True)  # It's a good practice to make the email unique
+    password = models.CharField(max_length=128)  # Use a longer max_length for hashed passwords
+    last_login = models.DateTimeField(null=True, blank=True)  # Add this line
+
+    # --- Required for Django's Authentication system ---
+    @property
+    def is_authenticated(self):
+        """
+        Always returns True. This is a required property for a User model.
+        """
+        return True
+
+    @property
+    def is_active(self):
+        """
+        Always returns True, as admin accounts are active by default.
+        """
+        return True
+
+    @property
+    def is_staff(self):
+        """
+        Returns True to grant access to the Django admin site.
+        """
+        return True
+
+    @property
+    def is_superuser(self):
+        """
+        Returns True to grant superuser permissions.
+        """
+        return True
+
+    # Required for Django's admin to display the user's name
+    def get_full_name(self):
+        return self.email
+
+    def get_short_name(self):
+        return self.email
+
+    # ----------------------------------------------------
+
     def __str__(self):
         return self.email

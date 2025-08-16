@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Bus Ticket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to the Home Page!</h1>
+        <p class="text-gray-600">You are logged in successfully.</p>
+        <p class="text-gray-600 mt-2">Your User ID is: <strong class="text-blue-600">{{ user_id }}</strong></p>
+        <p class="text-gray-600">Your email is: <strong class="text-blue-600">{{ user_email }}</strong></p>
+        <a href="" class="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Logout</a>
+    </div>
+
+</body>
+</html>

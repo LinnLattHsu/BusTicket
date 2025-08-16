@@ -6,6 +6,7 @@ from django.contrib.auth import (
     get_user_model
 
 )
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import User
 from .models import Operator
@@ -142,7 +143,6 @@ class UserRegisterForm(forms.ModelForm):
     """
 
 class CustomUserCreationForm(forms.ModelForm):
-
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input'}))
     password2 = forms.CharField(label='Password confirmation',
                                 widget=forms.PasswordInput(attrs={'class': 'form-input'}))
@@ -159,6 +159,7 @@ class CustomUserCreationForm(forms.ModelForm):
             'nrc',
             'address',
             'phone_no',
+            # Do not include 'password' here as it's handled separately
         )
 
         # Add a widgets dictionary to apply custom HTML attributes to the model fields
@@ -169,6 +170,12 @@ class CustomUserCreationForm(forms.ModelForm):
             'address': forms.TextInput(attrs={'class': 'form-input'}),
             'phone_no': forms.TextInput(attrs={'class': 'form-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure password field is not rendered twice
+        self.fields['password'].required = True
+        self.fields['password2'].required = True
 
     def clean_password2(self):
         """
@@ -185,10 +192,45 @@ class CustomUserCreationForm(forms.ModelForm):
         This method saves the user to the database with a hashed password.
         """
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])
+        # Hash the password before saving
+        user.password = make_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user
+
+
+class CustomUserAuthenticationForm(forms.Form):
+    """
+    A custom authentication form that uses email instead of username.
+    """
+    username = forms.CharField(label='Email', max_length=150)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
+    def __init__(self, request=None, *args, **kwargs):
+        """
+        The 'request' is passed as a keyword argument to make sure the
+        authentication backend can use it.
+        """
+        self.request = request
+        self.user_cache = None
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            # Pass the request as a keyword argument to authenticate
+            self.user_cache = authenticate(request=self.request, username=username, password=password)
+            if self.user_cache is None:
+                raise forms.ValidationError(
+                    "Invalid email or password. Please try again.",
+                    code='invalid_login',
+                )
+        return self.cleaned_data
+
+    def get_user(self):
+        return self.user_cache
 
 # class UserRegisterForm(forms.ModelForm):
 #     email = forms.EmailField(label='Email address')

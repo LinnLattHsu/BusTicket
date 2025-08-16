@@ -18,7 +18,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Status,Payment
 from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm, CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -47,6 +47,11 @@ from .forms import ScheduleForm
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from .models import Admin
+from django.contrib.admin.views.decorators import staff_member_required
+from .forms import CustomUserAuthenticationForm
 
 # Create your views here.
 
@@ -539,31 +544,53 @@ def signin(request):
 
 # custom user register form by sdwp
 def user_registration(request):
-
     if request.method == 'POST':
-        # Create a form instance with the submitted data
         form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
             user = form.save()
-            # Log the user in after successful registration
-            login(request, user)
-            # Display a success message
+            # FIX: Explicitly specify the custom authentication backend for login
+            login(request, user, backend='myapp.backends.MyCustomAuthBackend')
             messages.success(request, 'Account created successfully!')
-            # Redirect to a success page or the home page
             return redirect('login')
         else:
-            # If the form is not valid, display an error message
             messages.error(request, 'There was an error creating your account. Please check the form.')
     else:
-        # If it's a GET request, create an empty form
         form = CustomUserCreationForm()
-
-    # Render the registration page with the form
     return render(request, 'user_registration_form.html', {'form': form})
 
+# user login
 def user_login(request):
-    return render(request,'login.html')
+    if request.method == 'POST':
+        form = CustomUserAuthenticationForm(request=request, data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+
+            if user is not None:
+                # FIX: Explicitly specify the custom authentication backend for login
+                login(request, user, backend='myapp.backends.MyCustomAuthBackend')
+                messages.success(request, 'You have been logged in successfully!')
+
+                if isinstance(user, Admin):
+                    return redirect('admin_dashboard')
+                else:
+                    return redirect('logined_user')
+            else:
+                messages.error(request, 'Invalid email or password. Please try again.')
+    else:
+        form = CustomUserAuthenticationForm(request=request)
+
+    return render(request, 'login.html', {'form': form})
+
+@login_required
+def logined_user_home(request):
+    user_id = request.user.user_id
+    context = {
+        'user_id': user_id,
+        'user_email': request.user.email,
+    }
+    return render(request, 'register_user/login_user_home.html', context)
 
 # @login_required(login_url='signin')
 # def download_ticket(request, booking_id):
@@ -696,6 +723,7 @@ def signout(request):
 
 
 # Admin Dashboard
+@staff_member_required
 def admin_dashboard(request):
     no_of_users = User.objects.filter(del_flag = 0).count()
     no_of_buses = Bus.objects.filter(del_flag = 0).count()
