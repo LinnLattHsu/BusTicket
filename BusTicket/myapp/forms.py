@@ -6,6 +6,8 @@ from django.contrib.auth import (
     get_user_model
 
 )
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import User
 from .models import Operator
 from .models import Bus
 from .models import Route
@@ -130,6 +132,64 @@ class UserRegisterForm(forms.ModelForm):
         fields = ['name', 'email', 'password', 'nrc', 'address', 'phone_no']
 
 
+
+# for user_register form by sdwp
+
+    """
+    A custom form for creating new users. It extends Django's
+    built-in UserCreationForm and adds the extra fields from our
+    custom User model with specific styling.
+    """
+
+class CustomUserCreationForm(forms.ModelForm):
+
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    password2 = forms.CharField(label='Password confirmation',
+                                widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+
+    class Meta:
+        """
+        The Meta class configures the form to use our custom User model
+        and includes a widgets dictionary for custom styling.
+        """
+        model = User
+        fields = (
+            'name',
+            'email',
+            'nrc',
+            'address',
+            'phone_no',
+        )
+
+        # Add a widgets dictionary to apply custom HTML attributes to the model fields
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-input'}),
+            'email': forms.EmailInput(attrs={'class': 'form-input'}),
+            'nrc': forms.TextInput(attrs={'class': 'form-input'}),
+            'address': forms.TextInput(attrs={'class': 'form-input'}),
+            'phone_no': forms.TextInput(attrs={'class': 'form-input'}),
+        }
+
+    def clean_password2(self):
+        """
+        This custom cleaning method checks if the passwords match.
+        """
+        password = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password2')
+        if password and password2 and password != password2:
+            raise forms.ValidationError("Passwords don't match.")
+        return password2
+
+    def save(self, commit=True):
+        """
+        This method saves the user to the database with a hashed password.
+        """
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+
 # class UserRegisterForm(forms.ModelForm):
 #     email = forms.EmailField(label='Email address')
 #     email2 = forms.EmailField(label='Confirm Email')
@@ -154,3 +214,5 @@ class UserRegisterForm(forms.ModelForm):
 #             raise forms.ValidationError(
 #                 "This email has already been registered")
 #         return super(UserRegisterForm, self).clean(*args, **kwargs)
+
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bus Ticket</title>
+    <!-- Use Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+           background: url('https://res.cloudinary.com/ddvru0ow1/image/upload/v1727193013/imgblur_vcheyk.jpg') no-repeat center center fixed;
+           background-size: cover;
+            background-position: center;
+         }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-700">
+
+    <!-- Main page wrapper to handle full-screen content -->
+    <div class="flex flex-col items-center min-h-screen">
+        <!-- Navbar fixed to the top -->
+        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-gray-800 bg-opacity-50 text-white shadow-lg">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <!-- Bus icon to match the one on the home page -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>
+                    </svg>
+                    <span class="text-xl font-bold">Bus Ticket</span>
+                </div>
+                <div class="space-x-4 flex">
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Home</a>
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">About Us</a>
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Login</a>
+                    <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Signup</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main form container, with top padding to prevent it from being hidden -->
+        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">
+
+            <!-- Form title -->
+            <h1 class="text-3xl font-bold text-white text-center mb-6">Login</h1>
+
+            <!-- The form itself -->
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-field-container">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        <div class="mt-1">
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="text-xs text-gray-200 mt-1">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p class="text-xs text-red-300 mt-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="pt-4">
+                    <button type="submit"
+                            class="w-full py-3 px-4 rounded-full text-white font-semibold shadow-lg
+                                   bg-blue-600 hover:bg-blue-700 transition-colors duration-200
+                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>

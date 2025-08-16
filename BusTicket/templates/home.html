@@ -214,18 +214,18 @@ footer {
                          <a class="nav-item nav-link active" href="{% url 'home' %}">
                              <i class="fas fa-home"></i> Home
                          </a>
-                         <a class="nav-item nav-link" href="{% url 'findbus' %}">
+                         <a class="nav-item nav-link" href="">
                              <i class="fas fa-bus"></i> Find Bus
                          </a>
-                         <a class="nav-item nav-link" href="{% url 'seebookings' %}">
+                         <a class="nav-item nav-link" href="">
                              <i class="fas fa-list"></i> See Bookings
                          </a>
                          {% if request.user.is_active %}
-                         <a class="nav-item nav-link" href="{% url 'signout' %}">
+                         <a class="nav-item nav-link" href="">
                              <i class="fas fa-sign-out-alt"></i> Logout
                          </a>
                          {% else %}
-                         <a class="nav-item nav-link" href="{% url 'signup' %}">
+                         <a class="nav-item nav-link" href="">
                              <i class="fas fa-user-plus"></i> Registration
                          </a>
                          {% endif %}

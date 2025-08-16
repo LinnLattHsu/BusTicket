@@ -36,10 +36,13 @@ urlpatterns = [
 
     path('home', views.home, name="home"),
     # path('about_us',views.about_us,name="about_us"),
-    path('login/', views.user_login, name="login"),
-    path('signup/', views.signup, name="signup"),
+    # path('login/', views.user_login, name="login"),
+    # path('signup/', views.signup, name="signup"),
     path('signin/', views.signin, name="signin"),
     path('signout/', views.signout, name="signout"),
+    # sdwp
+    path('register/',views.user_registration,name='register'),
+    path('login/',views.user_login,name='login'),
 
     # path('findbus', views.findbus, name="findbus"),
     # path('bookings', views.bookings, name="bookings"),

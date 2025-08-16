@@ -20,7 +20,7 @@ from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Sta
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
-from .forms import UserLoginForm, UserRegisterForm
+from .forms import UserLoginForm, UserRegisterForm, CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from reportlab.lib.pagesizes import letter
@@ -536,6 +536,35 @@ def signin(request):
     else:
         context["error"] = "You are not logged in"
         return render(request, 'signin.html', context)
+
+# custom user register form by sdwp
+def user_registration(request):
+
+    if request.method == 'POST':
+        # Create a form instance with the submitted data
+        form = CustomUserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            # Log the user in after successful registration
+            login(request, user)
+            # Display a success message
+            messages.success(request, 'Account created successfully!')
+            # Redirect to a success page or the home page
+            return redirect('login')
+        else:
+            # If the form is not valid, display an error message
+            messages.error(request, 'There was an error creating your account. Please check the form.')
+    else:
+        # If it's a GET request, create an empty form
+        form = CustomUserCreationForm()
+
+    # Render the registration page with the form
+    return render(request, 'user_registration_form.html', {'form': form})
+
+def user_login(request):
+    return render(request,'login.html')
+
 # @login_required(login_url='signin')
 # def download_ticket(request, booking_id):
 #     booking = Book.objects.get(id=booking_id)
