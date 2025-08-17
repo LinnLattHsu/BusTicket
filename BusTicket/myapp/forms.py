@@ -257,4 +257,30 @@ class CustomUserAuthenticationForm(forms.Form):
 #                 "This email has already been registered")
 #         return super(UserRegisterForm, self).clean(*args, **kwargs)
 
+class CustomUserChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'nrc', 'address', 'phone_no'] # Specify the fields you want users to be able to edit
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make the email field readonly as it's typically the USERNAME_FIELD
+        # and not intended to be changed directly via a profile update form
+        if 'email' in self.fields: # Check if 'email' field exists (it should, from AbstractBaseUser)
+            self.fields['email'].widget.attrs['readonly'] = True
+            self.fields['email'].required = False # Not required for update if read-only
+
+        # Apply Bootstrap's 'form-control' class for consistent styling
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+        # Optional: Apply specific Bootstrap classes for larger, rounded inputs
+        self.fields['name'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input'
+        if 'nrc' in self.fields:
+            self.fields['nrc'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input'
+        if 'address' in self.fields:
+            self.fields['address'].widget.attrs['class'] += ' form-control-lg rounded-3 custom-textarea'
+        if 'phone_no' in self.fields:
+            self.fields['phone_no'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input'
+        if 'email' in self.fields: # Apply styling to readonly email field as well
+            self.fields['email'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input bg-light'

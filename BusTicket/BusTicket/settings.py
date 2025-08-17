@@ -66,6 +66,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
+
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -137,3 +139,14 @@ AUTHENTICATION_BACKENDS = [
     # Keep the default backend as a fallback for other cases
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# SESSION SETTINGS
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+
+# The URL where users are redirected for login when login_required is used
+LOGIN_URL = '/login/' # Or whatever your login URL path is, e.g., '/accounts/login/'
+
+# Optional: The URL to redirect to after successful login (if no 'next' parameter is provided)
+LOGIN_REDIRECT_URL = '/process-payment/' # Or '/dashboard/' or '/profile/' etc.

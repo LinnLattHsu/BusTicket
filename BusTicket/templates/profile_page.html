@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
+    <title>Update Profile</title>
+    <style>
+        /* Global styles - Re-added for standalone file */
+        body {
+            background: url('https://res.cloudinary.com/ddvru0ow1/image/upload/v1727193013/imgblur_vcheyk.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-position: center;
+            color: #fff; /* Default text color for body */
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #007bff !important; /* Solid blue background */
+            transition: background-color 0.3s;
+        }
+        .navbar:hover {
+            background-color: #0056b3; /* Slightly darker blue on hover */
+        }
+        .navbar-nav {
+            align-items: center; /* Vertically align items in the nav bar */
+        }
+        .nav-link {
+            color: white; /* White text for all nav links */
+            font-size: 18px;
+            transition: color 0.3s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem; /* Adjust padding for links */
+        }
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.75); /* Slightly transparent white on hover */
+            background-color: transparent; /* No background color change on hover for links */
+            border-radius: 5px;
+        }
+        .nav-link i {
+            margin-right: 8px;
+        }
+        .navbar-brand img {
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Profile Circle Styles */
+        .profile-dropdown-container {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle; /* Align with nav links */
+        }
+        .profile-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #fff; /* White background */
+            color: #007bff; /* Blue text color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            border: 2px solid #007bff; /* Blue border */
+            margin-left: 0.5rem; /* Space from last nav item */
+        }
+        .profile-circle:hover {
+            transform: scale(1.05); /* Gentle scaling on hover */
+        }
+        .profile-circle span {
+            line-height: 1; /* Ensure text is vertically centered */
+        }
+
+        /* Profile Dropdown Menu Styles */
+        .profile-dropdown-menu {
+            display: none; /* Hidden by default */
+            position: absolute;
+            right: 0;
+            top: 100%; /* Position below the circle */
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .profile-dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .profile-dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+        /* JavaScript Toggle Class */
+        .show {
+            display: block; /* Class to show the dropdown */
+        }
+
+        /* Custom Styles for Update Profile Card */
+        .profile-card-custom {
+            background: rgba(255, 255, 255, 0.98); /* Less translucent white for better readability */
+            backdrop-filter: blur(8px); /* Slightly stronger blur effect */
+            border: none; /* Removed the subtle border as shadow is strong */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow for more lift */
+            overflow: hidden; /* Ensures rounded corners apply to children */
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient header */
+            border-bottom: none; /* Remove default border */
+        }
+        .card-header .card-title, .card-header .card-subtitle {
+            color: white; /* Ensure text remains white */
+        }
+        .form-label {
+            font-size: 0.95em; /* Slightly larger labels */
+            color: #343a40; /* Darker label text for better contrast */
+            margin-bottom: 0.5rem; /* Space between label and input */
+        }
+        .custom-input, .custom-textarea { /* Apply styles to both input and textarea */
+            border: 1px solid #dee2e6; /* Lighter border for inputs */
+            border-radius: 0.75rem; /* More prominent rounded corners */
+            padding: 0.875rem 1.25rem; /* Increased padding inside inputs */
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04); /* Subtle inner shadow */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .custom-input:focus, .custom-textarea:focus {
+            border-color: #6aabff; /* Lighter blue on focus */
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.2); /* Softer, wider focus shadow */
+            outline: none; /* Remove default outline */
+        }
+        .custom-textarea {
+            resize: vertical; /* Allow vertical resizing only */
+        }
+        .form-text {
+            font-size: 0.825em; /* Slightly smaller helper text */
+            color: #6c757d; /* Consistent muted grey */
+            margin-top: 0.25rem; /* Closer to the input */
+        }
+        .custom-btn-gradient {
+            background: linear-gradient(45deg, #007bff, #0056b3); /* Blue gradient for save button */
+            border: none;
+            padding: 0.875rem 1.5rem; /* Adjust padding for button size */
+            font-size: 1.1rem; /* Slightly larger text */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out;
+        }
+        .custom-btn-gradient:hover {
+            transform: translateY(-3px); /* Slightly more lift effect on hover */
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.4); /* More prominent shadow on hover */
+            opacity: 0.95; /* Slight opacity change */
+        }
+        .custom-btn-outline {
+            border-color: #929292; /* Darker outline color for better visibility */
+            color: #555; /* Darker text color */
+            padding: 0.875rem 1.5rem; /* Adjust padding for button size */
+            font-size: 1.1rem; /* Slightly larger text */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .custom-btn-outline:hover {
+            background-color: #6c757d;
+            color: white;
+            border-color: #6c757d;
+        }
+        /* Adjust specific Bootstrap overrides for better consistency */
+        .rounded-4 {
+            border-radius: 1.5rem !important; /* Make corners even more rounded for a softer look */
+        }
+        .rounded-top-4 {
+            border-top-left-radius: 1.5rem !important;
+            border-top-right-radius: 1.5rem !important;
+        }
+        /* Font Awesome icon spacing */
+        .me-2 {
+            margin-right: 0.75rem !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+                    {% if request.user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'bookings' %}">
+                        <i class="fas fa-list"></i> See Bookings
+                    </a>
+                    <div class="profile-dropdown-container">
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">
+                            <span>{{ user.name|default:'U'|first|upper }}</span>
+                        </div>
+                        <div class="profile-dropdown-menu" id="profileDropdown">
+                            <a href="{% url 'profile_page' %}">Your Profile</a>
+                            <a href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i> Signup
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card profile-card-custom shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-gradient-primary text-white text-center py-4 rounded-top-4">
+                        <h2 class="card-title mb-0 fs-3 fw-bold">Update Your Profile</h2>
+                        <p class="card-subtitle mt-2 text-opacity-75">Edit your personal information below. Your privacy matters!</p>
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="post" id="profileUpdateForm">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="id_name" class="form-label text-dark fw-semibold">Full Name</label>
+                                <input type="text" class="form-control form-control-lg rounded-pill custom-input" id="id_name" name="name" value="{{ user.name }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="id_email" class="form-label text-dark fw-semibold">Email Address</label>
+                                <input type="email" class="form-control form-control-lg rounded-pill custom-input bg-light" id="id_email" name="email" value="{{ user.email }}" required readonly>
+                                <div class="form-text text-muted fst-italic mt-2">Your email address is used for login and cannot be changed here.</div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="id_nrc" class="form-label text-dark fw-semibold">NRC (National Registration Card)</label>
+                                <input type="text" class="form-control form-control-lg rounded-pill custom-input" id="id_nrc" name="nrc" value="{{ user.nrc|default_if_none:'' }}">
+                                <div class="form-text text-muted fst-italic mt-2">Optional: Provide for smoother booking processes.</div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="id_address" class="form-label text-dark fw-semibold">Residential Address</label>
+                                <textarea class="form-control form-control-lg rounded-3 custom-textarea" id="id_address" name="address" rows="4">{{ user.address|default_if_none:'' }}</textarea>
+                                <div class="form-text text-muted fst-italic mt-2">Where do you currently reside?</div>
+                            </div>
+                            <div class="mb-5">
+                                <label for="id_phone_no" class="form-label text-dark fw-semibold">Phone Number</label>
+                                <input type="text" class="form-control form-control-lg rounded-pill custom-input" id="id_phone_no" name="phone_no" value="{{ user.phone_no|default_if_none:'' }}">
+                                <div class="form-text text-muted fst-italic mt-2">This number will be used for ticket confirmations.</div>
+                            </div>
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg custom-btn-gradient rounded-pill py-3 fw-bold shadow-sm">
+                                    <i class="fas fa-save me-2"></i> Save Changes
+                                </button>
+                                <a href="{% url 'profile_page' %}" class="btn btn-outline-secondary btn-lg custom-btn-outline rounded-pill py-3 fw-bold">
+                                    <i class="fas fa-times-circle me-2"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--     Success Modal-->
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script>
+
+
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks anywhere else on the page
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-circle') && !event.target.matches('.profile-circle span')) {
+                var dropdowns = document.getElementsByClassName("profile-dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

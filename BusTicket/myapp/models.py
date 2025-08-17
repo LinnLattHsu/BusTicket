@@ -157,16 +157,16 @@ class Booking(models.Model):
     customer = models.ForeignKey(User,on_delete=models.CASCADE)
     seat_numbers = models.CharField(max_length=100)
     booked_time = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        self.id
+    # def __str__(self):
+    #     self.id
 
 class Ticket(models.Model):
     booking = models.OneToOneField(Booking,on_delete=models.CASCADE)
     total_seat = models.IntegerField()
     total_amount = models.DecimalField(max_digits=6,decimal_places=0)
     created_date = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.id
+    # def __str__(self):
+    #     return self.id
 
 class Payment(models.Model):
     PAYMENT_METHODS = [
@@ -178,7 +178,7 @@ class Payment(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return self.payment_method
 
 
 class Admin(models.Model):

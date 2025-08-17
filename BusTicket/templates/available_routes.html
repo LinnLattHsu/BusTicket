@@ -123,7 +123,8 @@
 <!--  {%endif%}-->
   {% load humanize %}
   <div class="container">
-        <form method="get" action= "{% url 'search_routes'%}" class="route-summary">
+        <form method="post" action= "{% url 'search_routes'%}" class="route-summary">
+            {% csrf_token %}
             <input type="hidden" name="source" value="available">
                     <div class="row align-items-end g-3">
                         <div class="col-md-3">

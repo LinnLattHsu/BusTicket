@@ -1,11 +1,11 @@
-
+import json
 from django.shortcuts import render
 from django.db.models import Q
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
 from decimal import Decimal
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.contrib.auth import login
 from django.template.context_processors import request
 from django.shortcuts import render, redirect  # Ensure 'redirect' is imported
@@ -43,7 +43,7 @@ from .forms import BookingForm
 from .forms import OperatorForm
 from .forms import RouteForm
 from .forms import BusForm
-from .forms import ScheduleForm
+from .forms import ScheduleForm,CustomUserChangeForm
 from django.shortcuts import render
 from datetime import datetime
 from .models import Route, Schedule
@@ -53,7 +53,7 @@ from .models import Admin
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CustomUserAuthenticationForm
 from django.contrib.auth import logout as auth_logout
-
+from django.conf import settings
 # Create your views here.
 
 
@@ -128,11 +128,14 @@ def search_routes(request):
     return render(request, 'base.html', context)
 
 def seat_selection(request,schedule_id):
+    # print("DEBUG request.GET:", request.GET)
+    # print("DEBUG request.POST:", request.POST)
     selected_bus = Schedule.objects.get(id=schedule_id)
     # source = request.GET.get('from')
     # dest = request.GET.get('to')
     # date = request.GET.get('departure_date')
     seats = request.GET.get('number_of_seats')
+    # print("DEBUG seats (raw):", seats)
     seats = int(seats)
     total_price=Decimal(seats)*selected_bus.price
     context={
@@ -146,6 +149,7 @@ def seat_selection(request,schedule_id):
     }
     return render(request, 'seat_selection.html',context)
 
+@login_required
 def submit_seats(request, schedule_id):
     # 1️⃣ Get the schedule
     selected_bus = Schedule.objects.get(id=schedule_id)
@@ -176,202 +180,446 @@ def submit_seats(request, schedule_id):
         'destination': destination,
         'selected_seats': selected_seats,
         'number_of_seats': number_of_seats,
-        'total_price': total_price
+        'total_price': total_price,
+        'user_id':request.user.user_id ,
+        'user_name':request.user.name,
     }
     return render(request, 'payment.html', context)
+def bookings(request):
+    return render(request,'see_bookings.html')
 
 
 
 
 
-def process_payment(request):
-    if request.method == 'POST':
-        schedule_id = request.POST.get('schedule_id')
-        selected_seats_str = request.POST.get('selected_seats')
-        total_price_str = request.POST.get('total_price')
-        payment_method_value = request.POST.get('payment_method')
 
-        try:
-            # Retrieve the Schedule object, ensuring del_flag is 0 (not deleted)
-            selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
-            current_user = request.user
+# In your views.py file
+# SESSION_SELECTED_SEATS_KEY = 'pending_selected_seats'
+# SESSION_SCHEDULE_ID_KEY = 'pending_schedule_id'
+#
+#
+# def submit_seats(request, schedule_id):
+#     # This view's only job is to handle the form submission and redirect
+#     if request.method == 'POST':
+#         selected_seats_str = request.POST.get('selected_seats')
+#
+#         if selected_seats_str:
+#             # Save the data to the session
+#             request.session[SESSION_SELECTED_SEATS_KEY] = selected_seats_str
+#             request.session[SESSION_SCHEDULE_ID_KEY] = schedule_id
+#             request.session.modified = True
+#
+#             # Redirect to the new, login-required view.
+#             return redirect('process_booking')
+#
+#     # If not a POST request, redirect back to the home page
+#     messages.error(request, "Invalid request to submit seats.")
+#     return redirect('home')
+#
+# def submit_seats(request, schedule_id):
+#     if request.method == "POST":
+#         selected_seats = request.POST.get("selected_seats")
+#
+#         # If no seat selected, go back to seat selection
+#         if not selected_seats:
+#             return redirect('seat_selection', schedule_id=schedule_id)
+#
+#         schedule = get_object_or_404(Schedule, id=schedule_id)
+#         price = schedule.price
+#
+#         # Count seats (split by comma) safely
+#         seat_list = [seat for seat in selected_seats.split(',') if seat.strip()]
+#         total_seat = len(seat_list)
+#
+#         total_amount = total_seat * price
+#
+#         # Store in session for payment page
+#         request.session['selected_seats'] = selected_seats
+#         request.session['total_amount'] = str(total_amount)
+#         request.session['total_seat'] = total_seat
+#
+#         return redirect('process_payment', schedule_id=schedule_id)
+#
+#     # if user tries to open /submit/ without POST → redirect back
+#     return redirect('seat_selection', schedule_id=schedule_id)
+
+
+
+# @login_required
+# def process_payment(request,schedule_id):
+#     if request.method != 'POST':
+#         messages.error(request, 'Invalid request to process payment. Please use the booking flow.')
+#         return redirect('home')
+#
+#     schedule_id = request.POST.get('schedule_id')
+#     selected_seats_str = request.POST.get('selected_seats')
+#     total_price_str = request.POST.get('total_price')
+#     payment_method_value = request.POST.get('payment_method')
+#
+#     # Basic validation
+#     if not all([schedule_id, selected_seats_str, total_price_str, payment_method_value]):
+#         messages.error(request, "Missing payment details. Please go back and try again.")
+#         return redirect('home')
+#
+#     try:
+#         with transaction.atomic():
+#             # Lock schedule
+#             selected_bus_schedule = Schedule.objects.select_for_update().get(id=schedule_id, del_flag=0)
+#             current_user = request.user
+#
+#             total_price_decimal = Decimal(total_price_str)
+#             selected_seats_list = selected_seats_str.split(',')
+#             number_of_seats = len(selected_seats_list)
+#
+#             # Create booking first
+#             booking = Booking.objects.create(
+#                 schedule=selected_bus_schedule,
+#                 customer=current_user,
+#                 seat_numbers=selected_seats_str,
+#             )
+#
+#             # Lock and update seat status
+#             for seat_no in selected_seats_list:
+#                 seat_status_obj = Seat_Status.objects.select_for_update().get(
+#                     schedule=selected_bus_schedule,
+#                     seat_no=seat_no,
+#                     seat_status='Available'
+#                 )
+#                 seat_status_obj.seat_status = 'Unavailable'
+#                 seat_status_obj.booking = booking
+#                 seat_status_obj.save()
+#
+#             # Create ticket
+#             ticket = Ticket.objects.create(
+#                 booking=booking,
+#                 total_seat=number_of_seats,
+#                 total_amount=total_price_decimal,
+#             )
+#
+#             # Handle payment method
+#             payment_method_code = ''
+#             if payment_method_value == 'kpay':
+#                 payment_method_code = 'KP'
+#             elif payment_method_value == 'wave_money':
+#                 payment_method_code = 'WP'
+#
+#             if payment_method_code:
+#                 Payment.objects.create(
+#                     ticket=ticket,
+#                     payment_method=payment_method_code,
+#                 )
+#                 messages.success(request, "Payment processed successfully and booking confirmed!")
+#             else:
+#                 messages.warning(request, "Booking saved, but payment method not recognized. Please verify manually.")
+#
+#             return redirect('booking_confirmation', booking_id=booking.id)
+#
+#     except Schedule.DoesNotExist:
+#         messages.error(request, "Selected bus schedule not found or is no longer available.")
+#         return redirect('home')
+#     except Seat_Status.DoesNotExist:
+#         messages.error(request, "One or more selected seats are no longer available. Please re-select your seats.")
+#         return redirect('seat_selection', schedule_id=schedule_id)
+#     except ValueError as e:
+#         messages.error(request, f"Invalid data format: {e}. Please try again.")
+#         return redirect('home')
+#     except Exception as e:
+#         messages.error(request, "Unexpected error occurred during booking. Please try again.")
+#         print(f"Unhandled exception in process_payment: {e}")
+#         return redirect('home')
+
+# new function
+@login_required
+def process_payment(request,user_id):
+    if request.method != 'POST':
+        messages.error(request,'Invalid request to process payment. Please use the booking flow.')
+        return redirect('/')
+    schedule_id = request.POST.get('schedule_id')
+    selected_seats_str = request.POST.get('selected_seats')
+    total_price_str = request.POST.get('total_price')
+    payment_method_value = request.POST.get('payment_method')
+
+    # Basic validation for essential data before proceeding
+    if not all([schedule_id, selected_seats_str, total_price_str, payment_method_value]):
+        messages.error(request, "Missing payment details. Please go back and try again.")
+        # Redirect back to the payment page or seat selection if data is incomplete
+        return redirect('/')  # You'll need to define 'some_seat_selection_page' URL
+
+    try:
+        # Use a database transaction for atomicity:
+        # All operations inside this block (getting schedule, updating seats, creating booking/ticket/payment)
+        # will either completely succeed or completely fail. This prevents partial bookings.
+        with transaction.atomic():
+            # Retrieve the Schedule object, and lock it with select_for_update()
+            # to prevent race conditions during seat selection/booking.
+            selected_bus_schedule = Schedule.objects.select_for_update().get(id=schedule_id, del_flag=0)
+            current_user = request.user  # The user is guaranteed to be authentic
 
             total_price_decimal = Decimal(total_price_str)
-            number_of_seats = len(selected_seats_str.split(',')) if selected_seats_str else 0
-
-            # Map the payment_method value from form to the choices defined in Payment model
+            selected_seats_list = selected_seats_str.split(',')
+            number_of_seats = len(selected_seats_list)
             payment_method_code = ''
             if payment_method_value == 'kpay':
                 payment_method_code = 'KP'
             elif payment_method_value == 'wave_money':
                 payment_method_code = 'WP'
-            # elif payment_method_value == 'credit_card':
-            #     # Assuming 'CC' is a valid choice in your PAYMENT_METHODS if used
-            #     payment_method_code = 'CC'
 
+#            update seat status for each selected seat
+            for seat_no in selected_seats_list:
+                # Use select_for_update() to lock the seat row during update
+                # Crucially, check if the seat is still 'Available' before updating.
+                seat_status_obj = Seat_Status.objects.select_for_update().get(
+                    schedule=selected_bus_schedule,
+                    seat_no=seat_no,
+                    seat_status='Available'  # Important: This prevents double booking!
+                )
+                seat_status_obj.seat_status = 'Unavailable'
+                seat_status_obj.booking = None  # Initially set to None, will link to booking after creation
+                # No, you should link it to the booking object *after* the booking is created
+                seat_status_obj.save()
             booking = Booking.objects.create(
-                schedule=selected_bus_schedule,
-                customer=current_user,
-                seat_numbers=selected_seats_str,
+                    schedule=selected_bus_schedule,
+                    customer=current_user,
+                    seat_numbers=selected_seats_str,
             )
-
+            for seat_no in selected_seats_list:
+                seat_status_obj = Seat_Status.objects.get(
+                    schedule = selected_bus_schedule,
+                    seat_no = seat_no,
+                )
+                seat_status_obj.booking=booking
+                seat_status_obj.save()
             ticket = Ticket.objects.create(
-                booking=booking,
-                total_seat=number_of_seats,
-                total_amount=total_price_decimal,
+                    booking=booking,
+                    total_seat=number_of_seats,
+                    total_amount=total_price_decimal,
             )
-
             if payment_method_code:
                 Payment.objects.create(
                     ticket=ticket,
                     payment_method=payment_method_code,
                 )
             else:
-                print("Warning: Payment method not recognized or missing.")
+                messages.warning(request,"Warning: Payment method not recognized or missing.")
+            messages.success(request,f"Payment method not recognized. Booking recorded, but please verify payment.")
 
-            return redirect('process_payment', booking_id=booking.id)
-
-        except Schedule.DoesNotExist:
-            error_message = "Selected bus schedule not found or is no longer available."
-            print(f"Error: {error_message}")
-            return render(request, 'error.html', {'message': error_message})
-        except User.DoesNotExist:
-            error_message = "User not logged in or invalid user. Please log in to complete booking."
-            print(f"Error: {error_message}")
-            return render(request, 'error.html', {'message': error_message})
-        except ValueError as e:
-            error_message = f"Invalid data format received (e.g., price): {e}"
-            print(f"Error: {error_message}")
-            return render(request, 'error.html', {'message': error_message})
-        except Exception as e:
-            error_message = f"An unexpected error occurred during booking: {e}"
-            print(f"Error: {error_message}")
-            return render(request, 'error.html', {'message': "Booking failed due to an internal error. Please try again."})
-    else:
-        # This part handles the initial GET request to display the payment.html page
-        schedule_id = request.GET.get('schedule_id')
-        if not schedule_id:
-            return redirect('seat_selection')
-
-        # Retrieve the schedule for GET request, also checking del_flag
-        try:
-            selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
-        except Schedule.DoesNotExist:
-            return render(request, 'error.html', {'message': 'The selected bus schedule is unavailable.'})
-
-        selected_seats = request.GET.get('selected_seats')
-        if not selected_seats:
-            return redirect('seat_selection')
-
-        number_of_seats = len(selected_seats.split(','))
-        total_price = Decimal(number_of_seats) * selected_bus_schedule.price
-
-        context = {
-            'selected_bus': selected_bus_schedule,
-            'bus_name': selected_bus_schedule.bus.license_no,
-            'departure_date': selected_bus_schedule.date,
-            'departure_time': selected_bus_schedule.time,
-            'origin': selected_bus_schedule.route.origin,
-            'destination': selected_bus_schedule.route.destination,
-            'selected_seats': selected_seats,
-            'number_of_seats': number_of_seats,
-            'total_price': total_price
-        }
-        return render(request, 'payment.html', context)
-
-# if request.method == 'POST':
-    #     schedule = get_object_or_404(Schedule, pk=schedule_id, del_flag=0)
-    #     selected_seat_nos = request.POST.getlist('selected_seats')
-    #
-    #     if not selected_seat_nos:
-    #         messages.error(request, "Please select at least one seat.")
-    #         return redirect('select_trip', schedule_id=schedule_id)
-    #
-    #     # Validate seat availability
-    #     available_selected_seats_status = Seat_Status.objects.filter(
-    #         schedule=schedule,
-    #         seat_no__in=selected_seat_nos,
-    #         seat_status='Available'
-    #     )
-    #
-    #     if len(available_selected_seats_status) != len(selected_seat_nos):
-    #         messages.error(request, "Some of the selected seats are no longer available.")
-    #         return redirect('select_trip', schedule_id=schedule_id)
-    #
-    #     total_price = len(selected_seat_nos) * schedule.price
-    #
-    #     # Save all necessary booking details in the session
-    #     request.session['schedule_id'] = schedule.pk
-    #     request.session['selected_seat_nos'] = selected_seat_nos
-    #     request.session['total_price'] = float(total_price)
-    #
-    #     # Redirect directly to the payment page
-    #     return redirect('payment')  # make sure 'payment' URL works without login
-    # else:
-    #     return redirect('select_trip', schedule_id=schedule_id)
-
-# def payment(request):
-#     """
-#         Displays the payment page, retrieving booking details from the session.
-#         """
-#     print("\n--- payment_page_view START ---")
-#     print(f"DEBUG: payment_page_view accessed. Current session key: {request.session.session_key}")
+            return redirect('booking_confirmation',booking_id=booking.id)
+            # return redirect('booking_confirmation', booking_id=booking.id)
 #
-#     # Retrieve the booking details stored in the session
-#     booking_data = request.session.get('booking_in_progress')
+    except Schedule.DoesNotExist:
+        messages.error(request, "Selected bus schedule not found or is no longer available.")
+        return redirect('home') # Redirect to home on error
+    except Seat_Status.DoesNotExist: # This means a selected seat was already taken
+        messages.error(request, "One or more selected seats are no longer available. Please re-select your seats.")
+        return redirect('home') # Redirect to home on error
+    except User.DoesNotExist:
+        messages.error(request, "User not logged in or invalid user. Please log in to complete booking.")
+        return redirect('login') # Redirect to login on error
+    except ValueError as e:
+        messages.error(request, f"Invalid data format received: {e}. Please try again.")
+        print(f"ValueError in process_payment: {e}") # For server-side debugging
+        return redirect('home') # Redirect to home on error
+    except Exception as e:
+        messages.error(request, "An unexpected error occurred during booking. Please try again.")
+        print(f"Unhandled exception in process_payment: {e}") # For server-side debugging
+        return redirect('home') # Redirect to home on error
+
+@login_required
+def booking_confirmation(request):
+    # This view should handle GET requests
+    try:
+        # Get the booking object and ensure it belongs to the current user
+        # Use get_object_or_404 to return a 404 page if the booking doesn't exist
+        booking = get_object_or_404(Booking, id=Booking.id, customer=request.user)
+    except Booking.DoesNotExist:
+        return render(request, 'error_page.html', {'message': 'Booking not found.'})
+
+    # Get the related objects using the booking object
+    ticket = Ticket.objects.get(booking=booking)
+    schedule = booking.schedule
+    bus = schedule.bus
+    route = schedule.route
+    booked_seats_status = Seat_Status.objects.filter(booking=booking)
+
+    context = {
+        'booking': booking,
+        'ticket': ticket,
+        'schedule': schedule,
+        'bus': bus,
+        'route': route,
+        'booked_seats_status': booked_seats_status,
+        'user': request.user,
+    }
+
+    return render(request, 'booking_confirmation.html', context)
+
+
+# @login_required # Confirm user is still logged in for this sensitive page
+# def booking_confirmation(request, booking_id):
+#     try:
+#         # Get the booking object, ensure it belongs to the current user
+#         booking = Booking.objects.get(id=booking_id, customer=request.user)
+#         ticket = Ticket.objects.get(booking=booking) # Get the related ticket
+#         schedule = booking.schedule # Access the related schedule
+#         bus = schedule.bus # Access the related bus
+#         route = schedule.route # Access the related route
 #
-#     print(f"DEBUG: Retrieved booking_data from session: {booking_data}")
+#         # Get the individual Seat_Status objects for this booking
+#         booked_seats_status = Seat_Status.objects.filter(booking=booking)
 #
-#     if not booking_data:
-#         # If session data is missing, redirect to a starting page
-#         print("DEBUG: booking_data is None. Redirecting to bus search page.")
-#         print("--- payment_page_view END (Redirect - No Data) ---")
-#         # Replace 'some_bus_search_page_name_here' with the actual name of your search URL
-#         return redirect(reverse('some_bus_search_page_name_here'))
+#         context = {
+#             'booking': booking,
+#             'ticket': ticket,
+#             'schedule': schedule,
+#             'bus': bus,
+#             'route': route,
+#             'booked_seats_status': booked_seats_status, # List of Seat_Status objects
+#             'user': request.user, # Pass the user object explicitly if needed for other details
+#         }
+#         return render(request, 'booking_confirmation.html', context)
 #
-#         # Extract details from the session data
-#     schedule_id = booking_data.get('schedule_id')
-#     selected_seats = booking_data.get('selected_seats')
-#     total_amount = booking_data.get('total_amount')
-#
-#     print(f"DEBUG: Extracted schedule_id: {schedule_id}")
-#     print(f"DEBUG: Extracted selected_seats: {selected_seats}")
-#     print(f"DEBUG: Extracted total_amount: {total_amount}")
-#
-#     # Dummy user info for testing (since login is commented out)
-#     user_id = 'guest_user_id_for_test'
-#     user_email = 'guest@example.com'
-#
-#     # Prepare context to pass to the HTML template
-#     context = {
-#         'user_id': user_id,
-#         'user_email': user_email,
-#         'schedule_id': schedule_id,
-#         'selected_seats': selected_seats,
-#         'total_amount': total_amount,  # Convert float back to Decimal for template
-#     }
-#
-#     print("--- payment_page_view END (Render) ---")
-#     return render(request, 'payment.html', context)
-#     # schedule_id = request.POST.get('schedule_id')
-#     # selected_seats = request.POST.get('selected_seats')
-#     # total_amount = request.POST.get('total_amount')
-#     # context = {
-#     #     # 'user_id': user_id,
-#     #     # 'user_email': user_email,
-#     #     'schedule_id': schedule_id,
-#     #     'selected_seats': selected_seats,
-#     #     'total_amount': total_amount, # Convert back to Decimal for precise display in template if needed
-#     # }
-#     # return render(request, 'payment.html', context)
+#     except Booking.DoesNotExist:
+#         messages.error(request, "Booking not found or you do not have permission to view it.")
+#         return redirect('home') # Redirect to home if booking not found
+#     except Ticket.DoesNotExist:
+#         messages.error(request, "Ticket details missing for this booking.")
+#         return redirect('home') # Handle missing ticket gracefully
+#     except Exception as e:
+#         messages.error(request, "An error occurred while loading your booking confirmation.")
+#         print(f"Error loading booking confirmation: {e}")
+#         return redirect('home')
 
 
 
-def user_login(request):
-    if request.user.is_authenticated:
-        return render(request, 'home.html')
-    else:
-        return render(request, 'signin.html')
+
+
+
+
+# old function
+# def process_payment(request):
+#     if request.method == 'POST':
+#         schedule_id = request.POST.get('schedule_id')
+#         selected_seats_str = request.POST.get('selected_seats')
+#         total_price_str = request.POST.get('total_price')
+#         payment_method_value = request.POST.get('payment_method')
+#
+#         try:
+#             # Retrieve the Schedule object, ensuring del_flag is 0 (not deleted)
+#             selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
+#             current_user = request.user
+#
+#             total_price_decimal = Decimal(total_price_str)
+#             number_of_seats = len(selected_seats_str.split(',')) if selected_seats_str else 0
+#
+#             # Map the payment_method value from form to the choices defined in Payment model
+#             payment_method_code = ''
+#             if payment_method_value == 'kpay':
+#                 payment_method_code = 'KP'
+#             elif payment_method_value == 'wave_money':
+#                 payment_method_code = 'WP'
+#             # elif payment_method_value == 'credit_card':
+#             #     # Assuming 'CC' is a valid choice in your PAYMENT_METHODS if used
+#             #     payment_method_code = 'CC'
+#
+#             booking = Booking.objects.create(
+#                 schedule=selected_bus_schedule,
+#                 customer=current_user,
+#                 seat_numbers=selected_seats_str,
+#             )
+#
+#             ticket = Ticket.objects.create(
+#                 booking=booking,
+#                 total_seat=number_of_seats,
+#                 total_amount=total_price_decimal,
+#             )
+#
+#             if payment_method_code:
+#                 Payment.objects.create(
+#                     ticket=ticket,
+#                     payment_method=payment_method_code,
+#                 )
+#             else:
+#                 print("Warning: Payment method not recognized or missing.")
+#
+#             return redirect('process_payment', booking_id=booking.id)
+#
+#         except Schedule.DoesNotExist:
+#             error_message = "Selected bus schedule not found or is no longer available."
+#             print(f"Error: {error_message}")
+#             return render(request, 'error.html', {'message': error_message})
+#         except User.DoesNotExist:
+#             error_message = "User not logged in or invalid user. Please log in to complete booking."
+#             print(f"Error: {error_message}")
+#             return render(request, 'error.html', {'message': error_message})
+#         except ValueError as e:
+#             error_message = f"Invalid data format received (e.g., price): {e}"
+#             print(f"Error: {error_message}")
+#             return render(request, 'error.html', {'message': error_message})
+#         except Exception as e:
+#             error_message = f"An unexpected error occurred during booking: {e}"
+#             print(f"Error: {error_message}")
+#             return render(request, 'error.html', {'message': "Booking failed due to an internal error. Please try again."})
+#     else:
+#         # This part handles the initial GET request to display the payment.html page
+#         schedule_id = request.GET.get('schedule_id')
+#         if not schedule_id:
+#             return redirect('seat_selection')
+#
+#         # Retrieve the schedule for GET request, also checking del_flag
+#         try:
+#             selected_bus_schedule = Schedule.objects.get(id=schedule_id, del_flag=0)
+#         except Schedule.DoesNotExist:
+#             return render(request, 'error.html', {'message': 'The selected bus schedule is unavailable.'})
+#
+#         selected_seats = request.GET.get('selected_seats')
+#         if not selected_seats:
+#             return redirect('seat_selection')
+#
+#         number_of_seats = len(selected_seats.split(','))
+#         total_price = Decimal(number_of_seats) * selected_bus_schedule.price
+#
+#         context = {
+#             'selected_bus': selected_bus_schedule,
+#             'bus_name': selected_bus_schedule.bus.license_no,
+#             'departure_date': selected_bus_schedule.date,
+#             'departure_time': selected_bus_schedule.time,
+#             'origin': selected_bus_schedule.route.origin,
+#             'destination': selected_bus_schedule.route.destination,
+#             'selected_seats': selected_seats,
+#             'number_of_seats': number_of_seats,
+#             'total_price': total_price
+#         }
+#         return render(request, 'payment.html', context)
+
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = CustomUserAuthenticationForm(request=request, data=request.POST)
+#
+#         if form.is_valid():
+#             user = form.get_user()
+#
+#             if user is not None:
+#                 # FIX: Explicitly specify the custom authentication backend for login
+#                 login(request, user, backend='myapp.backends.MyCustomAuthBackend')
+#                 messages.success(request, 'You have been logged in successfully!')
+#
+#                 # --- NEW LOGIC: Check for the 'next' parameter ---
+#                 next_url = request.GET.get('next')
+#                 if next_url:
+#                     # If 'next' exists, redirect the user back to that URL
+#                     return redirect(next_url)
+#                 # --- END NEW LOGIC ---
+#
+#                 if isinstance(user, Admin):
+#                     return redirect('admin_dashboard')
+#                 else:
+#                     return redirect('logined_user')
+#             else:
+#                 messages.error(request, 'Invalid email or password. Please try again.')
+#     else:
+#         form = CustomUserAuthenticationForm(request=request)
+#
+#     return render(request, 'login.html', {'form': form})
 
 
 
@@ -379,169 +627,33 @@ def home(request):
     bookings = Bus.objects.all()
     return render(request,'base.html',{'bookings':bookings})
 
+@login_required # Add this decorator to protect the view
+def profile_page(request):
+    # Pass the authenticated user object to the template context
+    # return render(request, 'profile_page.html', {'user': request.user})
+    user = request.user
 
-#
-#
-# @login_required(login_url='signin')
-# def bookings(request):
-#     context = {}
-#     if request.method == 'POST':
-#         id_r = request.POST.get('bus_id')
-#         seats_r = int(request.POST.get('no_seats'))
-#         bus = Bus.objects.get(id=id_r)
-#         if bus:
-#             if bus.rem > int(seats_r):
-#                 seat_numbers = [str(i) for i in range(int(bus.nos) - int(bus.rem) + 1, int(bus.nos) - int(bus.rem) + seats_r + 1)]
-#                 seat_numbers_str = ', '.join(seat_numbers)
-#                 name_r = bus.bus_name
-#                 cost = int(seats_r) * bus.price
-#                 source_r = bus.source
-#                 dest_r = bus.dest
-#                 nos_r = Decimal(bus.nos)
-#                 price_r = bus.price
-#                 date_r = bus.date
-#                 time_r = bus.time
-#                 username_r = request.user.username
-#                 email_r = request.user.email
-#                 userid_r = request.user.id
-#                 rem_r = bus.rem - seats_r
-#                 Bus.objects.filter(id=id_r).update(rem=rem_r)
-#                 book = Book.objects.create(name=username_r, email=email_r, userid=userid_r, bus_name=name_r,
-#                                            source=source_r, busid=id_r,
-#                                            dest=dest_r, price=price_r, nos=seats_r, date=date_r, time=time_r,
-#                                            status='BOOKED',seat_numbers=seat_numbers_str)
-#                 print('------------book id-----------', book.id)
-#                 # book.save()
-#                 return render(request, 'bookings.html', locals())
-#             else:
-#                 context["error"] = "Sorry select fewer number of seats"
-#                 return render(request, 'findbus.html', context)
-#
-#     else:
-#         return render(request, 'findbus.html')
-# def booking_confirmation(request, booking_id):
-#     booking = Book.objects.get(id=booking_id)
-#     return render(request, 'confirmation.html', {'book': booking})
-#
-#
-#
-# @login_required(login_url='signin')
-# def cancellings(request):
-#     context = {}
-#     if request.method == 'POST':
-#         id_r = request.POST.get('bus_id')
-#         seats_r = int(request.POST.get('no_seats'))
-#
-#         try:
-#             book = Book.objects.get(id=id_r)
-#             bus = Bus.objects.get(id=book.busid)
-#             rem_r = bus.rem + book.nos
-#             Bus.objects.filter(id=book.busid).update(rem=rem_r)
-#             #nos_r = book.nos - seats_r
-#             Book.objects.filter(id=id_r).update(status='CANCELLED')
-#             Book.objects.filter(id=id_r).update(nos=0)
-#             messages.success(request, "Booked Bus has been cancelled successfully.")
-#             return redirect(seebookings)
-#         except Book.DoesNotExist:
-#             context["error"] = "Sorry You have not booked that bus"
-#             return render(request, 'error.html', context)
-#     else:
-#         return render(request, 'findbus.html')
-#
-# def payment_process(request, booking_id):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         email = request.POST.get('email')
-#         card_number = request.POST.get('card_number')
-#         expiry_date = request.POST.get('expiry_date')
-#         cvv = request.POST.get('cvv')
-#         insurance = request.POST.get('insurance', 'no')
-#
-#         # Validate the fields (You can add more sophisticated validation as needed)
-#         if not (name and email and card_number and expiry_date and cvv):
-#             messages.error(request, "All fields are mandatory.")
-#             return render(request, 'payment.html', {'total_amount': total_amount, 'booking_id': booking_id})
-#
-#
-#         return redirect('payment_success', booking_id=booking_id)
-#
-#     # If GET request, just render the payment page
-#     return render(request, 'payment.html', {'total_amount': total_amount, 'booking_id': booking_id})
-#
-#
-#
-# @login_required(login_url='signin')
-# def seebookings(request,new={}):
-#     context = {}
-#     id_r = request.user.id
-#     book_list = Book.objects.filter(userid=id_r)
-#     if book_list:
-#         return render(request, 'booklist.html', locals())
-#     else:
-#         context["error"] = "Sorry no buses booked"
-#         return render(request, 'findbus.html', context)
-#
-#
-def signup(request):
-    context = {}
     if request.method == 'POST':
-        name_r = request.POST.get('name')
-        email_r = request.POST.get('email')
-        password_r = request.POST.get('password')
-        nrc_r = request.POST.get('nrc')
-        address_r = request.POST.get('address')
-        phone_no_r = request.POST.get('phone_no')
-
-        # Check if the username already exists
-        if User.objects.filter(name=name_r).exists():
-            context["error"] = "Username already exists, please choose another one."
-            return render(request, 'signup.html', context)
-
-        # Check if the email already exists
-        if User.objects.filter(email=email_r).exists():
-            context["error"] = "Email is already registered, please choose another one."
-            return render(request, 'signup.html', context)
-        if nrc_r and User.objects.filter(nrc=nrc_r).exists():
-            context['error'] = "NRC already exists."
-            return render(request, 'signup.html', context)
-
-        try:
-            user = User.objects.create(
-                name=name_r,
-                email=email_r,
-                password=make_password(password_r),
-                nrc=nrc_r,
-                address=address_r,
-                phone_no=phone_no_r
-            )
-            if user:
-                login(request, user)
-                return render(request, 'thank.html')
-        except IntegrityError:
-            context["error"] = "An error occurred. Please try again."
-            return render(request, 'signup.html', context)
-
-    return render(request, 'signup.html', context)
-
-def signin(request):
-    context = {}
-    if request.method == 'POST':
-        name_r = request.POST.get('name')
-        password_r = request.POST.get('password')
-        user = authenticate(request, username=name_r, password=password_r)
-        if user:
-            login(request, user)
-            # username = request.session['username']
-            context["user"] = name_r
-            context["id"] = request.user.id
-            return render(request, 'success.html', context)
-            # return HttpResponseRedirect('success')
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            user.refresh_from_db()
+            messages.success(request, 'Your profile has been updated successfully!')
+            # --- IMPORTANT CHANGE HERE: Re-render the page instead of redirecting ---
+            return redirect('/')
         else:
-            context["error"] = "Provide valid credentials"
-            return render(request, 'signin.html', context)
+            print("\n--- FORM ERRORS ---")  # Keep this for debugging if issues persist
+            print(form.errors)
+            print("--- END FORM ERRORS ---\n")
+            messages.error(request, 'There was an error updating your profile. Please correct the errors below.')
+            return render(request, 'profile_page.html', {'form': form})
+            # messages.error(request, 'There was an error updating your profile. Please correct the errors below.')
     else:
-        context["error"] = "You are not logged in"
-        return render(request, 'signin.html', context)
+        form = CustomUserChangeForm(instance=user)
+
+    return render(request, 'profile_page.html', {'form': form})
+
+
 
 # custom user register form by sdwp
 def user_registration(request):

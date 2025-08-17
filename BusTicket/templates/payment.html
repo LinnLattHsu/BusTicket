@@ -102,6 +102,7 @@
     </style>
 </head>
 <body class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
+
 <div class="row">
 <div class="col-12">
     <div class="container mt-4">
@@ -136,7 +137,9 @@
             </div>
         </div>
     </div>
-<div class="col-12 mt-5">
+    <form action="{% url 'booking_confirmation' %}" method="post">
+        {% csrf_token %}
+        <div class="col-12 mt-5">
 <div class="container-md ticket-container">
     <!-- Ticket Header -->
     <div class="ticket-header">
@@ -150,6 +153,10 @@
             <div class="ticket-section">
                 <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-info-circle me-3 text-primary"></i> Booking Details</h3>
                 <div class="space-y-2 text-dark">
+                    <div class="ticket-info-item">
+                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-user me-2 text-success"></i>Customer Name:</span>
+                        <span>{{ user_name }}</span>
+                    </div>
                     <div class="ticket-info-item">
                         <span class="fw-medium d-flex align-items-center"><i class="fas fa-bus me-2 text-success"></i>Bus:</span>
                         <span>{{ bus_name }}</span>
@@ -199,17 +206,6 @@
             </div>
         </div>
 
-        <div class="col-12">
-            <div class="card shadow-sm p-4 border-dashed border-2 border-primary-subtle">
-                <h3 class="h4 fw-bold text-dark mb-4 text-center d-flex align-items-center justify-content-center"><i class="fas fa-credit-card me-3 text-primary"></i> Payment Details</h3>
-
-                <form method="post" action="{% url 'process_payment' %}">
-                    {% csrf_token %}
-            <!-- Hidden fields MUST be inside the form to be submitted -->
-                    <input type="hidden" name="schedule_id" value="{{ selected_bus.id }}">
-                    <input type="hidden" name="selected_seats" value="{{ selected_seats }}">
-                    <input type="hidden" name="total_price" value="{{ total_price }}">
-
         <!-- Payment Method Selection -->
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Choose Payment Method:</label>
@@ -243,14 +239,15 @@
                         <i class="fas fa-lock me-2"></i> Confirm & Pay
                     </button>
 
-                </form>
-
     </div>
     <!-- Decorative punches for ticket tear-off effect (hidden on small screens) -->
     <div class="d-none d-md-block ticket-punch"></div>
     <div class="d-none d-md-block ticket-punch ticket-punch-right"></div>
 </div>
-</div>
+            </div>
+    </form>
+
+
 </div>
 
 <!-- Bootstrap JS CDN (Bundle includes Popper) -->
