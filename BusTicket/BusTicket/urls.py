@@ -29,18 +29,22 @@ urlpatterns = [
     path('search/',views.search_routes, name='search_routes'),
     path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),
     path('select-seats/<int:schedule_id>/submit/', views.submit_seats, name='submit_seats'),
+    # payment and booking by LLS
     # URL to handle the payment form submission
-    path('process-payment/<int:schedule_id>/',views.process_payment,name='process_payment'),
+    # path('process-payment/<int:schedule_id>/',views.process_payment,name='process_payment'),
     # URL pattern for the booking confirmation page
-    path('booking-confirmation/', views.booking_confirmation, name='booking_confirmation'),
+    # path('booking-confirmation/', views.booking_confirmation, name='booking_confirmation'),
 
-    # path('home', views.home, name="home"),
-    # path('about_us',views.about_us,name="about_us"),
-    # path('login/', views.user_login, name="login"),
-    # path('signup/', views.signup, name="signup"),
-    # path('signin/', views.signin, name="signin"),
-    path('bookings/',views.bookings,name='bookings'),
+    # path('bookings/',views.bookings,name='bookings'),
     path('profile_page/',views.profile_page,name='profile_page'),
+
+
+    # payment and booking process by sdwp
+    path('process-payment/<int:user_id>/', views.process_payment, name='process_payment'),
+    path('booking-confirmation/<int:booking_id>/', views.booking_confirmation, name='booking_confirmation'),
+
+
+
 
     # sdwp
     path('register/',views.user_registration,name='register'),
@@ -85,4 +89,8 @@ urlpatterns = [
     path('admindashboard/schedule_home/add_new_schedule/',views.add_schedule,name='schedule_add'),
     path('admindashboard/schedule_home/<int:schedule_id>/update/',views.update_schedule,name='schedule_update'),
     path('admindashboard/schedule_home/<int:schedule_id>/delete/',views.delete_schedule,name='schedule_delete'),
+
+    path('admindashboard/bookings/', views.booking_list, name='booking_list'),
+    path('admindashboard/bookings/create/', views.booking_create, name='booking_create'),
+    path('admindashboard/history/', views.history_view, name="history"),
 ]

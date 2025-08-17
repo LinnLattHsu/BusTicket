@@ -137,86 +137,78 @@
             </div>
         </div>
     </div>
-    <form action="{% url 'booking_confirmation' %}" method="post">
+    <form action="{% url 'process_payment' user_id=user_id %}" method="post">
+
         {% csrf_token %}
+
+        <input type="hidden" name="schedule_id" value="{{ selected_bus.id }}">
+        <input type="hidden" name="selected_seats" value="{{ selected_seats }}">
+        <input type="hidden" name="total_price" value="{{ total_price }}">
         <div class="col-12 mt-5">
-<div class="container-md ticket-container">
-    <!-- Ticket Header -->
-    <div class="ticket-header">
-        <i class="fas fa-ticket-alt me-3"></i> {{selected_bus.bus.operator.operator_name}} Express
-    </div>
-
-    <!-- Main Ticket Body -->
-    <div class="ticket-body row g-4">
-        <!-- Booking Details Section -->
-        <div class="col-12 col-md-6">
-            <div class="ticket-section">
-                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-info-circle me-3 text-primary"></i> Booking Details</h3>
-                <div class="space-y-2 text-dark">
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-user me-2 text-success"></i>Customer Name:</span>
-                        <span>{{ user_name }}</span>
-                    </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-bus me-2 text-success"></i>Bus:</span>
-                        <span>{{ bus_name }}</span>
-                    </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-calendar-alt me-2 text-info"></i>Date:</span>
-                        <span>{{ departure_date }}</span>
-                    </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-clock me-2 text-secondary"></i>Time:</span>
-                        <span>{{ departure_time }}</span>
-                    </div>
+            <div class="container-md ticket-container">
+                <div class="ticket-header">
+                    <i class="fas fa-ticket-alt me-3"></i> {{selected_bus.bus.operator.operator_name}} Express
                 </div>
-            </div>
-        </div>
 
-        <!-- Route & Seat Section -->
-        <div class="col-12 col-md-6">
-            <div class="ticket-section">
-                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-route me-3 text-danger"></i> Route & Seats</h3>
-                <div class="space-y-2 text-dark">
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>From:</span>
-                        <span>{{ origin }}</span>
+                <div class="ticket-body row g-4">
+                    <div class="col-12 col-md-6">
+                        <div class="ticket-section">
+                            <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-info-circle me-3 text-primary"></i> Booking Details</h3>
+                            <div class="space-y-2 text-dark">
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-user me-2 text-success"></i>Customer Name:</span>
+                                    <span>{{ user_name }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-bus me-2 text-success"></i>Bus:</span>
+                                    <span>{{ bus_name }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-calendar-alt me-2 text-info"></i>Date:</span>
+                                    <span>{{ departure_date }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-clock me-2 text-secondary"></i>Time:</span>
+                                    <span>{{ departure_time }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>To:</span>
-                        <span>{{ destination }}</span>
-                    </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-chair me-2 text-warning"></i>Seats:</span>
-                        <span>{{ selected_seats }}</span>
-                    </div>
-                    <div class="ticket-info-item">
-                        <span class="fw-medium d-flex align-items-center"><i class="fas fa-users me-2 text-info"></i>Qty:</span>
-                        <span>{{ number_of_seats }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Total Price Section (full width) -->
-        <div class="col-12">
-            <div class="ticket-section text-center">
-                <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center justify-content-center"><i class="fas fa-dollar-sign me-3 text-success"></i> Total Price</h3>
-                <span class="display-5 fw-bold text-success">{{ total_price }} Ks</span>
-            </div>
-        </div>
+                    <div class="col-12 col-md-6">
+                        <div class="ticket-section">
+                            <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center"><i class="fas fa-route me-3 text-danger"></i> Route & Seats</h3>
+                            <div class="space-y-2 text-dark">
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>From:</span>
+                                    <span>{{ origin }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-map-marker-alt me-2 text-muted"></i>To:</span>
+                                    <span>{{ destination }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-chair me-2 text-warning"></i>Seats:</span>
+                                    <span>{{ selected_seats }}</span>
+                                </div>
+                                <div class="ticket-info-item">
+                                    <span class="fw-medium d-flex align-items-center"><i class="fas fa-users me-2 text-info"></i>Qty:</span>
+                                    <span>{{ number_of_seats }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Payment Method Selection -->
+                    <div class="col-12">
+                        <div class="ticket-section text-center">
+                            <h3 class="h5 fw-bold text-dark mb-4 d-flex align-items-center justify-content-center"><i class="fas fa-dollar-sign me-3 text-success"></i> Total Price</h3>
+                            <span class="display-5 fw-bold text-success">{{ total_price }} Ks</span>
+                        </div>
+                    </div>
+
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Choose Payment Method:</label>
                         <div class="d-flex flex-column gap-3">
-<!--                            <div class="form-check">-->
-<!--                                <input class="form-check-input" type="radio" name="payment_method" id="paymentCreditCard" value="credit_card" checked>-->
-<!--                                <label class="form-check-label d-flex align-items-center" for="paymentCreditCard">-->
-<!--                                    <i class="fas fa-credit-card fa-2x text-primary me-2"></i>-->
-<!--                                    <span class="payment-option-label">Credit / Debit Card</span>-->
-<!--                                </label>-->
-<!--                            </div>-->
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="payment_method" id="paymentKpay" value="kpay">
                                 <label class="form-check-label d-flex align-items-center" for="paymentKpay">
@@ -239,13 +231,13 @@
                         <i class="fas fa-lock me-2"></i> Confirm & Pay
                     </button>
 
-    </div>
-    <!-- Decorative punches for ticket tear-off effect (hidden on small screens) -->
-    <div class="d-none d-md-block ticket-punch"></div>
-    <div class="d-none d-md-block ticket-punch ticket-punch-right"></div>
-</div>
+                </div>
+                <div class="d-none d-md-block ticket-punch"></div>
+                <div class="d-none d-md-block ticket-punch ticket-punch-right"></div>
             </div>
+        </div>
     </form>
+
 
 
 </div>

@@ -133,24 +133,6 @@ class Seat_Status(models.Model):
     def __str__(self):
         return f"{self.schedule.id} - {self.seat_no} ({self.seat_status})"
 
-# class User(models.Model):
-#     user_id = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=30)
-#     email = models.EmailField(unique=True)
-#     password = models.CharField(max_length=30)
-#     nrc = models.CharField(max_length=30,unique=True,null=True)
-#     address = models.CharField(max_length=100,default='')
-#     phone_no = models.CharField(max_length=11,null=True)
-#     del_flag = models.IntegerField(default=0)
-#     created_date = models.DateTimeField(auto_now_add=True)
-#     updated_date = models.DateTimeField(auto_now=True)
-#
-#
-#     class Meta:
-#         verbose_name_plural = "Users"
-#
-#     def __str__(self):
-#         return self.name
 
 class Booking(models.Model):
     schedule = models.ForeignKey(Schedule,on_delete=models.CASCADE)
