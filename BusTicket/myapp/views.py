@@ -472,17 +472,30 @@ def process_payment(request, user_id):
         return redirect('home')
 
     schedule_id = request.POST.get('schedule_id')
-    selected_seats_str = request.POST.get('selected_seats')
+    selected_seats_str = request.POST.get('selected_seats', '')
     total_price_str = request.POST.get('total_price')
     payment_method_value = request.POST.get('payment_method')
+    # selected_seats_list = selected_seats_str.split(',')
+
+    # Add this print statement to see what you are receiving from the form
+    print("Received selected_seats_str:", selected_seats_str)
+
+    # Use a more robust way to split and clean the list
+    # .strip() removes any leading/trailing whitespace from each seat number
+    selected_seats_list = [seat.strip() for seat in selected_seats_str.split(',') if seat.strip()]
+
+    # Check if the list of selected seats is empty after cleaning
+    if not selected_seats_list:
+        messages.error(request, "Please select at least one seat.")
+        return redirect('select_seats', schedule_id=schedule_id)
 
     print(schedule_id)
     print(selected_seats_str)
     print(total_price_str)
     print(payment_method_value)
 
-    for seat_no in selected_seats_str:
-        print(seat_no)
+    # for seat_no in selected_seats_str:
+    #     print(seat_no)
 
 
     if not all([schedule_id, selected_seats_str, total_price_str, payment_method_value]):
@@ -499,7 +512,6 @@ def process_payment(request, user_id):
 
         with transaction.atomic():
             selected_bus_schedule = get_object_or_404(Schedule.objects.select_for_update(), id=schedule_id)
-            selected_seats_list = selected_seats_str.split(',')
 
             # The code from here on is the same as your original code
             booking = Booking.objects.create(
@@ -508,7 +520,7 @@ def process_payment(request, user_id):
                 seat_numbers=selected_seats_str,
             )
 
-            for seat_no in selected_seats_str:
+            for seat_no in selected_seats_list:
                 seat_status_obj = get_object_or_404(
                     Seat_Status.objects.select_for_update(),
                     schedule=selected_bus_schedule,
@@ -1252,26 +1264,75 @@ def schedule_home(request):
     # Render the schedule_home template with the context
     return render(request, 'admin/schedule_home.html', context)
 
+# def add_schedule(request):
+#     if request.method == 'POST':
+#         schedule_form = ScheduleForm(request.POST)
+#         if schedule_form.is_valid():
+#             print("Form is valid! Saving schedule...")
+#             new_schedule = schedule_form.save()
+#             bus = new_schedule.bus
+#             seat_capacity = bus.seat_capacity
+#             for seat_no in range(1, seat_capacity + 1):
+#                 Seat_Status.objects.create(
+#                     schedule=new_schedule,
+#                     seat_no=f"{seat_no:02d}"
+#
+#                 )
+#             return redirect('schedule_home')
+#         else:
+#             # This is the key change to debug the issue
+#             print("Form is NOT valid! Errors:", schedule_form.errors)
+#     else:
+#         schedule_form = ScheduleForm()
+#     return render(request, 'admin/schedule_add_form.html', {'form': schedule_form})
+
 def add_schedule(request):
+    """
+    Handles the form submission for adding a new bus schedule and automatically
+    generates alphanumeric seat statuses based on the bus's seat capacity.
+    """
     if request.method == 'POST':
         schedule_form = ScheduleForm(request.POST)
         if schedule_form.is_valid():
             print("Form is valid! Saving schedule...")
             new_schedule = schedule_form.save()
+
+            # Retrieve the bus object from the new schedule to get the seat capacity.
             bus = new_schedule.bus
             seat_capacity = bus.seat_capacity
-            for seat_no in range(1, seat_capacity + 1):
+
+            # Loop through the total number of seats to create a seat for each one.
+            # Using i starting from 0, to simplify calculations.
+            for i in range(seat_capacity):
+                # Calculate the row letter based on a 3-seat-per-row layout.
+                # Integer division `//` gives us the row index (0 for 'A', 1 for 'B', etc.).
+                row_letter = chr(ord('A') + i // 3)
+
+                # Calculate the seat number within the row using the modulo operator.
+                # `i % 3` gives us 0, 1, or 2, so we add 1 to get seat numbers 1, 2, or 3.
+                seat_number_in_row = (i % 3) + 1
+
+                # Combine the letter and number to create the final seat name.
+                seat_name = f"{row_letter}{seat_number_in_row}"
+                # print(seat_name)
+
+                # Create the Seat_Status object for the new schedule.
+                # is_available is set to True by default for new seats.
                 Seat_Status.objects.create(
                     schedule=new_schedule,
-                    seat_no=f"{seat_no:02d}"
-
+                    seat_no=seat_name
                 )
+
+            # Redirect to a success page after creating the schedule and seats.
             return redirect('schedule_home')
         else:
-            # This is the key change to debug the issue
+            # Print form errors for debugging if the form is not valid.
             print("Form is NOT valid! Errors:", schedule_form.errors)
     else:
+        # For a GET request, create a blank form instance.
         schedule_form = ScheduleForm()
+
+    # Render the form template.
     return render(request, 'admin/schedule_add_form.html', {'form': schedule_form})
 
 def update_schedule(request,schedule_id):

@@ -49,8 +49,8 @@
 
     <div class="d-flex justify-content-between position-relative z-1">
         <div class="d-flex flex-column align-items-center">
-            <div class="rounded-circle bg-primary text-white font-weight-bold shadow-sm d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">1</div>
-            <div class="text-sm mt-2 text-primary text-center">Seat Selection</div>
+            <div class="rounded-circle bg-secondary text-white font-weight-bold shadow-sm d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">1</div>
+            <div class="text-sm mt-2 text-secondary text-center">Seat Selection</div>
         </div>
 
 
@@ -61,8 +61,8 @@
         </div>
 
         <div class="d-flex flex-column align-items-center">
-            <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">3</div>
-            <div class="text-sm mt-2 text-secondary text-center">Confirm</div>
+            <div class="rounded-circle bg-primary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">3</div>
+            <div class="text-sm mt-2 text-primary text-center">Confirm</div>
         </div>
     </div>
 </div>
@@ -80,47 +80,47 @@
             <div class="text-start mb-4">
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Booking Reference:</span>
-                    <span class="fw-bold text-primary">{{ booking_ref }}</span>
+                    <span class="fw-bold text-primary">{{ booking.id }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Customer Name:</span>
-                    <span>{{ user_name }}</span>
+                    <span>{{ user.name }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Bus:</span>
-                    <span>{{ bus_name }}</span>
+                    <span>{{ bus.operator.operator_name }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">From:</span>
-                    <span>{{ origin }}</span>
+                    <span>{{ route.origin }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">To:</span>
-                    <span>{{ destination }}</span>
+                    <span>{{ route.destination }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Date:</span>
-                    <span>{{ departure_date }}</span>
+                    <span>{{ schedule.date }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Time:</span>
-                    <span>{{ departure_time }}</span>
+                    <span>{{ schedule.time }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Seats:</span>
-                    <span>{{ selected_seats }} (Qty: {{ number_of_seats }})</span>
+                    <span>{{ booking.seat_numbers }} (Qty: {{ ticket.total_seat }})</span>
                 </div>
-                <div class="detail-item">
-                    <span class="fw-medium text-dark">Payment Method:</span>
-                    <span>{{ payment_method }}</span>
-                </div>
+<!--                <div class="detail-item">-->
+<!--                    <span class="fw-medium text-dark">Payment Method:</span>-->
+<!--                    <span>{{ payment_method }}</span>-->
+<!--                </div>-->
                 <div class="detail-item">
                     <span class="fw-medium text-dark">Total Price:</span>
-                    <span class="fw-bold text-success">{{ total_price }} Ks</span>
+                    <span class="fw-bold text-success">{{ ticket.total_amount }} Ks</span>
                 </div>
             </div>
 
-            <p class="text-muted small">You will receive an email confirmation shortly.</p>
+            <p class="text-muted small">Thank you for your booking. Have a pleasant trip!</p>
             <a href="/" class="btn btn-primary mt-4">Go to Home</a>
         </div>
     </div>

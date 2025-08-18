@@ -102,7 +102,6 @@ class Route(models.Model):
 
     def __str__(self):
         return f"{self.origin} -> {self.destination}"
-
 class Schedule(models.Model):
     bus = models.ForeignKey(Bus,on_delete=models.CASCADE)
     route = models.ForeignKey(Route,on_delete=models.CASCADE)
@@ -132,6 +131,7 @@ class Seat_Status(models.Model):
         unique_together = ('schedule','seat_no')
     def __str__(self):
         return f"{self.schedule.id} - {self.seat_no} ({self.seat_status})"
+
 
 
 class Booking(models.Model):
