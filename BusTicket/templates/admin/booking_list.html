@@ -80,7 +80,7 @@
                         {% for booking in bookings %}
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 border">{{ booking.customer.name }}</td>
-                                <td class="px-6 py-4 border">{{ booking.seat_number }}</td>
+                                <td class="px-6 py-4 border">{{ booking.seat_numbers }}</td>
                                 <td class="px-6 py-4 border">
                                     {{ booking.schedule.route }} - {{ booking.schedule.date }} {{ booking.schedule.time }}
                                 </td>

@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from django.db.models import Q
+from django.db.models import Q, Count
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render
@@ -16,7 +16,8 @@ from .models import Schedule, Booking, Ticket  # Assuming Bus, Route are already
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Seat_Status,Payment
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Payment
+from .models import Seat_Status
 from django.urls import reverse
 # from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
@@ -527,9 +528,9 @@ def process_payment(request, user_id):
                     seat_no=seat_no,
                     seat_status='Available'
                 )
-            seat_status_obj.seat_status = 'Unavailable'
-            seat_status_obj.booking = booking
-            seat_status_obj.save()
+                seat_status_obj.seat_status = 'Unavailable'
+                seat_status_obj.booking = booking
+                seat_status_obj.save()
 
             ticket = Ticket.objects.create(
                 booking=booking,
@@ -1020,15 +1021,34 @@ def admin_dashboard(request):
     no_of_bookings = Booking.objects.all().count()
     no_of_tickets = Ticket.objects.all().count()
 
-    return render(request,'admin/dashboard.html',{
-        'no_of_users' : no_of_users,
-        'no_of_buses' : no_of_buses,
-        'no_of_routes' : no_of_routes,
-        'no_of_operators' : no_of_operators,
-        'no_of_schedules' : no_of_schedules,
-        'no_of_bookings' : no_of_bookings,
-        'no_of_tickets' : no_of_tickets
+    bus_query = request.GET.get('bus_number', '')
+    route_query = request.GET.get('route', '')
+    selected_schedule = None
+    seat_status_list = []
 
+    if bus_query and route_query:
+        try:
+            selected_schedule = Schedule.objects.get(
+                Q(bus__license_no__iexact=bus_query) &
+                (Q(route__origin__iexact=route_query) | Q(route__destination__iexact=route_query))
+            )
+            seat_status_list = Seat_Status.objects.filter(schedule=selected_schedule).order_by('seat_no')
+        except Schedule.DoesNotExist:
+            selected_schedule = None
+            seat_status_list = []
+
+    return render(request, 'admin/dashboard.html', {
+        'no_of_users': no_of_users,
+        'no_of_buses': no_of_buses,
+        'no_of_routes': no_of_routes,
+        'no_of_operators': no_of_operators,
+        'no_of_schedules': no_of_schedules,
+        'no_of_bookings': no_of_bookings,
+        'no_of_tickets': no_of_tickets,
+        'bus_query': bus_query,
+        'route_query': route_query,
+        'selected_schedule': selected_schedule,
+        'seat_status_list': seat_status_list
     })
 
 def user_home(request):
@@ -1233,12 +1253,47 @@ def delete_bus(request,bus_id):
 
 
 # Admin Schedule Section
+# def schedule_home(request):
+#
+#     date_query = request.GET.get('date', '')
+#     route_query = request.GET.get('route', '')
+#
+#     schedules = Schedule.objects.all()
+#
+#     if date_query:
+#         schedules = schedules.filter(date__icontains=date_query)
+#
+#     if route_query:
+#         schedules = schedules.filter(
+#             Q(route__origin__icontains=route_query) | Q(route__destination__icontains=route_query)
+#         )
+#
+#     schedules = schedules.order_by('-updated_date')
+#
+#     buses = Bus.objects.all()
+#     routes = Route.objects.all()
+#
+#     context = {
+#         'schedules': schedules,
+#         'buses': buses,
+#         'routes': routes,
+#         'date_query': date_query,
+#         'route_query': route_query,
+#     }
+#
+#     # Render the schedule_home template with the context
+#     return render(request, 'admin/schedule_home.html', context)
+
 def schedule_home(request):
 
     date_query = request.GET.get('date', '')
     route_query = request.GET.get('route', '')
 
-    schedules = Schedule.objects.all()
+    # Annotate the queryset to include the available seats count
+    # This counts all related Seat_Status objects that have the status 'Available'.
+    schedules = Schedule.objects.annotate(
+        available_seats_count=Count('seat_status', filter=Q(seat_status__seat_status='Available'))
+    )
 
     if date_query:
         schedules = schedules.filter(date__icontains=date_query)
