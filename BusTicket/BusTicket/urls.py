@@ -37,7 +37,8 @@ urlpatterns = [
 
     # path('bookings/',views.bookings,name='bookings'),
     path('profile_page/',views.profile_page,name='profile_page'),
-
+    # path('seebookings/<int:booking_id>/',views.seebookings,name='seebookings'),
+    re_path(r'^seebookings/(?P<booking_id>\d+)?/?$', views.seebookings, name='seebookings'),
 
     # payment and booking process by sdwp
     path('process-payment/<int:user_id>/', views.process_payment, name='process_payment'),

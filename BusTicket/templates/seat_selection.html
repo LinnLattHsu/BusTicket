@@ -6,6 +6,77 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2JvI+n4l3G22Nq5I5hQ2bX/zJ+rI/g8b5o5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        .navbar {
+    background-color: #007bff !important;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
             .stepper {
         display: flex;
         align-items: center;
@@ -134,6 +205,84 @@
 </head>
 <body class="bg-light min-vh-100 font-sans">
 {% block content%}
+<!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+                    {% if request.user.is_authenticated %}
+                    <a class="nav-item nav-link" href="">
+                        <i class="fas fa-list"></i> See Bookings
+                    </a>
+<!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    <div class="profile-circle ms-2 me-2">-->
+<!--                        <span>{{ user.name|default:'U'|first|upper }}</span>-->
+<!--                    </div>-->
+                    <div class="profile-dropdown-container">
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
+<!--                            <i class="fas fa-user"></i>-->
+
+                        </div>
+                        <div class="profile-dropdown-menu" id="profileDropdown">
+                            <a href="{% url 'profile_page' %}">Your Profile</a>
+                            <a href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+        <a class="nav-item nav-link" href="{% url 'register' %}">
+            <i class="fas fa-user-plus"></i> Signup
+        </a>
+    {% endif %}
+<!--                   this is yin wai lwin parts-->
+<!--                    {% if not request.user.is_authenticated %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
+<!--                        </a>-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-user-plus"></i> Signup-->
+<!--                        </a>-->
+<!--                    {% else %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                        </a>-->
+<!--                    {% endif %}-->
+
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
+<!--                    {% if request.user.is_active %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    {% else %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-user-plus"></i> Registration-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
+                </div>
+            </div>
+        </div>
+    </nav>
     <div class="container mt-4">
         <div class="bg-white p-4 p-md-5 rounded-lg shadow">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Booking Progress</h2>
@@ -337,8 +486,8 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center py-2 text-lg font-weight-bold text-gray-800 border-top border-secondary pt-4">
                         <span>Total Ticket Price</span>
-<!--                        <span>MMK <span id="totalTicketPrice">{{total_price}}</span></span>-->
-                         <input type="hidden" name="total_amount_data" id="totalTicketPrice" value="{{ total_price }}">
+                        <span>MMK <span id="totalTicketPrice">{{total_price}}</span></span>
+                         <input type="hidden" name="total_amount_data" value="{{ total_price }}">
 
                     </div>
                     <div class="mt-4 p-4 bg-primary-subtle rounded-lg text-primary text-sm">
