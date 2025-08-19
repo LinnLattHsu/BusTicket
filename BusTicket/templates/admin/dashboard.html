@@ -265,7 +265,7 @@
                 <div class="w-16 h-16 flex items-center justify-center rounded-lg shadow-lg text-white font-bold text-xl
                     {% if seat.seat_status == 'Available' %}
                         bg-green-500
-                    {% elif seat.seat_status == 'Booked' %}
+                    {% elif seat.seat_status == 'Unavailable' %}
                         bg-red-500
                     {% else %}
                         bg-gray-400

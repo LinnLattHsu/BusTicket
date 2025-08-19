@@ -1133,9 +1133,48 @@ def admin_dashboard(request):
         'seat_status_list': seat_status_list
     })
 
+
 def user_home(request):
-    users = User.objects.all().order_by('name')
-    return render(request,'admin/user_home.html',{'users' : users})
+    """
+    View function to display the list of users with filtering capabilities.
+
+    GET parameters:
+    - name (optional): Filters users by name (case-insensitive search).
+    - status (optional): Filters users by their status ('active' or 'deleted').
+    """
+    # Start with the base queryset for all users
+    users = User.objects.all()
+
+    # Get the filter parameters from the request
+    name_query = request.GET.get('name')
+    status_query = request.GET.get('status')
+
+    # Apply filters conditionally
+    if name_query:
+        # Use Q objects for more complex or combined queries if needed,
+        # or simply filter by a single field.
+        # This will filter based on both first_name and last_name or just name field
+        users = users.filter(name__icontains=name_query)
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            users = users.filter(del_flag=0)
+        elif status_query == 'deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            users = users.filter(del_flag__gt=0)
+
+    # Sort the users for a consistent display
+    users = users.order_by('user_id')
+
+    # Prepare the context to pass to the template
+    users = {
+        'users': users
+    }
+
+    # Render the user_home.html template with the filtered user list
+    return render(request, 'admin/user_home.html', users)
+
 
 def soft_delete_user(request,user_id):
     user_info = User.objects.get(user_id=user_id)
