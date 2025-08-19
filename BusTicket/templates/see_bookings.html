@@ -37,14 +37,14 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                    <a class="nav-item nav-link" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
                     <a class="nav-item nav-link" href=""> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
+                    <a class="nav-item nav-link active" href="{% url 'seebookings' %}">
                         <i class="fas fa-list"></i> See Bookings
                     </a>
 <!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
@@ -175,7 +175,7 @@
                                  <div class="bg-light p-3 border rounded">
                                     <p class="mb-2 text-muted small">Scan to verify</p>
                                     {# Using QR server for dynamic QR codes based on booking ID #}
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ booking.id }}&size=150x150" alt="QR Code" class="img-fluid" style="max-width: 150px;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ booking.customer.name }}, {{ booking.schedule.route.origin }}, {{ booking.schedule.route.destination }}, {{ booking.schedule.date }}, {{ booking.schedule.time }}&size=150x150" alt="QR Code" class="img-fluid" style="max-width: 150px;">
                                  </div>
                             </div>
                             <div class="col-12 col-md-6 d-flex align-items-center justify-content-center flex-column">
