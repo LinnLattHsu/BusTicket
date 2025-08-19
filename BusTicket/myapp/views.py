@@ -1135,13 +1135,7 @@ def admin_dashboard(request):
 
 
 def user_home(request):
-    """
-    View function to display the list of users with filtering capabilities.
 
-    GET parameters:
-    - name (optional): Filters users by name (case-insensitive search).
-    - status (optional): Filters users by their status ('active' or 'deleted').
-    """
     # Start with the base queryset for all users
     users = User.objects.all()
 
@@ -1149,7 +1143,6 @@ def user_home(request):
     name_query = request.GET.get('name')
     status_query = request.GET.get('status')
 
-    # Apply filters conditionally
     if name_query:
         # Use Q objects for more complex or combined queries if needed,
         # or simply filter by a single field.
@@ -1623,7 +1616,6 @@ def history_list(request):
         'schedule__route'
     ).all()
 
-    # Get filter parameters from the request's GET query string
     origin = request.GET.get('origin')
     destination = request.GET.get('destination')
     operator_name = request.GET.get('operator_name')
@@ -1631,15 +1623,10 @@ def history_list(request):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
 
-    # Initialize a Q object for building the filter query
     filter_query = Q()
 
-    # Get the current date and time
     now = timezone.now()
 
-    # CRITICAL: Filter to only show past bookings.
-    # A booking is in the past if its scheduled date is before today,
-    # OR if the scheduled date is today but the scheduled time is in the past.
     filter_query &= Q(schedule__date__lt=now.date()) | \
                     (Q(schedule__date=now.date()) & Q(schedule__time__lt=now.time()))
 
@@ -1666,11 +1653,9 @@ def history_list(request):
     # Order the results from most recent to oldest booked time
     history_items = history_items.order_by('-booked_time')
 
-    # Prepare the context dictionary to pass to the template
     context = {
         'history': history_items,
         'request': request
     }
 
-    # Render the history list HTML page
     return render(request, 'admin/history.html', context)
