@@ -68,42 +68,46 @@ def search_routes(request):
     # Always provide dropdown lists
     origins = Route.objects.values_list('origin', flat=True).distinct()
     destinations = Route.objects.values_list('destination', flat=True).distinct()
+    operators = Operator.objects.filter(del_flag=0).order_by("operator_name")
 
-    context = {'origins': origins, 'destinations': destinations}
+    context = {
+        'origins': origins,
+        'destinations': destinations,
+        'operators': operators,
+    }
 
-    # Accept both GET and POST (GET useful for header quick-search)
+    # Accept both GET and POST
     data = request.GET if request.method == 'GET' and request.GET else request.POST
 
     if data:
         origin_r = data.get('origin', '').strip()
         dest_r = data.get('destination', '').strip()
-        # allow either 'date' (base) or 'departure_date' (header)
         date_r = data.get('date') or data.get('departure_date')
         number_of_seats = data.get('number_of_seats')
+        bus_type = data.get('bus_type')
+        operator_name = data.get('operator_name')  # ✅ fixed
 
-
-        # If the form came from header and used 'to' param, support that:
         if not dest_r and data.get('to'):
             dest_r = data.get('to').strip()
 
-        # Save selected values for repopulating form
         context.update({
-            'data':data,
+            'data': data,
             'selected_origin': origin_r,
             'selected_destination': dest_r,
             'selected_date': date_r,
-            'number_of_seats':number_of_seats,
+            'number_of_seats': number_of_seats,
+            'selected_bus_type': bus_type,
+            'selected_operator': operator_name,
         })
 
-        # Validate required fields
         if not (origin_r and dest_r and date_r):
-            context.update({'error': 'Please enter origin, destination and date.', 'data': data})
+            context.update({'error': 'Please enter origin, destination and date.'})
             return render(request, 'base.html', context)
 
         try:
             date_obj = datetime.strptime(date_r, "%Y-%m-%d").date()
         except ValueError:
-            context.update({'error': 'Invalid date format.', 'data': data})
+            context.update({'error': 'Invalid date format.'})
             return render(request, 'base.html', context)
 
         schedules = Schedule.objects.filter(
@@ -114,22 +118,31 @@ def search_routes(request):
             route__del_flag=0,
             bus__del_flag=0
         )
+        # Apply bus type filter
+        if bus_type:
+            schedules = schedules.filter(bus__bus_type__iexact=bus_type)
+
+        # Apply operator filter
+        if operator_name:
+            schedules = schedules.filter(bus__operator__operator_name__iexact=operator_name)
 
         if schedules.exists():
             return render(request, 'available_routes.html', {
                 'schedules': schedules,
-                'origins':origins,
-                'destinations':destinations,
-                'selected_origin':origin_r,
-                'selected_destination':dest_r,
-                'selected_date':date_r,
-                'selected_seat':number_of_seats,
+                'origins': origins,
+                'destinations': destinations,
+                'operators': operators,  # ✅ added
+                'selected_origin': origin_r,
+                'selected_destination': dest_r,
+                'selected_date': date_r,
+                'selected_seat': number_of_seats,
+                'selected_bus_type': bus_type,
+                'selected_operator': operator_name,
             })
         else:
-            context.update({'error': 'No available Bus Schedule for entered Route and Date', 'data': data})
-            return render(request, 'base.html', {'context':context})
+            context.update({'error': 'No available Bus Schedule for entered Route and Date'})
+            return render(request, 'base.html', context)
 
-    # GET with no query params -> show base form (empty)
     return render(request, 'base.html', context)
 
 def seat_selection(request,schedule_id):

@@ -28,9 +28,11 @@
       background-size: cover;
       background-position: center;
       color: #fff;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
   }
 .navbar {
-    background-color: #007bff !important;
+    background-color: rgb(30, 58, 138) !important;
 }
 
 .navbar-nav {
@@ -101,49 +103,118 @@
     display: block;
 }
   .search-card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            color: black;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-        .badge-new {
-            background-color: red;
-            color: white;
-            font-size: 0.7rem;
-            padding: 3px 5px;
-            border-radius: 3px;
-            margin-left: 5px;
-        }
-        .search-now-btn {
-            background-color: #d80000;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            color: white;
-            border-radius: 5px;
-        }
-        .seat-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .seat-control button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-      width: 32px;
-      height: 32px;
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        border-radius: 15px; /* More rounded corners */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+        padding: 30px;
+        transition: transform 0.3s ease-in-out;
     }
 
-    .search-btn{
-        width: 100px;
-        height: 30px;
-        background: skyblue;
+    .search-card:hover {
+        transform: translateY(-5px); /* Slight lift on hover */
+    }
+
+    h1 {
+        color: #2c3e50; /* Darker text for headings */
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .lead {
+        color: #555;
+        font-size: 1.15rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #444; /* Slightly darker labels */
+    }
+
+    .form-control {
+        border: 1px solid #ced4da; /* Default Bootstrap border */
+        border-radius: 8px !important; /* Apply rounded corners to inputs */
+        padding: 10px 15px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+
+    .glass-input {
+        background-color: rgba(255, 255, 255, 0.7); /* Lighter background for glass effect */
+        backdrop-filter: blur(5px); /* Apply blur for glass effect */
+    }
+
+    .stylish-border {
+        border: 1px solid #b0c4de; /* A slightly more pronounced but still soft border */
+    }
+
+    .seat-control {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .seat-control .form-control {
+        flex-grow: 1;
+        max-width: 80px; /* Limit width of seat input */
+        text-align: center;
+    }
+
+    .seat-control .btn {
+        border-radius: 8px; /* Rounded buttons */
+        font-size: 1.2rem;
+        padding: 5px 15px;
+        background-color: #f8f9fa; /* Light button background */
+        border-color: #ced4da;
+        color: #495057;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .seat-control .btn:hover {
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
+        color: #212529;
+    }
+
+    .search-btn {
+        width: 100%;
+        padding: 12px 20px;
+        background: linear-gradient(45deg, #007bff, #0056b3); /* Gradient button */
+        color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px; /* Rounded button */
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
     }
 
+    .search-btn:hover {
+        background: linear-gradient(45deg, #0056b3, #007bff); /* Reverse gradient on hover */
+        box-shadow: 0 7px 20px rgba(0, 123, 255, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .search-card {
+            margin-top: 30px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .lead {
+            text-align: center;
+            font-size: 1rem;
+        }
+    }
   footer {
     background-color: rgba(0, 123, 255, 0.4); /* More transparency */
     color: #fff;
@@ -402,7 +473,7 @@ footer {
         <div class="container">
             <a class="navbar-brand" href="{% url 'home'%}">
                 <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
-                    style="height:50px;width:50px;">
+                    style="height:50px;width:50px;border-radius:10px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -492,61 +563,58 @@ footer {
 
     <!-- Main Content -->
     {% block content %}
-
-    <div class="container text-center mt-5">
-
-
+    <div class="container py-5">
     <div class="row justify-content-center align-items-center mt-4">
-        <div class="col-md-6">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center text-center">
             <h1>Get Bus Tickets Across Myanmar</h1>
-            <p class="lead">Fast and easy—book in just 3 minutes!</p>
+            <p class="lead">Fast and easy—book in just 3 minutes! 🚌</p>
         </div>
         <div class="col-md-6">
             <div class="search-card text-start">
-                <h4>Book Your Ticket Now</h4>
-<!--                <div>origins length: {{ origins|length }}</div>-->
+                <h4 class="mb-4 text-center" style="color: #444;">Book Your Ticket Now</h4>
 
                 <form method="get" action="{% url 'search_routes' %}">
                     <input type="hidden" name="source" value="home">
+
                     <!-- From (dropdown filled by context_processor -> origins) -->
-                        <div class="mb-3">
-                            <label for="origin" class="form-label text-black">From</label>
-                            <select name="origin" id="origin" class="form-control rounded-0 glass-input stylish-border" required>
-                                <option value="">-- Select --</option>
-                                {% for origin in origins %}
-                                    <option value="{{ origin }}"
-                                        {% if data.origin == origin or request.GET.origin == origin %}
-                                            selected
-                                        {% endif %}>
-                                        {{ origin }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Destination (dropdown filled by context_processor -> destinations) -->
-                        <div class="mb-3">
-                            <label for="destination" class="form-label text-black">To</label>
-                            <select name="destination" id="destination" class="form-control rounded-0 glass-input stylish-border" required>
-                                <option value="">-- Select --</option>
-                                {% for destination in destinations %}
-                                    <option value="{{ destination }}" {% if data.destination == destination or request.GET.to == destination %}selected{% endif %}>{{ destination }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Date -->
-                        <div class="mb-3">
-                            <label for="date" class="form-label text-black">Date</label>
-                            <input name="date" id="date" class="form-control rounded-0 glass-input stylish-border" type="date" min="{% now 'Y-m-d' %}"
-                                   value="{% if data.date %}{{ data.date }}{% elif request.GET.departure_date %}{{ request.GET.departure_date }}{% endif %}" required>
-                        </div>
-
                     <div class="mb-3">
-                        <label>Seats</label>
-                        <div class="seat-control">
+                        <label for="origin" class="form-label">From</label>
+                        <select name="origin" id="origin" class="form-control glass-input stylish-border" required>
+                            <option value="">-- Select --</option>
+                            {% for origin in origins %}
+                                <option value="{{ origin }}"
+                                    {% if data.origin == origin or request.GET.origin == origin %}
+                                        selected
+                                    {% endif %}>
+                                    {{ origin }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Destination (dropdown filled by context_processor -> destinations) -->
+                    <div class="mb-3">
+                        <label for="destination" class="form-label">To</label>
+                        <select name="destination" id="destination" class="form-control glass-input stylish-border" required>
+                            <option value="">-- Select --</option>
+                            {% for destination in destinations %}
+                                <option value="{{ destination }}" {% if data.destination == destination or request.GET.to == destination %}selected{% endif %}>{{ destination }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input name="date" id="date" class="form-control glass-input stylish-border" type="date" min="{% now 'Y-m-d' %}"
+                               value="{% if data.date %}{{ data.date }}{% elif request.GET.departure_date %}{{ request.GET.departure_date }}{% endif %}" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Seats</label>
+                        <div class="input-group seat-control">
                             <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
-                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">
+                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control text-center">
                             <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
                         </div>
                     </div>
@@ -554,11 +622,76 @@ footer {
                     <button type="submit" class="search-btn">Search Now</button>
 
                 </form>
-
-
             </div>
         </div>
     </div>
+</div>
+<!--    <div class="container text-center mt-5">-->
+
+
+<!--    <div class="row justify-content-center align-items-center mt-4">-->
+<!--        <div class="col-md-6">-->
+<!--            <h1>Get Bus Tickets Across Myanmar</h1>-->
+<!--            <p class="lead">Fast and easy—book in just 3 minutes!</p>-->
+<!--        </div>-->
+<!--        <div class="col-md-6">-->
+<!--            <div class="search-card text-start">-->
+<!--                <h4>Book Your Ticket Now</h4>-->
+<!--&lt;!&ndash;                <div>origins length: {{ origins|length }}</div>&ndash;&gt;-->
+
+<!--                <form method="get" action="{% url 'search_routes' %}">-->
+<!--                    <input type="hidden" name="source" value="home">-->
+<!--                    &lt;!&ndash; From (dropdown filled by context_processor -> origins) &ndash;&gt;-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="origin" class="form-label text-black">From</label>-->
+<!--                            <select name="origin" id="origin" class="form-control rounded-0 glass-input stylish-border" required>-->
+<!--                                <option value="">&#45;&#45; Select &#45;&#45;</option>-->
+<!--                                {% for origin in origins %}-->
+<!--                                    <option value="{{ origin }}"-->
+<!--                                        {% if data.origin == origin or request.GET.origin == origin %}-->
+<!--                                            selected-->
+<!--                                        {% endif %}>-->
+<!--                                        {{ origin }}-->
+<!--                                    </option>-->
+<!--                                {% endfor %}-->
+<!--                            </select>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Destination (dropdown filled by context_processor -> destinations) &ndash;&gt;-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="destination" class="form-label text-black">To</label>-->
+<!--                            <select name="destination" id="destination" class="form-control rounded-0 glass-input stylish-border" required>-->
+<!--                                <option value="">&#45;&#45; Select &#45;&#45;</option>-->
+<!--                                {% for destination in destinations %}-->
+<!--                                    <option value="{{ destination }}" {% if data.destination == destination or request.GET.to == destination %}selected{% endif %}>{{ destination }}</option>-->
+<!--                                {% endfor %}-->
+<!--                            </select>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Date &ndash;&gt;-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="date" class="form-label text-black">Date</label>-->
+<!--                            <input name="date" id="date" class="form-control rounded-0 glass-input stylish-border" type="date" min="{% now 'Y-m-d' %}"-->
+<!--                                   value="{% if data.date %}{{ data.date }}{% elif request.GET.departure_date %}{{ request.GET.departure_date }}{% endif %}" required>-->
+<!--                        </div>-->
+
+<!--                    <div class="mb-3">-->
+<!--                        <label>Seats</label>-->
+<!--                        <div class="seat-control">-->
+<!--                            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>-->
+<!--                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">-->
+<!--                            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <button type="submit" class="search-btn">Search Now</button>-->
+
+<!--                </form>-->
+
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 {% endblock %}
 
