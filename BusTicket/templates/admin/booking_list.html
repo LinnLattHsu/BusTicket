@@ -22,6 +22,45 @@
             border-radius: 4px;
             border: 2px solid #1e293b;
         }
+
+        /* Styling for the date input fields */
+        input[type="date"] {
+            /* Basic styling to match other inputs */
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition-property: all;
+            transition-duration: 200ms;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Style the date input when it's focused */
+        input[type="date"]:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+
+        /* Styling for other text input fields to match date inputs */
+        input[type="text"] {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition-property: all;
+            transition-duration: 200ms;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Style the text inputs when they are focused */
+        input[type="text"]:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen">
@@ -44,12 +83,12 @@
                 <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="{% url 'booking_list' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="{% url 'history' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
-                <li><a href="/logout" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
+                <li><a href="{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
             </ul>
         </div>
     </aside>
 
-    <!-- Main -->
+    <!-- Main Content Area -->
     <div class="flex-grow p-4 md:p-6 overflow-y-auto md:ml-64">
         <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
             <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
@@ -57,21 +96,82 @@
 
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Bookings</h1>
-<!--            <a href=""-->
-<!--               class="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 shadow-md">-->
-<!--                <ion-icon name="add-circle-outline" class="mr-2"></ion-icon> New Booking-->
-<!--            </a>-->
         </div>
 
+        <!-- Filter Form -->
+        <form method="get" action="{% url 'booking_list' %}">
+            <div class="bg-gray-50 rounded-2xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-4">Search & Filter Bookings</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <!-- Origin Input -->
+                    <div>
+                        <label for="origin" class="block text-sm font-medium text-gray-700 mb-1">Origin</label>
+                        <input type="text" id="origin" name="origin" value="{{ request.GET.origin }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+
+                    <!-- Destination Input -->
+                    <div>
+                        <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                        <input type="text" id="destination" name="destination" value="{{ request.GET.destination }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+
+                    <!-- Operator Input -->
+                    <div>
+                        <label for="operator_name" class="block text-sm font-medium text-gray-700 mb-1">Operator</label>
+                        <input type="text" id="operator_name" name="operator_name" value="{{ request.GET.operator_name }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+
+                    <!-- License No Input -->
+                    <div>
+                        <label for="license" class="block text-sm font-medium text-gray-700 mb-1">License NO</label>
+                        <input type="text" id="license" name="license" value="{{ request.GET.license }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+
+                    <!-- From Date Input -->
+                    <div>
+                        <label for="from_date" class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                        <input type="date" id="from_date" name="from_date" value="{{ request.GET.from_date }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+
+                    <!-- To Date Input -->
+                    <div>
+                        <label for="to_date" class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                        <input type="date" id="to_date" name="to_date" value="{{ request.GET.to_date }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <ion-icon name="filter-outline" class="mr-2"></ion-icon> Filter
+                    </button>
+                    <a href="{% url 'booking_list' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reset
+                    </a>
+                    <button type="button" onclick="exportTableToCSV()" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <ion-icon name="download-outline" class="mr-2"></ion-icon> Export
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Booking List Table -->
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Booking List</h2>
-
             <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200">
+                <table id="booking_table" class="min-w-full border border-gray-200">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Customer</th>
                             <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Seat</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">License No</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Operator</th>
                             <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Schedule</th>
                             <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Booked Time</th>
                         </tr>
@@ -81,6 +181,8 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 border">{{ booking.customer.name }}</td>
                                 <td class="px-6 py-4 border">{{ booking.seat_numbers }}</td>
+                                <td class="px-6 py-4 border">{{ booking.schedule.bus.license_no }}</td>
+                                <td class="px-6 py-4 border">{{ booking.schedule.bus.operator.operator_name }}</td>
                                 <td class="px-6 py-4 border">
                                     {{ booking.schedule.route }} - {{ booking.schedule.date }} {{ booking.schedule.time }}
                                 </td>
@@ -88,7 +190,7 @@
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">No bookings available.</td>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">No bookings available.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -106,6 +208,49 @@
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
         });
+
+        // Function to export table data to a CSV file
+        function exportTableToCSV() {
+            // Get the current date and time
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            // Create a formatted date-time string
+            const dateTimeString = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+
+            // Create the new filename
+            const filename = `booking_list_${dateTimeString}.csv`;
+
+            const table = document.getElementById('booking_table');
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = [], cols = rows[i].querySelectorAll('td, th');
+
+                for (let j = 0; j < cols.length; j++) {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ');
+                    data = data.replace(/"/g, '""');
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(','));
+            }
+
+            // Download CSV file
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
     </script>
 </body>
 </html>

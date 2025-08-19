@@ -6,10 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="995a9b6f-5d5c-49be-b3a4-f0cf6d7ed2b8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BusTicket/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/BusTicket/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqllite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqllite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myapp/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/myapp/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myapp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/myapp/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/admin/booking_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/booking_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/bus_add_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/bus_add_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/bus_home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/bus_home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/bus_update.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/bus_update.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/history.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/history.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/operator_add_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/operator_add_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/operator_home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/operator_home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/operator_update.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/operator_update.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/route_add_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/route_add_form.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

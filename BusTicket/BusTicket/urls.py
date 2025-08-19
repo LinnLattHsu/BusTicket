@@ -92,6 +92,6 @@ urlpatterns = [
     path('admindashboard/schedule_home/<int:schedule_id>/delete/',views.delete_schedule,name='schedule_delete'),
 
     path('admindashboard/bookings/', views.booking_list, name='booking_list'),
-    path('admindashboard/bookings/create/', views.booking_create, name='booking_create'),
-    path('admindashboard/history/', views.history_view, name="history"),
+    # path('admindashboard/bookings/create/', views.booking_create, name='booking_create'),
+    path('admindashboard/history/', views.history_list, name="history"),
 ]

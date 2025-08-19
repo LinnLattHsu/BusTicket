@@ -1,5 +1,5 @@
 from cProfile import label
-
+import datetime
 from django import forms
 from django.contrib.auth import (
     authenticate,
@@ -69,6 +69,13 @@ class BusForm(forms.ModelForm):
 
 # for schedule form
 class ScheduleForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get today's date in 'YYYY-MM-DD' format
+        today_date = datetime.date.today().isoformat()
+        # Add the 'min' attribute to the date field's widget
+        self.fields['date'].widget.attrs['min'] = today_date
+
     class Meta:
         model = Schedule
         fields = ['bus', 'route', 'date', 'time', 'price']

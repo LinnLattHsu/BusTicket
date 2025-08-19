@@ -1498,37 +1498,140 @@ def delete_schedule(request,schedule_id):
     return redirect('schedule_home')
 
 # for booking admindashboard
-
 def booking_list(request):
-    bookings = Booking.objects.all().order_by('-booked_time')
-    return render(request, 'admin/booking_list.html', {'bookings': bookings})
 
-def booking_create(request):
-    if request.method == "POST":
-        schedule_id = request.POST.get("schedule_id")
-        customer_id = request.POST.get("customer_id")
-        seat_number = request.POST.get("seat_number")
+    bookings = Booking.objects.select_related(
+        'customer',
+        'schedule__bus__operator',
+        'schedule__route'
+    ).all()
 
-        schedule = get_object_or_404(Schedule, id=schedule_id)
-        customer = get_object_or_404(User, id=customer_id)
+    origin = request.GET.get('origin')
+    destination = request.GET.get('destination')
+    operator_name = request.GET.get('operator_name')
+    license_no = request.GET.get('license')
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
 
-        Booking.objects.create(
-            schedule=schedule,
-            customer=customer,
-            seat_number=seat_number,
-            booked_time=timezone.now()
-        )
-        return redirect("booking_list")
+    filter_query = Q()
 
-    schedules = Schedule.objects.all()
-    customers = User.objects.all()
-    return render(request, "admin/booking_form.html", {
-        "schedules": schedules,
-        "customers": customers
-    })
+    now = timezone.now()
+
+    filter_query &= Q(schedule__date__gt=now.date()) | \
+                    (Q(schedule__date=now.date()) & Q(schedule__time__gte=now.time()))
+
+    if origin:
+        filter_query &= Q(schedule__route__origin__icontains=origin)
+
+    if destination:
+        filter_query &= Q(schedule__route__destination__icontains=destination)
+
+    if operator_name:
+        filter_query &= Q(schedule__bus__operator__operator_name__icontains=operator_name)
+
+    if license_no:
+        filter_query &= Q(schedule__bus__license_no__icontains=license_no)
+
+    if from_date and to_date:
+        filter_query &= Q(booked_time__date__range=[from_date, to_date])
+
+    bookings = bookings.filter(filter_query)
+
+    bookings = bookings.order_by('-booked_time')
+
+    context = {
+        'bookings': bookings,
+        'request': request
+    }
+
+    return render(request, 'admin/booking_list.html', context)
+
+# def booking_create(request):
+#     if request.method == "POST":
+#         schedule_id = request.POST.get("schedule_id")
+#         customer_id = request.POST.get("customer_id")
+#         seat_number = request.POST.get("seat_number")
+#
+#         schedule = get_object_or_404(Schedule, id=schedule_id)
+#         customer = get_object_or_404(User, id=customer_id)
+#
+#         Booking.objects.create(
+#             schedule=schedule,
+#             customer=customer,
+#             seat_number=seat_number,
+#             booked_time=timezone.now()
+#         )
+#         return redirect("booking_list")
+#
+#     schedules = Schedule.objects.all()
+#     customers = User.objects.all()
+#     return render(request, "admin/booking_form.html", {
+#         "schedules": schedules,
+#         "customers": customers
+#     })
 
 # for history admindashboard
-def history_view(request):
-    history_records = Booking.objects.all().order_by('-booked_time')
-    # change field as needed
-    return render(request, "admin/history.html", {"history_records": history_records})
+# def history_view(request):
+#     history_records = Booking.objects.all().order_by('-booked_time')
+#     # change field as needed
+#     return render(request, "admin/history.html", {"history_records": history_records})
+
+def history_list(request):
+
+    bookings = Booking.objects.select_related(
+        'customer',
+        'schedule__bus__operator',
+        'schedule__route'
+    ).all()
+
+    # Get filter parameters from the request's GET query string
+    origin = request.GET.get('origin')
+    destination = request.GET.get('destination')
+    operator_name = request.GET.get('operator_name')
+    license_no = request.GET.get('license')
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    # Initialize a Q object for building the filter query
+    filter_query = Q()
+
+    # Get the current date and time
+    now = timezone.now()
+
+    # CRITICAL: Filter to only show past bookings.
+    # A booking is in the past if its scheduled date is before today,
+    # OR if the scheduled date is today but the scheduled time is in the past.
+    filter_query &= Q(schedule__date__lt=now.date()) | \
+                    (Q(schedule__date=now.date()) & Q(schedule__time__lt=now.time()))
+
+    # Apply additional filters based on user input from the form
+    if origin:
+        filter_query &= Q(schedule__route__origin__icontains=origin)
+
+    if destination:
+        filter_query &= Q(schedule__route__destination__icontains=destination)
+
+    if operator_name:
+        filter_query &= Q(schedule__bus__operator__operator_name__icontains=operator_name)
+
+    if license_no:
+        filter_query &= Q(schedule__bus__license_no__icontains=license_no)
+
+    if from_date and to_date:
+        # Filter by the booked time date range, if provided
+        filter_query &= Q(booked_time__date__range=[from_date, to_date])
+
+    # Apply all filters to the bookings queryset
+    history_items = bookings.filter(filter_query)
+
+    # Order the results from most recent to oldest booked time
+    history_items = history_items.order_by('-booked_time')
+
+    # Prepare the context dictionary to pass to the template
+    context = {
+        'history': history_items,
+        'request': request
+    }
+
+    # Render the history list HTML page
+    return render(request, 'admin/history.html', context)
