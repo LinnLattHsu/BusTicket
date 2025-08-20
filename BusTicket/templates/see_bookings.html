@@ -19,17 +19,130 @@
     <link rel="icon"
         href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
 
+    <style>
+
+        .navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+        .ticket-card{
+      border-radius: 1rem;
+     }
+    .ticket-card .card-header{
+      background-image: linear-gradient(to right, #2196f3, #0d47a1); /* Blue gradient */
+      border-top-left-radius: 1rem; /* Match the ticket-card's border-radius */
+    border-top-right-radius: 1rem;
+    }
+    @media print {
+        body * {
+            visibility: hidden; /* Hide everything by default */
+        }
+        .ticket-container {
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            overflow: hidden;
+        }
+        .ticket-card, .ticket-card * {
+            visibility: visible; /* Show only the ticket card and its contents */
+        }
+        .ticket-card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: auto;
+            border: 1px solid #000; /* Add a border for printout */
+            box-shadow: none !important; /* Remove shadow for printing */
+        }
+
+        .card-footer {
+            display: none !important; /* Hide back and print buttons when printing */
+        }
+        /* Ensure text is black for printing */
+        .ticket-card p, .ticket-card h3, .ticket-card h4, .ticket-card h5 {
+            color: #000 !important;
+        }
+    }
+    </style>
 
 </head>
 <body>
 
-{% block content %}
 <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home'%}">
                 <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
-                    style="height:50px;width:50px;">
+                    style="height:50px;width:50px;border-radius:10px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,14 +150,14 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="{% url 'home' %}">
+                    <a class="nav-item nav-link active" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
                     <a class="nav-item nav-link" href=""> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link active" href="{% url 'seebookings' %}">
+                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
                         <i class="fas fa-list"></i> See Bookings
                     </a>
 <!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
@@ -102,6 +215,7 @@
             </div>
         </div>
     </nav>
+
 <div class="container mt-5">
     {# Check if a single booking object is passed, implying a detailed view #}
     {% if booking %}
@@ -244,293 +358,30 @@
     {% endif %}
 </div>
 
-{# --- Styles for printing the ticket --- #}
-<style>
-  .navbar {
-    background-color: #007bff !important;
-}
 
-.navbar-nav {
-    align-items: center;
-}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
-.nav-link {
-    color: white;
-}
-
-.nav-link:hover {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.profile-dropdown-container {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.profile-circle {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    color: #007bff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-    border: 2px solid #007bff;
-}
-.profile-circle i{
-    font-size: 1.25rem;
-}
-
-.profile-circle:hover {
-    transform: scale(1.05);
-}
-
-.profile-dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background-color: #fff;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.profile-dropdown-menu a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.profile-dropdown-menu a:hover {
-    background-color: #f1f1f1;
-}
-
-.show {
-    display: block;
-}
-    .ticket-card{
-      border-radius: 1rem;
-     }
-    .ticket-card .card-header{
-      background-image: linear-gradient(to right, #2196f3, #0d47a1); /* Blue gradient */
-      border-top-left-radius: 1rem; /* Match the ticket-card's border-radius */
-    border-top-right-radius: 1rem;
+<script>
+    // Toggle the profile dropdown menu
+    function toggleDropdown() {
+        document.getElementById("profileDropdown").classList.toggle("show");
     }
-    @media print {
-        body * {
-            visibility: hidden; /* Hide everything by default */
-        }
-        .ticket-container {
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1.5rem; /* More rounded corners */
-            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15); /* Stronger shadow */
-            overflow: hidden;
-        }
-        .ticket-card, .ticket-card * {
-            visibility: visible; /* Show only the ticket card and its contents */
-        }
-        .ticket-card {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: auto;
-            border: 1px solid #000; /* Add a border for printout */
-            box-shadow: none !important; /* Remove shadow for printing */
-        }
 
-        .card-footer {
-            display: none !important; /* Hide back and print buttons when printing */
-        }
-        /* Ensure text is black for printing */
-        .ticket-card p, .ticket-card h3, .ticket-card h4, .ticket-card h5 {
-            color: #000 !important;
+    // Close the dropdown if the user clicks anywhere else
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile-circle') && !event.target.matches('.profile-circle span')) {
+            var dropdowns = document.getElementsByClassName("profile-dropdown-menu");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
         }
     }
-</style>
-{% endblock %}
-
-
-<!--<div class="container mt-5">-->
-<!--    {# Check if a single booking object is passed, implying a detailed view #}-->
-<!--    {% if booking %}-->
-<!--        &lt;!&ndash; -&#45;&#45; Detailed Ticket View (Responsive) -&#45;&#45; &ndash;&gt;-->
-<!--        <div class="row justify-content-center">-->
-<!--            <div class="col-12 col-md-8 col-lg-7"> {# Full width on small, 8-col on medium, 7-col on large #}-->
-<!--                <div class="card ticket-card rounded-0 shadow-lg"> {# Added shadow for better visual #}-->
-<!--                    <div class="card-header bg-primary text-white text-center rounded-0 py-3">-->
-<!--                        <h4 class="mb-0 fs-4 fw-bold">Bus Ticket</h4>-->
-<!--                    </div>-->
-<!--                    <div class="card-body text-black p-4"> {# Increased padding #}-->
-<!--                        <div class="row mb-4">-->
-<!--                            <div class="col-12 text-center">-->
-<!--                                <h5 class="text-uppercase fw-bolder fs-5 text-info">{{ booking.schedule.bus_operator.name }}</h5>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                        {# Route and Date - Responsive two-column layout #}-->
-<!--                        <div class="row text-center my-4 border-bottom pb-3"> {# Separator #}-->
-<!--                            <div class="col-12 col-md-6 mb-3 mb-md-0">-->
-<!--                                <p class="mb-0 text-muted small">From</p>-->
-<!--                                <h3 class="fw-bold fs-3">{{ booking.schedule.route.origin }}</h3>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6">-->
-<!--                                <p class="mb-0 text-muted small">To</p>-->
-<!--                                <h3 class="fw-bold fs-3">{{ booking.schedule.route.destination }}</h3>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                        {# Details Table - Responsive two-column layout with consistent spacing #}-->
-<!--                        <div class="row my-4">-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Travel Date</p>-->
-<!--                                <p class="text-secondary">{{ booking.schedule.date|date:"F d, Y" }}</p>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Departure Time</p>-->
-<!--                                <p class="text-secondary">{{ booking.schedule.time|time:"h:i A" }}</p>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Passenger Name</p>-->
-<!--                                <p class="text-secondary">{{ booking.customer.name }}</p>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Total Seats</p>-->
-<!--                                <p class="text-secondary">{{ booking.seat_numbers }}</p> {# booking.seat_numbers is on the Booking model directly #}-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Total Price</p>-->
-<!--                                <p class="text-secondary">{{ booking.ticket.total_amount }}</p>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Booking ID</p>-->
-<!--                                <p class="text-secondary">{{ booking.id }}</p>-->
-<!--                            </div>-->
-<!--                             <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Payment Method</p>-->
-<!--                                <p class="text-secondary">{{ booking.ticket.payment.get_payment_method_display }}</p>-->
-<!--                            </div>-->
-<!--                             <div class="col-12 col-md-6 mb-3">-->
-<!--                                <p class="mb-0 fw-bold">Booking Date</p>-->
-<!--                                <p class="text-secondary">{{ booking.booked_time|date:"F d, Y H:i" }}</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                        <hr class="my-4">-->
-
-<!--                        {# QR Code and Status - Centered and responsive #}-->
-<!--                        <div class="row text-center align-items-center">-->
-<!--                            <div class="col-12 col-md-6 mb-4 mb-md-0">-->
-<!--                                 <div class="bg-light p-3 border rounded">-->
-<!--                                    <p class="mb-2 text-muted small">Scan to verify</p>-->
-<!--                                    {# Using QR server for dynamic QR codes based on booking ID #}-->
-<!--                                    <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ booking.id }}&size=150x150" alt="QR Code" class="img-fluid" style="max-width: 150px;">-->
-<!--                                 </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-12 col-md-6 d-flex align-items-center justify-content-center flex-column">-->
-<!--                                <p class="mb-1 fw-bold fs-6">Status</p>-->
-<!--                                <span class="badge bg-success fs-4 py-2 px-3 rounded-pill">Confirmed</span> {# Larger, rounded badge #}-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                    </div>-->
-<!--                    <div class="card-footer d-flex flex-column flex-md-row justify-content-between rounded-0 py-3">-->
-<!--                        <a href="{% url 'seebookings' %}" class="btn btn-secondary mb-2 mb-md-0 d-block d-md-inline-block">-->
-<!--                            <i class="fas fa-arrow-left me-2"></i>Back to List-->
-<!--                        </a>-->
-<!--                        <button class="btn btn-info text-white d-block d-md-inline-block" onclick="window.print()">-->
-<!--                            <i class="fas fa-print me-2"></i>Print Ticket-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--    {% else %}-->
-<!--        &lt;!&ndash; -&#45;&#45; List View (Responsive) -&#45;&#45; &ndash;&gt;-->
-<!--        <h2 class="text-center mb-4 text-white">Your Purchased Tickets</h2>-->
-<!--        {% if bookings %}-->
-<!--        <div class="table-responsive bg-white rounded shadow-sm p-3">-->
-<!--            <table class="table table-hover table-striped mb-0 text-black">-->
-<!--                <thead>-->
-<!--                    <tr>-->
-<!--                        <th scope="col">#</th>-->
-<!--                        <th scope="col">From</th>-->
-<!--                        <th scope="col">To</th>-->
-<!--                        <th scope="col">Travel Date</th>-->
-<!--                        <th scope="col">Seats</th>-->
-<!--                        <th scope="col">Amount</th>-->
-<!--                        <th scope="col">Actions</th>-->
-<!--                    </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                    {% for booking in bookings %}-->
-<!--                    <tr>-->
-<!--                        <th scope="row">{{ forloop.counter }}</th>-->
-<!--                        <td>{{ booking.schedule.origin }}</td>-->
-<!--                        <td>{{ booking.schedule.destination }}</td>-->
-<!--                        <td>{{ booking.schedule.departure_date|date:"F d, Y" }}</td>-->
-<!--                        <td>{{ booking.ticket.total_seat }}</td>-->
-<!--                        <td>{{ booking.ticket.total_amount }}</td>-->
-<!--                        <td>-->
-<!--                            <a href="{% url 'seebookings' booking_id=booking.id %}" class="btn btn-sm btn-primary d-block d-sm-inline-block mt-1 mt-sm-0">-->
-<!--                                View Ticket-->
-<!--                            </a>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                    {% endfor %}-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
-<!--        {% else %}-->
-<!--        <div class="alert alert-info text-center mt-4" role="alert">-->
-<!--            <h4 class="alert-heading">No Tickets Found!</h4>-->
-<!--            <p>It looks like you haven't bought any tickets yet.</p>-->
-<!--            <hr>-->
-<!--            <p class="mb-0">Start your journey by booking a ticket <a href="{% url 'home' %}" class="alert-link">here</a>.</p>-->
-<!--        </div>-->
-<!--        {% endif %}-->
-<!--    {% endif %}-->
-<!--</div>-->
-
-<!--{# -&#45;&#45; Styles for printing the ticket -&#45;&#45; #}-->
-<!--<style>-->
-<!--    @media print {-->
-<!--        body * {-->
-<!--            visibility: hidden; /* Hide everything by default */-->
-<!--        }-->
-<!--        .ticket-card, .ticket-card * {-->
-<!--            visibility: visible; /* Show only the ticket card and its contents */-->
-<!--        }-->
-<!--        .ticket-card {-->
-<!--            position: absolute;-->
-<!--            left: 0;-->
-<!--            top: 0;-->
-<!--            width: 100%;-->
-<!--            height: auto;-->
-<!--            border: 1px solid #000; /* Add a border for printout */-->
-<!--            box-shadow: none !important; /* Remove shadow for printing */-->
-<!--        }-->
-<!--        .card-footer {-->
-<!--            display: none !important; /* Hide back and print buttons when printing */-->
-<!--        }-->
-<!--        /* Ensure text is black for printing */-->
-<!--        .ticket-card p, .ticket-card h3, .ticket-card h4, .ticket-card h5 {-->
-<!--            color: #000 !important;-->
-<!--        }-->
-<!--    }-->
-<!--</style>-->
-
+</script>
 
 </body>
 </html>

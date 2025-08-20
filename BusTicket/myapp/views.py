@@ -161,6 +161,33 @@ def seat_selection(request,schedule_id):
     # print("DEBUG request.GET:", request.GET)
     # print("DEBUG request.POST:", request.POST)
     selected_bus = Schedule.objects.get(id=schedule_id)
+    seat_capacity =selected_bus.bus.seat_capacity
+    booked_seat_statuses = Seat_Status.objects.filter(
+        schedule=selected_bus
+    ).exclude(seat_status='Available').values_list('seat_no', flat=True)
+    booked_seat_list = list(booked_seat_statuses)
+    # --- NEW: Prepare seat data with calculated names and status in the view ---
+    seats_data = []
+    for i in range(seat_capacity):
+        # Calculate the row letter based on a 3-seat-per-row layout.
+        # Python's integer division (//) and chr() are perfect for this.
+        row_letter = chr(ord('A') + i // 3)
+
+        # Calculate the seat number within the row using modulo operator.
+        # Python's modulo (%) is correct here.
+        seat_number_in_row = (i % 3) + 1
+
+        seat_name = f"{row_letter}{seat_number_in_row}"
+
+        is_booked = seat_name in booked_seat_list
+
+        seats_data.append({
+            'seat_name': seat_name,
+            'is_booked': is_booked,
+            'seat_index_in_row': i % 3
+            # This helps with the 2-aisle-1 layout in the template (0, 1 for left; 2 for right)
+        })
+    # --- END NEW ---
     # source = request.GET.get('from')
     # dest = request.GET.get('to')
     # date = request.GET.get('departure_date')
@@ -177,6 +204,8 @@ def seat_selection(request,schedule_id):
         'seats':seats,
         'total_price':total_price,
         'schedule_id':selected_bus.id,
+        'seat_capacity':seat_capacity,
+        'seats_data':seats_data,
     }
     return render(request, 'seat_selection.html',context)
 
