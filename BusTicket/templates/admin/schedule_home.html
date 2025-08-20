@@ -6,6 +6,8 @@
     <title>Admin - Manage Schedules - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -22,6 +24,12 @@
             background-color: #4a5568;
             border-radius: 4px;
             border: 2px solid #1e293b;
+        }
+        input[type="date"], input[type="text"], input[type="search"], select {
+            padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type="date"]:focus, input[type="text"]:focus, input[type="search"]:focus, select:focus {
+            outline: 2px solid transparent; outline-offset: 2px; border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6;
         }
     </style>
 </head>
@@ -44,6 +52,14 @@
                 <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="{% url 'booking_list' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="{% url 'history' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
+                <li>
+                <a href="{% url 'feedback_list' %}"
+                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
+                    <ion-icon name="chatbox-ellipses-outline" class="text-3xl mr-3"></ion-icon>
+                    <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
+                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span>
+                </a>
+                </li>
                 <li><a href="/{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
             </ul>
         </div>
@@ -64,17 +80,36 @@
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Filter Schedules</h2>
-            <form action="{% url 'schedule_home' %}" method="get" class="flex flex-col md:flex-row gap-4">
-                <input type="date" name="date" placeholder="Search by Date"
-                       class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       value="{{ date_query }}">
-                <input type="text" name="route" placeholder="Search by Route(Origin or Destination)"
-                       class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       value="{{ route_query }}">
-                <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 w-full md:w-auto"> Search
-                </button>
-</form>
+            <form action="{% url 'schedule_home' %}" method="get" class="flex flex-col md:flex-row md:items-end gap-4">
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Search by Date</label>
+                    <input type="date" id="date" name="date"
+                           class="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400"
+                           value="{{ date_query }}">
+                </div>
+                <div>
+                    <label for="route" class="block text-sm font-medium text-gray-700 mb-1">Search by Route (Origin or Destination)</label>
+                    <input type="text" id="route" name="route" placeholder="Search by Route"
+                           class="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400"
+                           value="{{ route_query }}">
+                </div>
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select id="status" name="status" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not request.GET.status %}selected{% endif %}>All</option>
+                        <option value="Active" {% if request.GET.status == 'Active' %}selected{% endif %}>Active</option>
+                        <option value="Inactive" {% if request.GET.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 w-full md:w-auto mt-4 md:mt-0">
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <ion-icon name="filter-outline" class="mr-2"></ion-icon> Filter
+                    </button>
+                    <a href="{% url 'schedule_home' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reset
+                    </a>
+                </div>
+            </form>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">

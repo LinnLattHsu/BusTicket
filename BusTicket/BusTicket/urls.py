@@ -97,4 +97,10 @@ urlpatterns = [
     path('admindashboard/bookings/', views.booking_list, name='booking_list'),
     # path('admindashboard/bookings/create/', views.booking_create, name='booking_create'),
     path('admindashboard/history/', views.history_list, name="history"),
+    path('admindashboard/feedback/', views.feedback_list,name='feedback_list'),
+    path('admindashboard/feedback_detail/<int:feedback_id>/',views.feedback_detail,name='feedback_detail'),
+    path('admindashboard/q_a/',views.question_answer_list,name='question_answer_list'),
+    path('admindashboard/q_a/add/',views.add_qa,name='qa_add'),
+    path('admindashboard/q_a/<int:qa_id>/update/',views.update_qa,name='qa_update'),
+    path('admindashboard/q_a/<int:qa_id>/delete/',views.delete_qa,name='qa_delete'),
 ]

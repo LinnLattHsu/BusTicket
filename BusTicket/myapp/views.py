@@ -12,12 +12,10 @@ from django.template.context_processors import request
 from django.shortcuts import render, redirect  # Ensure 'redirect' is imported
 from decimal import Decimal
 # Make sure you import all your relevant models here:
-from .models import Schedule, Booking, Ticket  # Assuming Bus, Route are already in models.py
-# from .models import Feedback
-# Create your views here.
+from .models import Schedule, Booking, Ticket
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Payment
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Payment,Feedback, QuestionAndAnswer
 from .models import Seat_Status
 from django.urls import reverse
 # from django.contrib.auth import authenticate, login, logout
@@ -47,7 +45,7 @@ from .models import Booking, Schedule, User
 from .forms import BookingForm
 from .forms import OperatorForm
 from .forms import RouteForm
-from .forms import BusForm
+from .forms import BusForm,qaForm
 from .forms import ScheduleForm,CustomUserChangeForm
 from django.shortcuts import render
 from datetime import datetime
@@ -1470,20 +1468,32 @@ def schedule_home(request):
 
     date_query = request.GET.get('date', '')
     route_query = request.GET.get('route', '')
+    status_query = request.GET.get('status', 'Active')
 
-    # Annotate the queryset to include the available seats count
-    # This counts all related Seat_Status objects that have the status 'Available'.
+    now = datetime.now()
+
+    # Find and update all active schedules where the date has expired or the date is today but the time has passed
+    Schedule.objects.filter(
+        Q(date__lt=now.date()) | Q(date=now.date(), time__lt=now.time()),
+        del_flag=0
+    ).update(del_flag=1)
+
     schedules = Schedule.objects.annotate(
         available_seats_count=Count('seat_status', filter=Q(seat_status__seat_status='Available'))
     )
 
     if date_query:
-        schedules = schedules.filter(date__icontains=date_query)
+        schedules = schedules.filter(date=date_query) # Corrected filter for exact date match
 
     if route_query:
         schedules = schedules.filter(
             Q(route__origin__icontains=route_query) | Q(route__destination__icontains=route_query)
         )
+    if status_query:
+        if status_query == 'Active':
+            schedules = schedules.filter(del_flag=0)
+        elif status_query == 'Inactive':
+            schedules = schedules.filter(del_flag=1)
 
     schedules = schedules.order_by('-updated_date')
 
@@ -1496,6 +1506,7 @@ def schedule_home(request):
         'routes': routes,
         'date_query': date_query,
         'route_query': route_query,
+        'status_query': status_query,
     }
 
     # Render the schedule_home template with the context
@@ -1698,7 +1709,6 @@ def history_list(request):
     filter_query &= Q(schedule__date__lt=now.date()) | \
                     (Q(schedule__date=now.date()) & Q(schedule__time__lt=now.time()))
 
-    # Apply additional filters based on user input from the form
     if origin:
         filter_query &= Q(schedule__route__origin__icontains=origin)
 
@@ -1715,10 +1725,9 @@ def history_list(request):
         # Filter by the booked time date range, if provided
         filter_query &= Q(booked_time__date__range=[from_date, to_date])
 
-    # Apply all filters to the bookings queryset
+
     history_items = bookings.filter(filter_query)
 
-    # Order the results from most recent to oldest booked time
     history_items = history_items.order_by('-booked_time')
 
     context = {
@@ -1727,3 +1736,88 @@ def history_list(request):
     }
 
     return render(request, 'admin/history.html', context)
+
+# feedback list page in admin
+def feedback_list(request):
+
+    feedbacks = Feedback.objects.all().order_by('-created_date')
+
+    search_query = request.GET.get('search')
+    if search_query:
+        feedbacks = feedbacks.filter(
+            Q(customer__name__icontains=search_query) |
+            Q(message__icontains=search_query)
+        )
+
+    context = {
+        'feedbacks': feedbacks,
+    }
+    return render(request, 'admin/feedback_list.html', context)
+
+def feedback_detail(request, feedback_id):
+    feedback = get_object_or_404(Feedback, id=feedback_id)
+    if not feedback.is_read:
+        feedback.is_read = 1
+        feedback.save()
+    if request.method == 'POST':
+        response_message = request.POST.get('response_message')
+        if response_message:
+            feedback.response = response_message
+
+
+            return redirect('feedback_detail', feedback_id=feedback.id)
+
+    context = {
+        'feedback': feedback,
+    }
+    return render(request, 'admin/feedback_details.html', context)
+
+# q&a list page in admin
+def question_answer_list(request):
+    qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')
+
+    search_query = request.GET.get('search')
+    if search_query:
+        qas = qas.filter(
+            Q(question__icontains=search_query) |
+            Q(answer__icontains=search_query)
+        )
+
+    qas = {
+        'qas': qas,
+    }
+    return render(request, 'admin/question_answer_list.html', qas)
+
+def add_qa(request):
+    if request.method == 'POST':
+        qa_form = qaForm(request.POST)
+        if qa_form.is_valid():
+            qa_form.save()
+            return redirect('question_answer_list')
+    else:
+        qa_form = qaForm()
+    return render(request,'admin/qa_add_form.html',{'form' : qa_form})
+
+def update_qa(request,qa_id):
+    qa_info = QuestionAndAnswer.objects.get(pk= qa_id)
+
+    if request.method == 'POST':
+        qa_form = qaForm(request.POST, instance=qa_info)
+        if qa_form.is_valid():
+            qa_form.save()
+            return redirect('question_answer_list')
+    else:
+        qa_form = qaForm(instance=qa_info)
+
+    return render(request,'admin/qa_update.html',{'form':qa_form})
+
+def delete_qa(request,qa_id):
+    qa_info = QuestionAndAnswer.objects.get(pk= qa_id)
+    if qa_info.del_flag == 0:
+        qa_info.del_flag = 1
+        qa_info.save()
+    else:
+        qa_info.del_flag = 0
+        qa_info.save()
+
+    return redirect('question_answer_list')

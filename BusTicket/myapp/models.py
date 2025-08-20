@@ -208,3 +208,25 @@ class Admin(models.Model):
 
     def __str__(self):
         return self.email
+
+class Feedback(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    del_flag = models.IntegerField(default=0)
+    is_read = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    response = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'Feedback from {self.customer.name} on {self.created_date.strftime("%Y-%m-%d")}'
+
+
+class QuestionAndAnswer(models.Model):
+    question = models.TextField()
+    answer = models.TextField(blank=True, null=True)
+    del_flag = models.IntegerField(default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Q&A on {self.created_date.strftime("%Y-%m-%d")}'

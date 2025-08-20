@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Q&A - MyBusTicket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        aside::-webkit-scrollbar { width: 8px; }
+        aside::-webkit-scrollbar-track { background: #1e293b; }
+        aside::-webkit-scrollbar-thumb { background-color: #4a5568; border-radius: 4px; border: 2px solid #1e293b; }
+        input[type="date"], input[type="text"], input[type="search"] {
+            padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type="date"]:focus, input[type="text"]:focus, input[type="search"]:focus {
+            outline: 2px solid transparent; outline-offset: 2px; border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen">
+
+    <aside id="logo-sidebar"
+           class="fixed inset-y-0 left-0 z-40 w-64 h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 bg-blue-900"
+           aria-label="Sidebar">
+        <div class="h-full px-3 py-4 overflow-y-auto">
+            <div class="flex justify-center items-center mb-4">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl" alt="Company Logo" style="height:50px;width:50px;">
+            </div>
+            <ul class="space-y-2 font-medium">
+                <li><a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="grid-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Dashboard</span></a></li>
+                <li><a href="{% url 'user_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="person-circle-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Users</span></a></li>
+                <li><a href="{% url 'bus_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="bus-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span></a></li>
+                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
+                <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
+                <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
+                <li><a href="{% url 'booking_list' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
+                <li><a href="{% url 'history' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
+                <li><a href="{% url 'feedback_list' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="chatbox-ellipses-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span></a></li>
+                <li><a href="{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="flex-grow p-4 md:p-6 overflow-y-auto md:ml-64">
+        <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
+            <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
+        </button>
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex space-x-2 text-2xl md:text-3xl font-bold">
+                <a href="{% url 'feedback_list' %}" class="px-4 py-2 rounded-xl text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200">Feedbacks</a>
+                <a href="{% url 'question_answer_list' %}" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">Q&A</a>
+            </div>
+            <!-- Add new Q&A button here -->
+            <a href="{% url 'qa_add' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200">
+                <ion-icon name="add-circle-outline" class="mr-2"></ion-icon>
+                Add New Q&A
+            </a>
+        </div>
+
+        <form method="get" action="{% url 'question_answer_list' %}">
+            <div class="bg-gray-50 rounded-2xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-4">Search & Filter Q&A</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search by Answer or Question</label>
+                        <input type="search" id="search" name="search" value="{{ request.GET.search }}"
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                    </div>
+                </div>
+                <div class="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <ion-icon name="filter-outline" class="mr-2"></ion-icon> Filter
+                    </button>
+                    <a href="{% url 'question_answer_list' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Q&A List</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-sm font-medium text-gray-700 border text-center">Question</th>
+                            <th class="px-6 py-3 text-sm font-medium text-gray-700 border text-center">Answer</th>
+                            <th class="px-6 py-3 text-sm font-medium text-gray-700 border text-center">Created Date</th>
+                            <th class="px-6 py-3 text-sm font-medium text-gray-700 border text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for qa in qas %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 border text-center">{{ qa.question }}</td>
+                                <td class="px-6 py-4 border text-center">{{ qa.answer }}</td>
+                                <td class="px-6 py-4 border text-center">{{ qa.created_date|date:"F j, Y, P" }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <div class="flex justify-center space-x-2">
+
+                                        <a href="{% url 'qa_update' qa.id %}" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Edit Q&A">
+                                            <ion-icon name="create-outline" class="text-lg"></ion-icon>
+                                        </a>
+                                        <a href="{% url 'qa_delete' qa.id %}" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Delete Q&A">
+                                            {% if qa.del_flag == 0 %}
+                                            <ion-icon name="trash-outline" class="text-lg"></ion-icon>
+                                            {% else %}
+                                            <ion-icon name="arrow-undo-outline" class="text-lg"></ion-icon>
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">No Q&A entries to display.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('logo-sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+    </script>
+</body>
+</html>

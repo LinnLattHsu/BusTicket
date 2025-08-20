@@ -13,6 +13,7 @@ from .models import Operator
 from .models import Bus
 from .models import Route
 from .models import Schedule
+from .models import QuestionAndAnswer
 User = get_user_model()
 
 # for operator form
@@ -291,3 +292,21 @@ class CustomUserChangeForm(forms.ModelForm):
             self.fields['phone_no'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input'
         if 'email' in self.fields: # Apply styling to readonly email field as well
             self.fields['email'].widget.attrs['class'] += ' form-control-lg rounded-pill custom-input bg-light'
+
+# Q & A form
+class qaForm(forms.ModelForm):
+    class Meta:
+        model = QuestionAndAnswer
+        fields = ['question', 'answer']
+        widgets = {
+            'question': forms.Textarea(attrs={
+                'class': 'mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500',
+                'rows': 4,
+                'placeholder': 'Enter the question here...',
+            }),
+            'answer': forms.Textarea(attrs={
+                'class': 'mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500',
+                'rows': 5,
+                'placeholder': 'Type your answer here...',
+            }),
+        }

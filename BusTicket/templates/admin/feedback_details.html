@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Update Route - MyBusTicket</title>
+    <title>Admin - Feedback Details - MyBusTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
@@ -13,18 +13,9 @@
             font-family: 'Inter', sans-serif;
             background-color: #f0f2f5;
         }
-        /* Custom scrollbar for sidebar */
-        aside::-webkit-scrollbar {
-            width: 8px;
-        }
-        aside::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        aside::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
-            border-radius: 4px;
-            border: 2px solid #1e293b;
-        }
+        aside::-webkit-scrollbar { width: 8px; }
+        aside::-webkit-scrollbar-track { background: #1e293b; }
+        aside::-webkit-scrollbar-thumb { background-color: #4a5568; border-radius: 4px; border: 2px solid #1e293b; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen">
@@ -34,26 +25,18 @@
            aria-label="Sidebar">
         <div class="h-full px-3 py-4 overflow-y-auto">
             <div class="flex justify-center items-center mb-4">
-                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl"
-                     alt="Company Logo" style="height:50px;width:50px;">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl" alt="Company Logo" style="height:50px;width:50px;">
             </div>
             <ul class="space-y-2 font-medium">
                 <li><a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="grid-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Dashboard</span></a></li>
                 <li><a href="{% url 'user_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="person-circle-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="ms-3">Users</span></a></li>
                 <li><a href="{% url 'bus_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="bus-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bus Info</span></a></li>
-                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
+                <li><a href="{% url 'route_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="navigate-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Routes</span></a></li>
                 <li><a href="{% url 'operator_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="business-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Operators</span></a></li>
                 <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="{% url 'booking_list' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="{% url 'history' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
-                <li>
-                <a href="{% url 'feedback_list' %}"
-                   class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
-                    <ion-icon name="chatbox-ellipses-outline" class="text-3xl mr-3"></ion-icon>
-                    <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
-                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span>
-                </a>
-                </li>
+                <li><a href="{% url 'feedback_list' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="chatbox-ellipses-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span></a></li>
                 <li><a href="{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
             </ul>
         </div>
@@ -63,53 +46,63 @@
         <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
             <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
         </button>
-
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Update Route: {{ route.origin }} to {{ route.destination }}</h1>
-            <!-- Back to List button -->
-            <a href="{% url 'route_home' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
-                <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon>
-                Back to List
-            </a>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Feedback & Inquiries</h1>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Edit Route Details</h2>
+        <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Feedback Details</h2>
 
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
+            <div class="mb-6 border-b pb-4">
+                <p class="text-sm text-gray-500">From:</p>
+                <p class="text-lg font-medium text-gray-900">
+                    {{ feedback.customer.name }} <span>&lt;{{ feedback.customer.email }}&gt;</span>
+                </p>
+                <p class="text-sm text-gray-500 mt-2">Submitted:</p>
+                <p class="text-sm text-gray-600">{{ feedback.created_date|date:"F j, Y, P" }}</p>
+            </div>
 
-                {% for field in route_form %}
-                <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                        {{ field.label }}
-                    </label>
-                    <div class="mt-1">
-                        {{ field }}
-                    </div>
-                    {% if field.help_text %}
-                        <p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
-                    {% endfor %}
+            <div class="mb-8">
+                <p class="text-sm text-gray-500 mb-2">Message:</p>
+                <div class="bg-gray-100 p-4 rounded-lg text-gray-800">
+                    <p>{{ feedback.message }}</p>
                 </div>
-                {% endfor %}
+            </div>
 
-                <button type="submit"
-                        class="w-full md:w-auto px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md">
-                    <ion-icon name="save-outline" class="mr-2"></ion-icon> Update Route
-                </button>
-            </form>
+            {% if feedback.response %}
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Admin Response</h3>
+                <div class="mb-8 p-4 bg-blue-50 rounded-lg shadow-inner">
+
+                    <p class="text-gray-800">{{ feedback.response }}</p>
+                </div>
+            {% else %}
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Respond to this Inquiry</h3>
+                <form method="post" action="{% url 'feedback_detail' feedback.id %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="response_message" class="block text-sm font-medium text-gray-700">Your Response</label>
+                        <textarea id="response_message" name="response_message" rows="6"
+                                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Submit Response
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+
+            <div class="mt-8 text-center">
+                <a href="{% url 'feedback_list' %}" class="text-blue-600 hover:underline flex items-center justify-center">
+                    <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon> Back to Feedback List
+                </a>
+            </div>
         </div>
     </div>
-
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
     <script>
         const sidebar = document.getElementById('logo-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
-
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
         });
