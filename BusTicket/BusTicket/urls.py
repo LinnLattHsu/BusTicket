@@ -53,6 +53,9 @@ urlpatterns = [
     path('login-home/',views.logined_user_home,name='logined_user'),
     path('logout/', views.logout_view, name="logout"),
 
+    path('forgot-password/', views.forgot_password_view, name='forgot_password'),
+    path('send-reset-email/', views.send_password_reset_email, name='send_reset_email'),
+
     # path('findbus', views.findbus, name="findbus"),
     # path('bookings', views.bookings, name="bookings"),
     # path('cancellings', views.cancellings, name="cancellings"),

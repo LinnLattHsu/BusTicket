@@ -973,6 +973,61 @@ def logout_view(request):
     messages.info(request, "You have been logged out")
     return redirect('login')
 
+
+def forgot_password_view(request):
+    """ Renders the forgot password page """
+    return render(request, 'forgot_psw.html')
+
+def send_password_reset_email(request):
+    """
+    Handles the password reset request.
+    It takes an email, finds the user, generates a token, and sends an email.
+    """
+    if request.method == 'POST':
+        try:
+            # Parse the JSON data sent from the frontend
+            data = json.loads(request.body)
+            email = data.get('email')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid request format.'}, status=400)
+
+        # Do not reveal if the email is registered for security reasons
+        # We will send a success message regardless of whether the email exists
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'If an account exists with this email, a reset link has been sent.'},
+                                status=200)
+
+        # Generate a unique token for the password reset link
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Build the password reset URL
+        current_site = get_current_site(request)
+        reset_link = reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+        reset_url = f"http://{current_site.domain}{reset_link}"
+
+        # Prepare the email content using a template
+        email_subject = 'Password Reset Request'
+        email_message = render_to_string('password_reset_email.html', {
+            'user': user,
+            'reset_url': reset_url,
+        })
+
+        # Send the email
+        send_mail(
+            email_subject,
+            email_message,
+            'noreply@yourdomain.com',  # Replace with your configured sender email
+            [user.email],
+            fail_silently=False,
+        )
+
+        return JsonResponse({'message': 'A password reset link has been sent to your email address.'}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
 # login_user_home.html
 
 # @login_required(login_url='signin')
