@@ -57,6 +57,20 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CustomUserAuthenticationForm
 from django.contrib.auth import logout as auth_logout
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator # This was the previous fix
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode # This is the new fix
+from django.utils.encoding import force_bytes # This is also needed
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+import json
+
+# Your views go here
 # Create your views here.
 
 
@@ -914,6 +928,7 @@ def seebookings(request, booking_id=None):
             'today': date.today(),  # Useful for future logic like status or actions
         }
         return render(request, 'see_bookings.html', context)
+
 def user_registration(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -1016,10 +1031,11 @@ def send_password_reset_email(request):
         # Send the email
         send_mail(
             email_subject,
-            email_message,
-            'noreply@yourdomain.com',  # Replace with your configured sender email
+            None,  # The plain text version can be empty
+            'noreply@yourdomain.com',
             [user.email],
             fail_silently=False,
+            html_message=email_message,  # This sends it as HTML
         )
 
         return JsonResponse({'message': 'A password reset link has been sent to your email address.'}, status=200)
