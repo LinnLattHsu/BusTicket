@@ -14,6 +14,7 @@ from .models import Bus
 from .models import Route
 from .models import Schedule
 from .models import QuestionAndAnswer
+from .models import Feedback
 User = get_user_model()
 
 # for operator form
@@ -310,3 +311,23 @@ class qaForm(forms.ModelForm):
                 'placeholder': 'Type your answer here...',
             }),
         }
+
+
+class FeedbackForm(forms.ModelForm):
+    overall_rating = forms.ChoiceField(
+        choices=Feedback.RATING_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+    )
+
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 4,
+            'placeholder': 'Tell us more about your experience, what went well, or what could be improved.',
+            'class': 'form-control'
+        })
+    )
+
+    class Meta:
+        model = Feedback
+        fields = ['overall_rating', 'message']
+

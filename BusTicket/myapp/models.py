@@ -210,15 +210,42 @@ class Admin(models.Model):
         return self.email
 
 class Feedback(models.Model):
+    # customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    # message = models.TextField()
+    # del_flag = models.IntegerField(default=0)
+    # is_read = models.IntegerField(default=0)
+    # created_date = models.DateTimeField(auto_now_add=True)
+    # response = models.TextField(blank=True, null=True)
+    #
+    # def __str__(self):
+    #     return f'Feedback from {self.customer.name} on {self.created_date.strftime("%Y-%m-%d")}'
+    RATING_CHOICES = [
+        (1, '1 Star (Very Poor)'),
+        (2, '2 Stars (Poor)'),
+        (3, '3 Stars (Average)'),
+        (4, '4 Stars (Good)'),
+        (5, '5 Stars (Excellent)'),
+    ]
+
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
+    overall_rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        help_text="Overall rating of the experience.",
+        default=3  # Or choose option 1 when prompted by makemigrations
+    )
+    message = models.TextField(help_text="Detailed feedback message.")
     del_flag = models.IntegerField(default=0)
     is_read = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
-    response = models.TextField(blank=True, null=True)
+    response = models.TextField(blank=True, null=True, help_text="Admin response to the feedback.")
 
     def __str__(self):
-        return f'Feedback from {self.customer.name} on {self.created_date.strftime("%Y-%m-%d")}'
+        return f'Feedback from {self.customer.username} ({self.overall_rating} stars) on {self.created_date.strftime("%Y-%m-%d")}'
+
+    class Meta:
+        verbose_name = "Customer Feedback"
+        verbose_name_plural = "Customer Feedback"
+        ordering = ['-created_date']
 
 
 class QuestionAndAnswer(models.Model):

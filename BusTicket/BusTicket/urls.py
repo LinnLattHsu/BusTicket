@@ -43,8 +43,8 @@ urlpatterns = [
     # payment and booking process by sdwp
     path('process-payment/<int:user_id>/', views.process_payment, name='process_payment'),
     path('booking-confirmation/<int:booking_id>/', views.booking_confirmation, name='booking_confirmation'),
-
-
+    path('feedback/',views.feedback,name='feedback'),
+    path('feedback/success/', views.feedback_success, name='feedback_success'),
 
 
     # sdwp

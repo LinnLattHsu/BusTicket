@@ -54,7 +54,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Admin
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import CustomUserAuthenticationForm
+from .forms import CustomUserAuthenticationForm,FeedbackForm
 from django.contrib.auth import logout as auth_logout
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -900,6 +900,7 @@ def profile_page(request):
 
 # custom user register form by sdwp
 
+@login_required
 def seebookings(request, booking_id=None):
     """
     Manages both the list view and the detailed ticket view in a single function.
@@ -957,6 +958,39 @@ def seebookings(request, booking_id=None):
             'today': date.today(),  # Useful for future logic like status or actions
         }
         return render(request, 'see_bookings.html', context)
+
+@login_required
+def feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback_instance = form.save(commit=False)  # Create but don't save yet
+            feedback_instance.customer = request.user  # Assign the logged-in user
+
+            # Optionally handle booking-ref if you want to store it (e.g., as a CharField in your model)
+            # booking_ref = request.POST.get('booking-ref')
+            # if booking_ref:
+            #     feedback_instance.booking_reference = booking_ref # Assuming you add this field to your model
+
+            feedback_instance.save()  # Now save the instance to the database
+
+            messages.success(request, "Thank you for your feedback! We appreciate it.")
+            return redirect('feedback_success')  # Redirect to a success page
+        else:
+            messages.error(request, "There was an error submitting your feedback. Please correct the issues below.")
+            # If form is not valid, it will be rendered again with errors in the template
+    else:
+        form = FeedbackForm()  # Create a fresh, empty form for GET requests
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'feedback_form.html', context)
+
+@login_required
+def feedback_success(request):
+    return render(request, 'feedback_success.html')
+
 
 def user_registration(request):
     if request.method == 'POST':

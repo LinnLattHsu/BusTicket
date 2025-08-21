@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Feedback</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Custom styles for font and rounded corners, to complement Bootstrap */
+        body {
+            font-family: 'Inter', sans-serif; /* Fallback to sans-serif */
+            background-color: #f8f9fa; /* Light background similar to Bootstrap default */
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+        .feedback-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 0.5rem; /* Bootstrap's default rounded corners */
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15); /* Soft shadow */
+            width: 100%;
+            max-width: 550px; /* Max width for better readability on large screens */
+        }
+        h1 {
+            color: #0d6efd; /* Bootstrap primary blue */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        .feedback-container p {
+            color: #6c757d; /* Bootstrap secondary text color */
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .required::after {
+            content: ' *';
+            color: #dc3545; /* Bootstrap danger red */
+            margin-left: 0.25rem;
+        }
+        /* Style for Django form rendering radio buttons within the template */
+        .rating-group ul {
+            list-style: none; /* Remove default list styling */
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem; /* Adjust gap between radio options */
+        }
+        .rating-group ul li {
+            margin-bottom: 0; /* Remove default li margin */
+        }
+        .rating-group .form-check {
+             margin-right: 0; /* Override default Bootstrap margin for inner form-check */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;border-radius:10px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+                    {% if request.user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
+                        <i class="fas fa-list"></i> See Bookings
+                    </a>
+                    <a class="nav-item nav-link" href="{% url 'feedback' %}">
+                        <i class="fas fa-list"></i> Feedback
+                    </a>
+<!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    <div class="profile-circle ms-2 me-2">-->
+<!--                        <span>{{ user.name|default:'U'|first|upper }}</span>-->
+<!--                    </div>-->
+                    <div class="profile-dropdown-container">
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
+<!--                            <i class="fas fa-user"></i>-->
+
+                        </div>
+                        <div class="profile-dropdown-menu" id="profileDropdown">
+                            <a href="{% url 'profile_page' %}">Your Profile</a>
+                            <a href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+        <a class="nav-item nav-link" href="{% url 'register' %}">
+            <i class="fas fa-user-plus"></i> Signup
+        </a>
+    {% endif %}
+<!--                   this is yin wai lwin parts-->
+<!--                    {% if not request.user.is_authenticated %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
+<!--                        </a>-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-user-plus"></i> Signup-->
+<!--                        </a>-->
+<!--                    {% else %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                        </a>-->
+<!--                    {% endif %}-->
+
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
+<!--                    {% if request.user.is_active %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    {% else %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-user-plus"></i> Registration-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container d-flex flex-column align-items-center mt-5 mb-5"> {# Keep the navbar content within a container #}
+
+<div class="feedback-container">
+    <h1>Share Your Experience</h1>
+    <p>Your valuable feedback helps us enhance our services and ensure a better journey for everyone. Thank you!</p>
+
+    <!--
+        IMPORTANT:
+        - Replace 'submit_feedback_url_name' with the actual name of your Django URL pattern for this view.
+        - The 'form' variable is passed from your Django view context.
+    -->
+    <form action="{% url 'feedback_success' %}" method="post">
+        {% csrf_token %} <!-- Django's Cross-Site Request Forgery protection -->
+
+        <!-- Display any non-field errors (e.g., if the form submission failed generally) -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Booking Reference Number - Optional, remains manual as it's not a model field -->
+        <div class="mb-3">
+            <label for="booking-ref" class="form-label">Booking Reference Number (Optional)</label>
+            <input type="text" id="booking-ref" name="booking-ref" class="form-control" placeholder="e.g., ABC123DEF456">
+            <!-- If you want to handle this in Django, you'd process request.POST.get('booking-ref') in the view -->
+        </div>
+
+        <!-- Overall Experience Rating - Now rendered by Django form -->
+        <!-- Overall Experience Rating - Now rendered by iterating over form choices -->
+<div class="mb-3">
+    <label class="form-label required">How would you rate your overall experience?</label>
+    <div class="rating-group d-flex flex-wrap mt-2">
+        {% for radio in form.overall_rating %}
+            <div class="form-check form-check-inline">
+                {{ radio.tag }} <!-- Renders the <input type="radio"> element -->
+                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+    {% if form.overall_rating.errors %}
+        <div class="text-danger small mt-1">
+            {% for error in form.overall_rating.errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+        <!-- Detailed Comments - The core of the feedback, rendered by Django form -->
+        <div class="mb-4">
+            <label for="{{ form.message.id_for_label }}" class="form-label required">Please provide your detailed comments:</label>
+            {{ form.message }} <!-- Django renders the Textarea widget here -->
+            {% if form.message.errors %}
+                <div class="text-danger small mt-1">
+                    {% for error in form.message.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Submit Feedback</button>
+        </div>
+    </form>
+</div>
+    </div>
+
+<!-- Bootstrap JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
