@@ -210,15 +210,6 @@ class Admin(models.Model):
         return self.email
 
 class Feedback(models.Model):
-    # customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    # message = models.TextField()
-    # del_flag = models.IntegerField(default=0)
-    # is_read = models.IntegerField(default=0)
-    # created_date = models.DateTimeField(auto_now_add=True)
-    # response = models.TextField(blank=True, null=True)
-    #
-    # def __str__(self):
-    #     return f'Feedback from {self.customer.name} on {self.created_date.strftime("%Y-%m-%d")}'
     RATING_CHOICES = [
         (1, '1 Star (Very Poor)'),
         (2, '2 Stars (Poor)'),
@@ -240,7 +231,7 @@ class Feedback(models.Model):
     response = models.TextField(blank=True, null=True, help_text="Admin response to the feedback.")
 
     def __str__(self):
-        return f'Feedback from {self.customer.username} ({self.overall_rating} stars) on {self.created_date.strftime("%Y-%m-%d")}'
+        return f'Feedback from {self.customer.name} ({self.overall_rating} stars) on {self.created_date.strftime("%Y-%m-%d")}'
 
     class Meta:
         verbose_name = "Customer Feedback"

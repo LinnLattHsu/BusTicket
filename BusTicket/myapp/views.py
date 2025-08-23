@@ -1894,7 +1894,6 @@ def history_list(request):
 
     return render(request, 'admin/history.html', context)
 
-# feedback list page in admin
 def feedback_list(request):
 
     feedbacks = Feedback.objects.all().order_by('-created_date')
