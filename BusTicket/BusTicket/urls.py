@@ -57,6 +57,8 @@ urlpatterns = [
     path('send_password_reset_email/', views.send_password_reset_email, name='send_password_reset_email'),
     path('accounts/', include('django.contrib.auth.urls')),
 
+    path('contactus/',views.contact_us, name='contact_us'),
+
     # path('findbus', views.findbus, name="findbus"),
     # path('bookings', views.bookings, name="bookings"),
     # path('cancellings', views.cancellings, name="cancellings"),

@@ -70,6 +70,9 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 import json
 
+from .forms import ContactForm
+from django.core.mail import EmailMessage
+
 # Your views go here
 # Create your views here.
 
@@ -1104,6 +1107,52 @@ def send_password_reset_email(request):
         return JsonResponse({'message': 'A password reset link has been sent to your email address.'}, status=200)
 
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+def contact_us(request):
+    """
+    Handles the contact form submission. Sends an email to the support team
+    and allows them to reply directly to the user.
+    """
+    if request.method == 'POST':
+        # Create a form instance from the submitted data
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Get data from the validated form
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+
+            # Get the logged-in user's email for the Reply-To header
+            user_email = request.user.email
+
+            try:
+                # Create the EmailMessage object
+                email = EmailMessage(
+                    subject=f"Contact from {user_email}: {subject}",
+                    body=f"From: {user_email}\n\n{message}",
+                    from_email=settings.EMAIL_HOST_USER,  # Your configured email
+                    to=[settings.EMAIL_HOST_USER],  # Your support email
+                    headers={'Reply-To': user_email},  # Correct way to pass headers
+                )
+
+                # Send the email
+                email.send(fail_silently=False)
+
+                messages.success(request,
+                                 'Your message has been sent successfully! Our team will get back to you shortly.')
+                return redirect('contact_us')
+            except Exception as e:
+                messages.error(request,
+                               f'An error occurred while sending your message. Please try again later. Error: {e}')
+    else:
+        # For a GET request, display a new, empty form
+        form = ContactForm()
+
+    context = {
+        'form': form,
+        'active_page': 'contact'
+    }
+    return render(request, 'contact_us.html', context)
 
 # login_user_home.html
 

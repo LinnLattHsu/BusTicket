@@ -1,0 +1,106 @@
+<!-- contact_us.html -->
+
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<style>
+    /* Add flexbox to the body block for vertical and horizontal centering */
+    html, body, #page-content {
+        height: 100%;
+        margin: 0;
+    }
+    .centered-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* This ensures the container takes up the full viewport height */
+        padding: 1rem;
+    }
+
+    /* Custom CSS for a clean, modern look */
+    .contact-card {
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        padding: 2.5rem;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #4a5568;
+    }
+    .form-control {
+        border-radius: 0.5rem;
+        border-color: #e2e8f0;
+        padding: 0.75rem 1rem;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    .form-control:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+    }
+    .btn-primary {
+        background-color: #4299e1;
+        border-color: #4299e1;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .btn-primary:hover {
+        background-color: #2b6cb0;
+        border-color: #2b6cb0;
+    }
+    .btn-primary .bi-send-fill {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<!-- Add a new centered container wrapper -->
+<div class="centered-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex flex-column align-items-center text-center">
+                    <!-- An email icon from Bootstrap Icons -->
+                    <i class="bi bi-envelope-fill" style="font-size: 60px; color: #4299e1;"></i>
+                    <h2 class="text-3xl font-bold text-gray-800">Contact Us</h2>
+                    <p class="text-sm text-gray-500 mt-1">We're here to help. Our support team will respond as soon as possible.</p>
+                </div>
+
+                <!-- Display Django messages -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div class="card shadow p-4 contact-card mt-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">Subject</label>
+                            {{ form.subject|add_class:"form-control" }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.message.id_for_label }}" class="form-label">Message</label>
+                            {{ form.message|add_class:"form-control" }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center">
+                            <!-- Send icon from Bootstrap Icons -->
+                            <i class="bi bi-send-fill" style="font-size: 20px;"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

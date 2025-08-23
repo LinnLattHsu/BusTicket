@@ -331,3 +331,15 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
         fields = ['overall_rating', 'message']
 
+
+
+class ContactForm(forms.Form):
+    """
+    A form for users to submit a message to the support team.
+    """
+    subject = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., Ticket issue, Refund request'})
+    )
+    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Tell us what is on your mind...'}))
+
