@@ -1335,7 +1335,7 @@ def user_home(request):
 
     # Get the filter parameters from the request
     name_query = request.GET.get('name')
-    status_query = request.GET.get('status')
+    status_query = request.GET.get('status', 'active')
 
     if name_query:
         # Use Q objects for more complex or combined queries if needed,
@@ -1378,9 +1378,19 @@ def soft_delete_user(request,user_id):
 # operator home page in admin
 def operator_home(request):
     search_query = request.GET.get('search', '')
+    status_query = request.GET.get('status', 'active')
+
     operators = Operator.objects.all()
     if search_query:
         operators = operators.filter(Q(operator_name__icontains=search_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            operators = operators.filter(del_flag=0)
+        elif status_query == 'Deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            operators = operators.filter(del_flag = 1)
     context = {
     'operators': operators,
     'search_query': search_query,
@@ -1393,6 +1403,7 @@ def operator_home(request):
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
+    status_query = request.GET.get('status', 'active')
 
     routes = Route.objects.all()
 
@@ -1401,6 +1412,14 @@ def route_home(request):
 
     if destination_query:
         routes = routes.filter(Q(destination__icontains=destination_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            routes = routes.filter(del_flag=0)
+        elif status_query == 'deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            routes = routes.filter(del_flag = 1)
 
     context = {
         'routes': routes,
@@ -1445,6 +1464,7 @@ from .models import Route  # Assuming your model is named Route
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
+    status_query = request.GET.get('status', 'active')
 
     routes = Route.objects.all()
 
@@ -1503,6 +1523,7 @@ def delete_route(request,route_id):
 def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
+    status_query = request.GET.get('status', 'active')
 
     buses = Bus.objects.all()
 
@@ -1510,7 +1531,15 @@ def bus_home(request):
         buses = buses.filter(Q(license_no__icontains=license_query))
 
     if operator_query:
-        buses = buses.filter(Q(operator__id=operator_query))
+        buses = buses.filter(Q(operator__operator_name__icontains=operator_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            buses = buses.filter(del_flag=0)
+        elif status_query == 'deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            buses = buses.filter(del_flag = 1)
 
     buses = buses.order_by('-updated_date')
     operators = Operator.objects.all()

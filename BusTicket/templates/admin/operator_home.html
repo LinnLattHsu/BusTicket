@@ -72,14 +72,34 @@
 
         <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
             <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Filter Operators</h2>
-            <form action="{% url 'operator_home' %}" method="get" class="flex flex-col md:flex-row gap-4">
-                <input type="text" name="search" placeholder="Search by Operator Name"
-                       class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       value="{{ search_query }}"> <!-- This is the key change -->
-                <button type="submit"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 w-full md:w-auto">
-                    Search
-                </button>
+            <form action="{% url 'operator_home' %}" method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <!-- Operator Search Input -->
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Operator Name</label>
+                    <input type="text" name="search" id="search" placeholder="Search by Operator Name"
+                           class="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400"
+                           value="{{ search_query }}">
+                </div>
+
+                <!-- Status Filter Dropdown -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select id="status" name="status" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not request.GET.status %}selected{% endif %}>All</option>
+                        <option value="Active" {% if request.GET.status == 'Active' %}selected{% endif %}>Active</option>
+                        <option value="Deleted" {% if request.GET.status == 'Deleted' %}selected{% endif %}>Deleted</option>
+                    </select>
+                </div>
+
+                <!-- Search and Reset Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <ion-icon name="filter-outline" class="mr-2"></ion-icon> Filter
+                    </button>
+                    <a href="{% url 'operator_home' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reset
+                    </a>
+                </div>
             </form>
         </div>
 
