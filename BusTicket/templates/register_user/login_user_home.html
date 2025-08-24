@@ -158,6 +158,12 @@
                     <a class="nav-item nav-link" href="{% url 'seebookings' %}">
                         <i class="fas fa-list"></i> See Bookings
                     </a>
+                    <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
+                        <i class="fas fa-list"></i> Feedback
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
+                        <i class="fas fa-list"></i> Contact Us
+                    </a>
 <!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
 <!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
 <!--                    </a>-->

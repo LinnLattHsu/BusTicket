@@ -26,7 +26,8 @@ from myapp import views
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path('', views.home, name="home"),
+    # path('', views.home, name="home"),
+    path('',views.home_page_feedback_qa,name='home'),
     path('about-us/',views.about_us,name='about_us'),
     path('search/',views.search_routes, name='search_routes'),
     path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),

@@ -4,8 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Bus Ticket</title>
-    <!-- Use Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
+<!--<script src="https://cdn.tailwindcss.com"></script>-->
+
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
@@ -35,91 +54,330 @@
             color: white;
             margin-bottom: 0.25rem;
         }
+        .navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important; /* Changes the text color to white on hover */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Adds a subtle glow effect */
+}
+
+/* Custom styling for active navbar links */
+.nav-link.active {
+    font-weight: bold; /* Makes the text bold */
+    background-color: rgba(255, 255, 255, 0.1); /* Adds a subtle background highlight */
+    border-radius: 0.5rem; /* Adds rounded corners */
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
     </style>
 </head>
-<body class="bg-gray-700">
+<body>
 
     <!-- Main page wrapper to handle full-screen content -->
-    <div class="flex flex-col items-center min-h-screen">
+<!--    <div class="flex flex-col items-center min-h-screen">-->
         <!-- Navbar fixed to the top -->
-        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-gray-800 bg-opacity-50 text-white shadow-lg">
-            <div class="container mx-auto flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <!-- Bus icon to match the one on the home page -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>
-                    </svg>
-                    <span class="text-xl font-bold">Bus Ticket</span>
-                </div>
-                <div class="space-x-4 flex">
-                    <a href="{% url 'home' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Home</a>
-                    <a href="{% url 'about_us' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">About Us</a>
-                    <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Login</a>
-                    <a href="{% url 'register' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Signup</a>
+<!--        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-gray-800 bg-opacity-50 text-white shadow-lg">-->
+<!--            <div class="container mx-auto flex justify-between items-center">-->
+<!--                <div class="flex items-center space-x-2">-->
+<!--                    &lt;!&ndash; Bus icon to match the one on the home page &ndash;&gt;-->
+<!--                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">-->
+<!--                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>-->
+<!--                    </svg>-->
+<!--                    <span class="text-xl font-bold">Bus Ticket</span>-->
+<!--                </div>-->
+<!--                <div class="space-x-4 flex">-->
+<!--                    <a href="{% url 'home' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Home</a>-->
+<!--                    <a href="{% url 'about_us' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">About Us</a>-->
+<!--                    <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Login</a>-->
+<!--                    <a href="{% url 'register' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Signup</a>-->
 
+<!--                </div>-->
+<!--            </div>-->
+<!--        </nav>-->
+
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;border-radius:10px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link " href=""> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+
+                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i> Signup
+                    </a>
+<!--                   this is yin wai lwin parts-->
+<!--                    {% if not request.user.is_authenticated %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
+<!--                        </a>-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-user-plus"></i> Signup-->
+<!--                        </a>-->
+<!--                    {% else %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                        </a>-->
+<!--                    {% endif %}-->
+
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
+<!--                    {% if request.user.is_active %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    {% else %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-user-plus"></i> Registration-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
+    <div class="container mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="p-4 rounded-3 shadow-lg form-container mt-5">
+                    <h1 class="text-3xl font-weight-bold text-white text-center mb-4">Login</h1>
+
+                    {% if messages %}
+                      <div class="mb-3">
+                        {% for message in messages %}
+                          <div class="alert alert-info border-info text-info rounded relative" role="alert">
+                            {{ message }}
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+
+                    <form method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Email</label>
+                            <input type="text" name="username" id="id_username" class="form-control form-input" placeholder="Enter your Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" name="password" id="id_password" class="form-control form-input" placeholder="Enter your password" required>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg">
+                                Login
+                            </button>
+                        </div>
+
+                        <div class="mt-2 text-center">
+                            <a href="/forgot-password/" class="text-white-50 text-decoration-none">
+                                Forgot password?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
         <!-- Main form container, with top padding to prevent it from being hidden -->
-        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">
+<!--        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">-->
 
-            <!-- Form title -->
-            <h1 class="text-3xl font-bold text-white text-center mb-6">Login</h1>
+<!--            &lt;!&ndash; Form title &ndash;&gt;-->
+<!--            <h1 class="text-3xl font-bold text-white text-center mb-6">Login</h1>-->
 
-            <!-- Django messages go here -->
-            {% if messages %}
-              <div class="mb-4 space-y-2">
-                {% for message in messages %}
-                  <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ message }}</span>
-                  </div>
-                {% endfor %}
-              </div>
-            {% endif %}
+<!--            &lt;!&ndash; Django messages go here &ndash;&gt;-->
+<!--            {% if messages %}-->
+<!--              <div class="mb-4 space-y-2">-->
+<!--                {% for message in messages %}-->
+<!--                  <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">-->
+<!--                    <span class="block sm:inline">{{ message }}</span>-->
+<!--                  </div>-->
+<!--                {% endfor %}-->
+<!--              </div>-->
+<!--            {% endif %}-->
 
-            <!-- The form itself -->
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
-                <div class="form-field-container">
-                    <label for="id_username" class="form-label">Email</label>
-                    <div class="mt-1">
-                        <input type="text" name="username" id="id_username" class="form-input" placeholder="Enter your Email">
-                    </div>
-                </div>
-                <div class="form-field-container">
-                    <label for="id_password" class="form-label">Password</label>
-                    <div class="mt-1">
-                        <input type="password" name="password" id="id_password" class="form-input" placeholder="Enter your password">
-                    </div>
-                </div>
+<!--            &lt;!&ndash; The form itself &ndash;&gt;-->
+<!--            <form method="POST" class="space-y-4">-->
+<!--                {% csrf_token %}-->
+<!--                <div class="form-field-container">-->
+<!--                    <label for="id_username" class="form-label">Email</label>-->
+<!--                    <div class="mt-1">-->
+<!--                        <input type="text" name="username" id="id_username" class="form-input" placeholder="Enter your Email">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-field-container">-->
+<!--                    <label for="id_password" class="form-label">Password</label>-->
+<!--                    <div class="mt-1">-->
+<!--                        <input type="password" name="password" id="id_password" class="form-input" placeholder="Enter your password">-->
+<!--                    </div>-->
+<!--                </div>-->
 
-                <!-- Display non-field errors if they exist -->
-                {% if form.non_field_errors %}
-                    <div class="text-xs text-red-300 mt-1">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
+<!--                &lt;!&ndash; Display non-field errors if they exist &ndash;&gt;-->
+<!--                {% if form.non_field_errors %}-->
+<!--                    <div class="text-xs text-red-300 mt-1">-->
+<!--                        {{ form.non_field_errors }}-->
+<!--                    </div>-->
+<!--                {% endif %}-->
 
-                <div class="pt-4">
-                    <button type="submit"
-                            class="w-full py-3 px-4 rounded-full text-white font-semibold shadow-lg
-                                   bg-blue-600 hover:bg-blue-700 transition-colors duration-200
-                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Login
-                    </button>
-                </div>
+<!--                <div class="pt-4">-->
+<!--                    <button type="submit"-->
+<!--                            class="w-full py-3 px-4 rounded-full text-white font-semibold shadow-lg-->
+<!--                                   bg-blue-600 hover:bg-blue-700 transition-colors duration-200-->
+<!--                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">-->
+<!--                        Login-->
+<!--                    </button>-->
+<!--                </div>-->
 
-                 <!-- Added "Forgot password?" link here -->
-                <div class="pt-2 text-center">
-                    <a href="/forgot-password/" class="text-base text-black-300 hover:underline hover:text-cyan-100 transition-colors duration-200">
-                        Forgot password?
-                    </a>
-                </div>
-            </form>
-        </div>
+<!--                 &lt;!&ndash; Added "Forgot password?" link here &ndash;&gt;-->
+<!--                <div class="pt-2 text-center">-->
+<!--                    <a href="/forgot-password/" class="text-base text-black-300 hover:underline hover:text-cyan-100 transition-colors duration-200">-->
+<!--                        Forgot password?-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
 
-    </div>
+<!--            <div class="container mt-5">-->
+<!--    <div class="row justify-content-center">-->
+<!--        <div class="col-md-6 col-lg-5">-->
+<!--            <div class="card bg-white shadow-lg p-4">-->
+<!--                <div class="card-body">-->
+<!--                    <h1 class="card-title text-center text-primary mb-4">Login</h1>-->
+
+<!--                    {% if messages %}-->
+<!--                      <div class="mb-4">-->
+<!--                        {% for message in messages %}-->
+<!--                          <div class="alert alert-info" role="alert">-->
+<!--                            {{ message }}-->
+<!--                          </div>-->
+<!--                        {% endfor %}-->
+<!--                      </div>-->
+<!--                    {% endif %}-->
+
+<!--                    <form method="POST">-->
+<!--                        {% csrf_token %}-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="id_username" class="form-label">Email</label>-->
+<!--                            <input type="text" name="username" id="id_username" class="form-control" placeholder="Enter your Email">-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="id_password" class="form-label">Password</label>-->
+<!--                            <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter your password">-->
+<!--                        </div>-->
+
+<!--                        {% if form.non_field_errors %}-->
+<!--                            <div class="alert alert-danger p-2" role="alert">-->
+<!--                                {{ form.non_field_errors }}-->
+<!--                            </div>-->
+<!--                        {% endif %}-->
+
+<!--                        <div class="d-grid gap-2 mb-3">-->
+<!--                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">-->
+<!--                                Login-->
+<!--                            </button>-->
+<!--                        </div>-->
+
+<!--                        <div class="text-center">-->
+<!--                            <a href="/forgot-password/" class="text-decoration-none">-->
+<!--                                Forgot password?-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
 
 </body>
 </html>

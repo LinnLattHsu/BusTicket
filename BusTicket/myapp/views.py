@@ -79,6 +79,15 @@ from django.core.mail import EmailMessage
 
 # In home page, when you enter origin,destination and date this function will search for available routes
 
+def home_page_feedback_qa(request):
+    feedbacks = Feedback.objects.filter(del_flag=0).order_by('-created_date')[:3]
+    qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')[:3]
+    context = {
+        'feedbacks': feedbacks,
+        'qas':qas,
+    }
+    return render(request, 'base.html', context)
+
 def search_routes(request):
     # Always provide dropdown lists
     origins = Route.objects.values_list('origin', flat=True).distinct()

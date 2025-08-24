@@ -5,7 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
     <!-- Use Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
@@ -35,67 +54,258 @@
             color: white;
             margin-bottom: 0.25rem;
         }
+        .navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important; /* Changes the text color to white on hover */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Adds a subtle glow effect */
+}
+
+/* Custom styling for active navbar links */
+.nav-link.active {
+    font-weight: bold; /* Makes the text bold */
+    background-color: rgba(255, 255, 255, 0.1); /* Adds a subtle background highlight */
+    border-radius: 0.5rem; /* Adds rounded corners */
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+        #submit-button{
+            font-size: 20px;
+        }
     </style>
 </head>
-<body class="bg-gray-700">
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;border-radius:10px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link " href=""> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+                    {% if request.user.is_authenticated %}
+                    <a class="nav-item nav-link {% if active_page == 'seebookings' %}active{% endif %}" href="{% url 'seebookings' %}">
+                        <i class="fas fa-list"></i> See Bookings
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
+                        <i class="fas fa-list"></i> Feedback
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
+                        <i class="fas fa-list"></i> Contact Us
+                    </a>
+<!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    <div class="profile-circle ms-2 me-2">-->
+<!--                        <span>{{ user.name|default:'U'|first|upper }}</span>-->
+<!--                    </div>-->
+                    <div class="profile-dropdown-container">
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
+<!--                            <i class="fas fa-user"></i>-->
 
-    <!-- Main page wrapper to handle full-screen content -->
-    <div class="flex flex-col items-center min-h-screen">
-        <!-- Navbar fixed to the top -->
-        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-gray-800 bg-opacity-50 text-white shadow-lg">
-            <div class="container mx-auto flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <!-- Bus icon to match the one on the home page -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>
-                    </svg>
-                    <span class="text-xl font-bold">Bus Ticket</span>
-                </div>
-                <div class="space-x-4 flex">
-                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Home</a>
-                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">About Us</a>
-                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Login</a>
-                    <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Signup</a>
+                        </div>
+                        <div class="profile-dropdown-menu" id="profileDropdown">
+                            <a href="{% url 'profile_page' %}">Your Profile</a>
+                            <a href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+        <a class="nav-item nav-link" href="{% url 'register' %}">
+            <i class="fas fa-user-plus"></i> Signup
+        </a>
+    {% endif %}
+<!--                   this is yin wai lwin parts-->
+<!--                    {% if not request.user.is_authenticated %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
+<!--                        </a>-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-user-plus"></i> Signup-->
+<!--                        </a>-->
+<!--                    {% else %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                        </a>-->
+<!--                    {% endif %}-->
+
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
+<!--                    {% if request.user.is_active %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    {% else %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-user-plus"></i> Registration-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main form container, with top padding to prevent it from being hidden -->
-        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">
+    <!-- Main page wrapper to handle full-screen content -->
+<!--    <div class="flex flex-col items-center min-h-screen">-->
+<!--        &lt;!&ndash; Navbar fixed to the top &ndash;&gt;-->
+<!--        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-gray-800 bg-opacity-50 text-white shadow-lg">-->
+<!--            <div class="container mx-auto flex justify-between items-center">-->
+<!--                <div class="flex items-center space-x-2">-->
+<!--                    &lt;!&ndash; Bus icon to match the one on the home page &ndash;&gt;-->
+<!--                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">-->
+<!--                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>-->
+<!--                    </svg>-->
+<!--                    <span class="text-xl font-bold">Bus Ticket</span>-->
+<!--                </div>-->
+<!--                <div class="space-x-4 flex">-->
+<!--                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Home</a>-->
+<!--                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">About Us</a>-->
+<!--                    <a href="#" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full">Login</a>-->
+<!--                    <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">Signup</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </nav>-->
 
-            <h1 class="text-3xl font-extrabold text-white text-center mb-6">Forgot Password</h1>
+<!--        &lt;!&ndash; Main form container, with top padding to prevent it from being hidden &ndash;&gt;-->
+<!--        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">-->
 
-            <!-- Form for password reset request -->
-            <form id="forgot-password-form" class="space-y-6" method="POST" action="{% url 'send_password_reset_email' %}">
+<!--            <h1 class="text-3xl font-extrabold text-white text-center mb-6">Forgot Password</h1>-->
+
+<!--            &lt;!&ndash; Form for password reset request &ndash;&gt;-->
+<!--            <form id="forgot-password-form" class="space-y-6" method="POST" action="{% url 'send_password_reset_email' %}">-->
+<!--                {% csrf_token %}-->
+<!--                <div>-->
+<!--                    <label for="email" class="form-label">Email address</label>-->
+<!--                    <div class="mt-1">-->
+<!--                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input" placeholder="Enter your email">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div>-->
+<!--                    <button type="submit" id="submit-button" class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">-->
+<!--                        Send Password Reset Link-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </form>-->
+
+<!--            &lt;!&ndash; Message area for feedback &ndash;&gt;-->
+<!--            <div id="status-message" class="mt-4 text-center text-sm font-medium text-white hidden py-2 px-4 rounded-md">-->
+<!--                &lt;!&ndash; This message will be updated by JavaScript &ndash;&gt;-->
+<!--            </div>-->
+
+<!--            <div class="mt-6 text-center">-->
+<!--                <a href="{% url 'login' %}" class="text-base text-blue-300 hover:underline hover:text-blue-100 transition-colors duration-200">-->
+<!--                    Return to Login-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </div>-->
+<div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="w-100 mx-auto p-4 rounded-3 shadow-lg form-container" style="max-width: 576px;">
+            <h3 class="text-3xl fw-extrabold text-white text-center mb-4">Forgot Password</h3>
+            <form id="forgot-password-form" class="space-y-3" method="POST" action="{% url 'send_password_reset_email' %}">
                 {% csrf_token %}
-                <div>
+                <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <div class="mt-1">
-                        <input id="email" name="email" type="email" autocomplete="email" required class="form-input" placeholder="Enter your email">
-                    </div>
+                    <input id="email" name="email" type="email" autocomplete="email" required class="form-control form-input" placeholder="Enter your email">
                 </div>
-
-                <div>
-                    <button type="submit" id="submit-button" class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <div class="d-grid">
+                    <button type="submit" id="submit-button" class="btn btn-primary btn-lg rounded-pill shadow-lg">
                         Send Password Reset Link
                     </button>
                 </div>
             </form>
-
-            <!-- Message area for feedback -->
-            <div id="status-message" class="mt-4 text-center text-sm font-medium text-white hidden py-2 px-4 rounded-md">
-                <!-- This message will be updated by JavaScript -->
-            </div>
-
-            <div class="mt-6 text-center">
-                <a href="{% url 'login' %}" class="text-base text-blue-300 hover:underline hover:text-blue-100 transition-colors duration-200">
+            <div id="status-message" class="mt-4 text-center small text-white hidden py-2 px-4 rounded-md"></div>
+            <div class="mt-3 text-center">
+                <a href="{% url 'login' %}" class="text-blue-50 hover:text-blue-100 text-decoration-none">
                     Return to Login
                 </a>
             </div>
         </div>
-
     </div>
-
     <script>
         document.getElementById('forgot-password-form').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
