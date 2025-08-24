@@ -962,10 +962,11 @@ def seebookings(request, booking_id=None):
         }
         return render(request, 'see_bookings.html', context)
 
-@login_required
+# @login_required
 def feedback(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
+
         if form.is_valid():
             feedback_instance = form.save(commit=False)  # Create but don't save yet
             feedback_instance.customer = request.user  # Assign the logged-in user
@@ -976,14 +977,16 @@ def feedback(request):
             #     feedback_instance.booking_reference = booking_ref # Assuming you add this field to your model
 
             feedback_instance.save()  # Now save the instance to the database
-
+            print(request.user.email)
             messages.success(request, "Thank you for your feedback! We appreciate it.")
             return redirect('feedback_success')  # Redirect to a success page
         else:
             messages.error(request, "There was an error submitting your feedback. Please correct the issues below.")
+            print('processs fail')
             # If form is not valid, it will be rendered again with errors in the template
     else:
         form = FeedbackForm()  # Create a fresh, empty form for GET requests
+        # print('processs fail')
 
     context = {
         'form': form,
@@ -994,6 +997,8 @@ def feedback(request):
 def feedback_success(request):
     return render(request, 'feedback_success.html')
 
+def about_us(request):
+    return render(request,'about_us.html')
 
 def user_registration(request):
     if request.method == 'POST':
@@ -1335,7 +1340,7 @@ def user_home(request):
 
     # Get the filter parameters from the request
     name_query = request.GET.get('name')
-    status_query = request.GET.get('status')
+    status_query = request.GET.get('status', 'active')
 
     if name_query:
         # Use Q objects for more complex or combined queries if needed,
@@ -1378,9 +1383,19 @@ def soft_delete_user(request,user_id):
 # operator home page in admin
 def operator_home(request):
     search_query = request.GET.get('search', '')
+    status_query = request.GET.get('status', 'active')
+
     operators = Operator.objects.all()
     if search_query:
         operators = operators.filter(Q(operator_name__icontains=search_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            operators = operators.filter(del_flag=0)
+        elif status_query == 'Deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            operators = operators.filter(del_flag = 1)
     context = {
     'operators': operators,
     'search_query': search_query,
@@ -1393,6 +1408,7 @@ def operator_home(request):
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
+    status_query = request.GET.get('status', 'active')
 
     routes = Route.objects.all()
 
@@ -1401,6 +1417,14 @@ def route_home(request):
 
     if destination_query:
         routes = routes.filter(Q(destination__icontains=destination_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            routes = routes.filter(del_flag=0)
+        elif status_query == 'deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            routes = routes.filter(del_flag = 1)
 
     context = {
         'routes': routes,
@@ -1445,6 +1469,7 @@ from .models import Route  # Assuming your model is named Route
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
+    status_query = request.GET.get('status', 'active')
 
     routes = Route.objects.all()
 
@@ -1503,6 +1528,7 @@ def delete_route(request,route_id):
 def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
+    status_query = request.GET.get('status', 'active')
 
     buses = Bus.objects.all()
 
@@ -1510,7 +1536,15 @@ def bus_home(request):
         buses = buses.filter(Q(license_no__icontains=license_query))
 
     if operator_query:
-        buses = buses.filter(Q(operator__id=operator_query))
+        buses = buses.filter(Q(operator__operator_name__icontains=operator_query))
+
+    if status_query:
+        if status_query == 'active':
+            # Assuming del_flag = 0 means the user is active
+            buses = buses.filter(del_flag=0)
+        elif status_query == 'deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            buses = buses.filter(del_flag = 1)
 
     buses = buses.order_by('-updated_date')
     operators = Operator.objects.all()
@@ -1865,7 +1899,6 @@ def history_list(request):
 
     return render(request, 'admin/history.html', context)
 
-# feedback list page in admin
 def feedback_list(request):
 
     feedbacks = Feedback.objects.all().order_by('-created_date')

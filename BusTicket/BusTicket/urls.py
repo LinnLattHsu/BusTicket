@@ -24,8 +24,10 @@ from django.views.generic import TemplateView
 from myapp import views
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('', views.home, name="home"),
+    path('about-us/',views.about_us,name='about_us'),
     path('search/',views.search_routes, name='search_routes'),
     path('select-trip/<int:schedule_id>/', views.seat_selection, name='select_trip'),
     path('select-seats/<int:schedule_id>/submit/', views.submit_seats, name='submit_seats'),
@@ -58,23 +60,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('contactus/',views.contact_us, name='contact_us'),
-
-    # path('findbus', views.findbus, name="findbus"),
-    # path('bookings', views.bookings, name="bookings"),
-    # path('cancellings', views.cancellings, name="cancellings"),
-    # path('seebookings', views.seebookings, name="seebookings"),
-
-    # path('success', views.success, name="success"),
-    # path('download_ticket/<int:booking_id>/', views.download_ticket, name='download_ticket'),
-
-    # path('bookings/payement/<int:booking_id>/', views.payment_page, name='payement'),
-    # path('bookings/payement/success/<int:booking_id>/', views.payment_success, name='payment_success'),
-    # path('bookings/payement/success/<int:booking_id>/feedback/', views.FeedbackForm, name='feedback'),
-    # URL for feedback form
-    # path('bookings/payement/success/<int:booking_id>/feedback/list/', views.FeedbackList, name='feedback_list'),
-    #
-    # path('seatselection',views.seat_selection),
-    #
 
     # admin url call
     path('admindashboard/',views.admin_dashboard,name='admin_dashboard'),
