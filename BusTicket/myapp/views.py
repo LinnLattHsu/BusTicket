@@ -962,10 +962,11 @@ def seebookings(request, booking_id=None):
         }
         return render(request, 'see_bookings.html', context)
 
-@login_required
+# @login_required
 def feedback(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
+
         if form.is_valid():
             feedback_instance = form.save(commit=False)  # Create but don't save yet
             feedback_instance.customer = request.user  # Assign the logged-in user
@@ -976,14 +977,16 @@ def feedback(request):
             #     feedback_instance.booking_reference = booking_ref # Assuming you add this field to your model
 
             feedback_instance.save()  # Now save the instance to the database
-
+            print(request.user.email)
             messages.success(request, "Thank you for your feedback! We appreciate it.")
             return redirect('feedback_success')  # Redirect to a success page
         else:
             messages.error(request, "There was an error submitting your feedback. Please correct the issues below.")
+            print('processs fail')
             # If form is not valid, it will be rendered again with errors in the template
     else:
         form = FeedbackForm()  # Create a fresh, empty form for GET requests
+        # print('processs fail')
 
     context = {
         'form': form,
@@ -994,6 +997,8 @@ def feedback(request):
 def feedback_success(request):
     return render(request, 'feedback_success.html')
 
+def about_us(request):
+    return render(request,'about_us.html')
 
 def user_registration(request):
     if request.method == 'POST':

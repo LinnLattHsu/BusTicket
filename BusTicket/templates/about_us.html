@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - MyanBus Ticket</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
+        /* New color palette to match the home page photo */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --background-color: #f4f7f6;
-            --text-color: #555;
-            --heading-color: #222;
+            --primary-color: #1e3a8a;       /* Dark Navy Blue for header and footer */
+            --secondary-color: #3b82f6;     /* Vibrant Blue for accents and icons */
+            --background-color: #f8fafc;    /* Very light gray/off-white background */
+            --text-color: #334155;          /* Darker gray for main body text */
+            --heading-color: #1f2937;       /* Very dark gray for headings */
             --font-family: 'Inter', sans-serif;
         }
 
@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: var(--font-family);
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
@@ -37,7 +37,7 @@
         }
 
         header {
-            background-color: #fff;
+            background-color: var(--primary-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
@@ -57,13 +57,15 @@
         }
 
         .logo img {
-            height: 40px;
+            height: 50px;
+            width: 50px;
+            border-radius: 10px;
             margin-right: 10px;
         }
 
         .logo h1 {
             font-size: 1.5rem;
-            color: var(--primary-color);
+            color: white; /* Logo text color changed to white */
         }
 
         .nav-links {
@@ -72,7 +74,7 @@
         }
 
         .nav-links a {
-            color: var(--primary-color);
+            color: white; /* Nav links color changed to white */
             text-decoration: none;
             font-weight: 600;
             padding: 0.5rem 1rem;
@@ -95,7 +97,7 @@
             margin: 5px auto;
             -webkit-transition: all 0.3s ease-in-out;
             transition: all 0.3s ease-in-out;
-            background-color: var(--primary-color);
+            background-color: white; /* Hamburger bars color changed to white */
         }
 
         .about-section {
@@ -215,10 +217,6 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
-            .nav-links.active {
-                right: 0;
-            }
-
             .nav-links li {
                 margin: 1.5rem 0;
             }
@@ -240,7 +238,6 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
@@ -254,8 +251,8 @@
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'about_us' %}" class="active">About Us</a></li>
-                <li><a href="">Login</a></li>
-                <li><a href="{% url 'signup' %}">Signup</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Signup</a></li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
