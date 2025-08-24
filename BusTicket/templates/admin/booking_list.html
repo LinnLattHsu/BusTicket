@@ -186,7 +186,7 @@
                     </thead>
                     <tbody>
                         {% for booking in bookings %}
-                            <tr class="hover:bg-gray-50">
+                            <tr class="{% if booking.alert %}text-yellow-600{% endif %}">
                                 <td class="px-6 py-4 border">{{ booking.customer.name }}</td>
                                 <td class="px-6 py-4 border">{{ booking.seat_numbers }}</td>
                                 <td class="px-6 py-4 border">{{ booking.schedule.bus.license_no }}</td>

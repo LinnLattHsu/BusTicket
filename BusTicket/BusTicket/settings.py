@@ -156,7 +156,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 # The URL where users are redirected for login when login_required is used
-LOGIN_URL = '/login/' # Or whatever your login URL path is, e.g., '/accounts/login/'
+# LOGIN_URL = '/login/' # Or whatever your login URL path is, e.g., '/accounts/login/'
 
 # Optional: The URL to redirect to after successful login (if no 'next' parameter is provided)
-LOGIN_REDIRECT_URL = '/process-payment/' # Or '/dashboard/' or '/profile/' etc.
+# LOGIN_REDIRECT_URL = '/process-payment/' # Or '/dashboard/' or '/profile/' etc.

@@ -69,7 +69,8 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 import json
-
+from django.db.models import Q, Count, Case, When, Value, F
+from datetime import datetime, timedelta
 from .forms import ContactForm
 from django.core.mail import EmailMessage
 
@@ -1320,7 +1321,8 @@ def admin_dashboard(request):
         try:
             selected_schedule = Schedule.objects.get(
                 Q(bus__license_no__iexact=bus_query) &
-                (Q(route__origin__iexact=route_query) | Q(route__destination__iexact=route_query))
+                (Q(route__origin__iexact=route_query) | Q(route__destination__iexact=route_query)) &
+                Q(del_flag=0)
             )
             seat_status_list = Seat_Status.objects.filter(schedule=selected_schedule).order_by('seat_no')
         except Schedule.DoesNotExist:
@@ -1653,6 +1655,14 @@ def schedule_home(request):
         available_seats_count=Count('seat_status', filter=Q(seat_status__seat_status='Available'))
     )
 
+    three_days_from_now = now.date() + timedelta(days=3)
+    schedules = schedules.annotate(
+        alert=Case(
+            When(date__lte=three_days_from_now, then=Value(True)),
+            default=Value(False)
+        )
+    )
+
     if date_query:
         schedules = schedules.filter(date=date_query) # Corrected filter for exact date match
 
@@ -1782,10 +1792,15 @@ def delete_schedule(request,schedule_id):
 # for booking admindashboard
 def booking_list(request):
 
+    now = datetime.now()
     bookings = Booking.objects.select_related(
         'customer',
         'schedule__bus__operator',
         'schedule__route'
+    ).filter(
+        # Filter out schedules that have already passed
+        Q(schedule__date__gt=now.date()) |
+        (Q(schedule__date=now.date()) & Q(schedule__time__gte=now.time()))
     ).all()
 
     origin = request.GET.get('origin')
@@ -1797,10 +1812,13 @@ def booking_list(request):
 
     filter_query = Q()
 
-    now = timezone.now()
-
-    filter_query &= Q(schedule__date__gt=now.date()) | \
-                    (Q(schedule__date=now.date()) & Q(schedule__time__gte=now.time()))
+    three_days_from_now = now.date() + timedelta(days=3)
+    bookings = bookings.annotate(
+        alert=Case(
+            When(schedule__date__lte=three_days_from_now, then=Value(True)),
+            default=Value(False)
+        )
+    )
 
     if origin:
         filter_query &= Q(schedule__route__origin__icontains=origin)
@@ -1825,7 +1843,9 @@ def booking_list(request):
         'bookings': bookings,
         'request': request
     }
-
+    print(now)
+    for booking in bookings:
+        print(booking.schedule.date)
     return render(request, 'admin/booking_list.html', context)
 
 # def booking_create(request):
@@ -1875,7 +1895,7 @@ def history_list(request):
 
     filter_query = Q()
 
-    now = timezone.now()
+    now = datetime.now()
 
     filter_query &= Q(schedule__date__lt=now.date()) | \
                     (Q(schedule__date=now.date()) & Q(schedule__time__lt=now.time()))

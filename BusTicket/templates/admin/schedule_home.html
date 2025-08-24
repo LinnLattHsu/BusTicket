@@ -132,14 +132,14 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         {% if schedules %}
                             {% for schedule in schedules %}
-                            <tr>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ schedule.id }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.bus.license_no}}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.route.origin }} - {{ schedule.route.destination }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.date }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.time }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.price }}</td>
-                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ schedule.available_seats_count }}</td>
+                            <tr class="{% if schedule.alert %}text-yellow-600{% endif %}">
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium">{{ schedule.id }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.bus.license_no}}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.route.origin }} - {{ schedule.route.destination }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.date }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.time }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.price }}</td>
+                                <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">{{ schedule.available_seats_count }}</td>
                                 <td class="px-3 md:px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if schedule.del_flag == 0 %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
                                         {% if schedule.del_flag == 0 %}Active{% else %}Inactive{% endif %}
