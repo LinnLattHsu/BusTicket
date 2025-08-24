@@ -51,13 +51,13 @@ urlpatterns = [
 
     # sdwp
     path('register/',views.user_registration,name='register'),
-    path('accounts/login/',views.user_login,name='login'),
+    path('login/',views.user_login,name='login'),
     path('login-home/',views.logined_user_home,name='logined_user'),
-    path('accounts/logout/', views.logout_view, name="logout"),
+    path('logout/', views.logout_view, name="logout"),
 
     path('forgot-password/', views.forgot_password_view, name='forgot_password'),
     path('send_password_reset_email/', views.send_password_reset_email, name='send_password_reset_email'),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('django.contrib.auth.urls')),
 
     path('contactus/',views.contact_us, name='contact_us'),
 
