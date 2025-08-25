@@ -2035,7 +2035,7 @@ def booking_list(request):
 
     bookings = bookings.filter(filter_query)
 
-    bookings = bookings.order_by('-booked_time')
+    bookings = bookings.order_by('schedule__date')
 
     context = {
         'bookings': bookings,
