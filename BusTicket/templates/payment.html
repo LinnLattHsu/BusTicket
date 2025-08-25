@@ -16,8 +16,19 @@
             font-family: 'Inter', sans-serif;
             background-color: #f0f2f5; /* Light gray background */
         }
-               .navbar {
-    background-color: #007bff !important;
+.navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important; /* Changes the text color to white on hover */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Adds a subtle glow effect */
+}
+
+/* Custom styling for active navbar links */
+.nav-link.active {
+    font-weight: bold; /* Makes the text bold */
+    background-color: rgba(255, 255, 255, 0.1); /* Adds a subtle background highlight */
+    border-radius: 0.5rem; /* Adds rounded corners */
 }
 
 .navbar-nav {
@@ -174,11 +185,11 @@
 </head>
 <body class="bg-light">
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home'%}">
                 <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
-                    style="height:50px;width:50px;">
+                    style="height:50px;width:50px;border-radius:10px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,15 +197,21 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
+                    <a class="nav-item nav-link " href=""> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
+                    <a class="nav-item nav-link {% if active_page == 'seebookings' %}active{% endif %}" href="{% url 'seebookings' %}">
                         <i class="fas fa-list"></i> See Bookings
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
+                        <i class="fas fa-list"></i> Feedback
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
+                        <i class="fas fa-list"></i> Contact Us
                     </a>
 <!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
 <!--                        <i class="fas fa-sign-out-alt"></i> Logout-->

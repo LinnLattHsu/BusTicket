@@ -266,43 +266,100 @@ def seat_selection(request,schedule_id):
 # def bookings(request):
 #     return render(request,'see_bookings.html')
 #
+#submit seat by lls
+def submit_seats(request, schedule_id):
+    if request.method == 'POST':
+        # Store the POST data in the session
+        request.session['seat_selection_data'] = {
+            'schedule_id': schedule_id,
+            'selected_seats': request.POST.get('selected_seats', ''),
+        }
+
+        # Check if user is authenticated
+        if not request.user.is_authenticated:
+            # Redirect to login page, which will redirect back to this view after login
+            return redirect(f"{reverse('login')}?next={reverse('submit_seats', kwargs={'schedule_id': schedule_id})}")
+
+    # If the user is authenticated, check for data in the session
+    if request.user.is_authenticated:
+        seat_data = request.session.get('seat_selection_data')
+        if seat_data and seat_data['schedule_id'] == schedule_id:
+            selected_seats_str = seat_data['selected_seats']
+            # Clear the session data after use
+            del request.session['seat_selection_data']
+        else:
+            # Handle cases where session data is missing or doesn't match
+            selected_seats_str = request.POST.get('selected_seats')
+
+        if not selected_seats_str:
+            return render(request, 'error_page.html', {'message': 'No seats selected.'})
+
+        selected_seats_list = selected_seats_str.split(',')
+        number_of_seats = len(selected_seats_list)
+
+        selected_bus = get_object_or_404(Schedule, id=schedule_id)
+        total_price = Decimal(number_of_seats) * selected_bus.price
+
+        context = {
+            'schedule_id': schedule_id,
+            'selected_bus': selected_bus,
+            'bus_name': selected_bus.bus.license_no,
+            'departure_date': selected_bus.date,
+            'departure_time': selected_bus.time,
+            'origin': selected_bus.route.origin,
+            'destination': selected_bus.route.destination,
+            'selected_seats': selected_seats_str,
+            'number_of_seats': number_of_seats,
+            'total_price': total_price,
+            'user_id': request.user.user_id,
+            'user_name': request.user.name,
+        }
+
+        # For debugging purposes
+        print("--- Start Debugging ---")
+        for key, value in context.items():
+            print(f"Key: {key}, Value: {value}")
+        print("--- End Debugging ---")
+
+        return render(request, 'payment.html', context)
+
+    # If the request is a GET and the user is not authenticated,
+    # or there's no session data, redirect to home.
+    return redirect('home')
 
 # submit seat by sdwp
-@login_required
-def submit_seats(request, schedule_id):
-    if request.method != 'POST':
-        return redirect('home')
-
-    selected_bus = get_object_or_404(Schedule, id=schedule_id)
-    selected_seats_str = request.POST.get('selected_seats')
-
-
-
-    if not selected_seats_str:
-        return render(request, 'error_page.html', {'message': 'No seats selected.'})
-
-    selected_seats_list = selected_seats_str.split(',')
-    number_of_seats = len(selected_seats_list)
-    total_price = Decimal(number_of_seats) * selected_bus.price
-
-    context = {
-        'schedule_id' : schedule_id,
-        'selected_bus': selected_bus,
-        'bus_name':selected_bus.bus.license_no,
-        'departure_date':selected_bus.date,
-        'departure_time':selected_bus.time,
-        'origin': selected_bus.route.origin,
-        'destination': selected_bus.route.destination,
-        'selected_seats': selected_seats_str,
-        'number_of_seats': number_of_seats,
-        'total_price': total_price,
-        'user_id':request.user.user_id ,
-        'user_name':request.user.name,
-    }
-    for key, value in context.items():
-        print(f"Key: {key}, Value: {value}")
-    print("--- End Debugging ---")
-    return render(request, 'payment.html', context)
+# @login_required
+# def submit_seats(request, schedule_id):
+#     if request.method != 'POST':
+#         return redirect('home')
+#
+#     selected_bus = get_object_or_404(Schedule, id=schedule_id)
+#     selected_seats_str = request.POST.get('selected_seats')
+#     if not selected_seats_str:
+#         return render(request, 'error_page.html', {'message': 'No seats selected.'})
+#
+#     selected_seats_list = selected_seats_str.split(',')
+#     number_of_seats = len(selected_seats_list)
+#     total_price = Decimal(number_of_seats) * selected_bus.price
+#
+#     context = {
+#         'schedule_id' : schedule_id,
+#         'selected_bus': selected_bus,
+#         'bus_name':selected_bus.bus.license_no,
+#         'departure_date':selected_bus.date,
+#         'departure_time':selected_bus.time,
+#         'origin': selected_bus.route.origin,
+#         'destination': selected_bus.route.destination,
+#         'selected_seats': selected_seats_str,
+#         'number_of_seats': number_of_seats,
+#         'total_price': total_price,
+#         'user_id':request.user.user_id ,
+#         'user_name':request.user.name,
+#     }
+#     for key, value in context.items():
+#         print(f"Key: {key}, Value: {value}")
+#     print("--- End Debugging ---")
+#     return render(request, 'payment.html', context)
 
 
 # In your views.py file
@@ -1030,7 +1087,7 @@ def user_registration(request):
         form = CustomUserCreationForm()
     return render(request, 'user_registration_form.html', {'form': form})
 
-# user login
+# user login by lls
 def user_login(request):
     if request.method == 'POST':
         form = CustomUserAuthenticationForm(request=request, data=request.POST)
@@ -1039,11 +1096,17 @@ def user_login(request):
             user = form.get_user()
 
             if user is not None:
-                # FIX: Explicitly specify the custom authentication backend for login
-                login(request, user, backend='myapp.backends.MyCustomAuthBackend')
+                # Log the user in
+                login(request, user)
                 messages.success(request, 'You have been logged in successfully!')
 
+                # Check for the 'next' parameter in the request's GET data
+                # If a 'next' URL is present, redirect to it.
+                next_url = request.GET.get('next')
+                if next_url:
+                    return redirect(next_url)
 
+                # If no 'next' parameter, use the default redirection logic
                 if isinstance(user, Admin):
                     return redirect('admin_dashboard')
                 else:
@@ -1054,6 +1117,31 @@ def user_login(request):
         form = CustomUserAuthenticationForm(request=request)
 
     return render(request, 'login.html', {'form': form})
+
+# user login
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = CustomUserAuthenticationForm(request=request, data=request.POST)
+#
+#         if form.is_valid():
+#             user = form.get_user()
+#
+#             if user is not None:
+#                 # FIX: Explicitly specify the custom authentication backend for login
+#                 login(request, user, backend='myapp.backends.MyCustomAuthBackend')
+#                 messages.success(request, 'You have been logged in successfully!')
+#
+#
+#                 if isinstance(user, Admin):
+#                     return redirect('admin_dashboard')
+#                 else:
+#                     return redirect('logined_user')
+#             else:
+#                 messages.error(request, 'Invalid email or password. Please try again.')
+#     else:
+#         form = CustomUserAuthenticationForm(request=request)
+#
+#     return render(request, 'login.html', {'form': form})
 
 @login_required
 def logined_user_home(request):
