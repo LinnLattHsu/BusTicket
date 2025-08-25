@@ -74,6 +74,9 @@ from datetime import datetime, timedelta
 from .forms import ContactForm
 from django.core.mail import EmailMessage
 import smtplib
+import os
+import requests
+
 
 # Your views go here
 # Create your views here.
@@ -1125,56 +1128,137 @@ def send_password_reset_email(request):
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 
+# def contact_us(request):
+#     """
+#     Handles the contact form submission. Sends an email to the support team
+#     and allows them to reply directly to the user.
+#     """
+#     if request.method == 'POST':
+#         # Create a form instance from the submitted data
+#         form = ContactForm(request.POST)
+#         if form.is_valid():
+#             # Get data from the validated form
+#             subject = form.cleaned_data['subject']
+#             message = form.cleaned_data['message']
+#
+#             # Get the logged-in user's email for the Reply-To header
+#             user_email = request.user.email
+#
+#             try:
+#                 # Create the EmailMessage object
+#                 email = EmailMessage(
+#                     subject=f"Contact from {user_email}: {subject}",
+#                     body=f"From: {user_email}\n\n{message}",
+#                     from_email=settings.EMAIL_HOST_USER,  # Your configured email
+#                     to=[settings.EMAIL_HOST_USER],  # Your support email
+#                     headers={'Reply-To': user_email},  # Correct way to pass headers
+#                 )
+#
+#                 # Send the email
+#                 email.send(fail_silently=False)
+#
+#                 messages.success(request,
+#                                  'Your message has been sent successfully! Our team will get back to you shortly.')
+#                 return redirect('contact_us')
+#
+#             # Catch specific errors related to the email server connection or authentication
+#             except smtplib.SMTPConnectError:
+#                 messages.error(request,
+#                                'Connection error: The app could not connect to the email server. Please check your internet connection and try again. ')
+#
+#             except smtplib.SMTPAuthenticationError:
+#                 messages.error(request,
+#                                'Authentication error: The app could not log in to the email server. Please check the email configuration. ')
+#
+#             except smtplib.SMTPException as e:
+#                 # This is a general SMTP error catch for other transmission failures.
+#                 messages.error(request,
+#                                f'A server error occurred while sending your message. Please try again later. Error: {e} ')
+#
+#             except Exception as e:
+#                 messages.error(request,
+#                                f'An error occurred while sending your message. Please try again later. Error: {e}')
+#     else:
+#         # For a GET request, display a new, empty form
+#         form = ContactForm()
+#
+#     context = {
+#         'form': form,
+#         'active_page': 'contact'
+#     }
+#     return render(request, 'contact_us.html', context)
+
+
 def contact_us(request):
     """
-    Handles the contact form submission. Sends an email to the support team
-    and allows them to reply directly to the user.
+    Handles the contact form submission with ZeroBounce API validation.
     """
     if request.method == 'POST':
-        # Create a form instance from the submitted data
         form = ContactForm(request.POST)
+
+        # Get the user's email
+        user_email = request.user.email
+
+        # If the user is logged in, you can add a field to the form data
+        # so the form can validate it.
+        if request.user.is_authenticated:
+            form.data = form.data.copy()
+            form.data['user_email'] = user_email
+
         if form.is_valid():
-            # Get data from the validated form
+            # --- REAL-TIME EMAIL VALIDATION WITH ZEROBOUNCE API ---
+            # Get the API key from your settings
+            api_key = os.getenv("ZEROBOUNCE_API_KEY")
+
+            # The API endpoint for real-time validation
+            api_url = f'https://api.zerobounce.net/v2/validate?api_key={api_key}&email={user_email}'
+
+            try:
+                # Make the API call
+                response = requests.get(api_url)
+                response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+
+                result = response.json()
+
+                # Check the validation status from the API response
+                if result.get('status') != 'valid':
+                    # The email is not valid according to ZeroBounce
+                    messages.error(request,
+                                   f'The email address "{user_email}" is not a real or valid account.')
+                    return render(request, 'contact_us.html', {'form': form, 'active_page': 'contact'})
+
+            except requests.exceptions.RequestException as e:
+                # Handle API connection errors
+                messages.error(request,
+                               f'Could not connect to the email validation service. Please try again later. ')
+                return render(request, 'contact_us.html', {'form': form, 'active_page': 'contact'})
+            # --- END OF ZEROBOUNCE VALIDATION ---
+
+            # If validation passes, proceed with sending the email
             subject = form.cleaned_data['subject']
             message = form.cleaned_data['message']
 
-            # Get the logged-in user's email for the Reply-To header
-            user_email = request.user.email
-
             try:
-                # Create the EmailMessage object
+                # Create and send the email
                 email = EmailMessage(
                     subject=f"Contact from {user_email}: {subject}",
                     body=f"From: {user_email}\n\n{message}",
-                    from_email=settings.EMAIL_HOST_USER,  # Your configured email
-                    to=[settings.EMAIL_HOST_USER],  # Your support email
-                    headers={'Reply-To': user_email},  # Correct way to pass headers
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[settings.EMAIL_HOST_USER],
+                    headers={'Reply-To': user_email},
                 )
-
-                # Send the email
                 email.send(fail_silently=False)
 
                 messages.success(request,
-                                 'Your message has been sent successfully! Our team will get back to you shortly.')
+                                 'Your message has been sent successfully! Our team will get back to you shortly. 📧')
                 return redirect('contact_us')
 
-            # Catch specific errors related to the email server connection or authentication
-            except smtplib.SMTPConnectError:
-                messages.error(request,
-                               'Connection error: The app could not connect to the email server. Please check your internet connection and try again. ')
-
-            except smtplib.SMTPAuthenticationError:
-                messages.error(request,
-                               'Authentication error: The app could not log in to the email server. Please check the email configuration. ')
-
+            # You can keep your existing email sending error handling here
             except smtplib.SMTPException as e:
-                # This is a general SMTP error catch for other transmission failures.
-                messages.error(request,
-                               f'A server error occurred while sending your message. Please try again later. Error: {e} ')
-
+                messages.error(request, f'An error occurred with the email server. Error: {e} 🚨')
             except Exception as e:
-                messages.error(request,
-                               f'An error occurred while sending your message. Please try again later. Error: {e}')
+                messages.error(request, f'An unexpected error occurred. Error: {e} 🐛')
+
     else:
         # For a GET request, display a new, empty form
         form = ContactForm()
@@ -1184,6 +1268,7 @@ def contact_us(request):
         'active_page': 'contact'
     }
     return render(request, 'contact_us.html', context)
+
 
 # login_user_home.html
 
@@ -1265,6 +1350,9 @@ def contact_us(request):
 #
 #     return response
 #
+
+
+
 def signout(request):
     context = {}
     logout(request)
