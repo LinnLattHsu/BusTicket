@@ -41,9 +41,9 @@
 </button>
 
 <aside id="logo-sidebar"
-       class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+       class="fixed inset-y-0 left-0 z-40 w-64 h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 bg-blue-900"
        aria-label="Sidebar">
-    <div class="h-full px-3 py-4 overflow-y-auto bg-blue-900 dark:bg-gray-500 ">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-blue-900  ">
         <div class="flex justify-center items-center mb-4">
             <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" class="rounded-2xl"
                  alt=""
@@ -54,8 +54,8 @@
         <ul class="space-y-2 font-medium">
             <li>
                 <a href="{% url 'admin_dashboard' %}" class="flex items-center p-2  rounded-lg  dark:text-white bg-white group text-blue-900">
-                    <ion-icon name="grid-outline" class="text-3xl mr-3"></ion-icon>
-                    <span class="ms-3">Dashboard</span>
+                    <ion-icon name="grid-outline" class="text-3xl mr-3 text-blue-900"></ion-icon>
+                    <span class="ms-3 text-blue-900">Dashboard</span>
                 </a>
             </li>
             <li>

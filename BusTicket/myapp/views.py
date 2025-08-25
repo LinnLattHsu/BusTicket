@@ -73,6 +73,7 @@ from django.db.models import Q, Count, Case, When, Value, F
 from datetime import datetime, timedelta
 from .forms import ContactForm
 from django.core.mail import EmailMessage
+import smtplib
 
 # Your views go here
 # Create your views here.
@@ -1156,6 +1157,21 @@ def contact_us(request):
                 messages.success(request,
                                  'Your message has been sent successfully! Our team will get back to you shortly.')
                 return redirect('contact_us')
+
+            # Catch specific errors related to the email server connection or authentication
+            except smtplib.SMTPConnectError:
+                messages.error(request,
+                               'Connection error: The app could not connect to the email server. Please check your internet connection and try again. ')
+
+            except smtplib.SMTPAuthenticationError:
+                messages.error(request,
+                               'Authentication error: The app could not log in to the email server. Please check the email configuration. ')
+
+            except smtplib.SMTPException as e:
+                # This is a general SMTP error catch for other transmission failures.
+                messages.error(request,
+                               f'A server error occurred while sending your message. Please try again later. Error: {e} ')
+
             except Exception as e:
                 messages.error(request,
                                f'An error occurred while sending your message. Please try again later. Error: {e}')
