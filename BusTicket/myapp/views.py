@@ -94,7 +94,6 @@ def home_page_feedback_qa(request):
     return render(request, 'base.html', context)
 
 def search_routes(request):
-    # Always provide dropdown lists
     origins = Route.objects.values_list('origin', flat=True).distinct()
     destinations = Route.objects.values_list('destination', flat=True).distinct()
     operators = Operator.objects.filter(del_flag=0).order_by("operator_name")
@@ -103,6 +102,13 @@ def search_routes(request):
         'origins': origins,
         'destinations': destinations,
         'operators': operators,
+        'selected_origin': None,
+        'selected_destination': None,
+        'selected_date': None,
+        'number_of_seats': None,
+        'selected_bus_type': None,
+        'selected_operator': None,
+        'error': None,
     }
 
     # Accept both GET and POST
@@ -111,7 +117,7 @@ def search_routes(request):
     if data:
         origin_r = data.get('origin', '').strip()
         dest_r = data.get('destination', '').strip()
-        date_r = data.get('date') or data.get('departure_date')
+        date_r = data.get('date')
         number_of_seats = data.get('number_of_seats')
         bus_type = data.get('bus_type')
         operator_name = data.get('operator_name')  # ✅ fixed
@@ -170,7 +176,7 @@ def search_routes(request):
             })
         else:
             context.update({'error': 'No available Bus Schedule for entered Route and Date'})
-            return render(request, 'base.html', context)
+            return render(request, 'available_routes.html', context)
 
     return render(request, 'base.html', context)
 
