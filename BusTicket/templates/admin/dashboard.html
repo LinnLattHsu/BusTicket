@@ -254,7 +254,9 @@
                 <div class="flex items-center space-x-2">
                     <input type="text" name="bus_number" placeholder="Bus Number" value="{{ bus_query }}"
                            class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="text" name="route" placeholder="Origin or Destination" value="{{ route_query }}"
+                    <input type="text" name="origin" placeholder="Origin" value="{{ origin_query }}"
+                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="destination" placeholder="Destination" value="{{ destination_query }}"
                            class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button type="submit" class="px-4 py-2 text-sm text-white bg-gray-700 rounded-lg shadow hover:bg-gray-800 transition">
                         Search

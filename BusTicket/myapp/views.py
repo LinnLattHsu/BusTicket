@@ -1484,15 +1484,16 @@ def admin_dashboard(request):
     no_of_tickets = Ticket.objects.all().count()
 
     bus_query = request.GET.get('bus_number', '')
-    route_query = request.GET.get('route', '')
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
     selected_schedule = None
     seat_status_list = []
 
-    if bus_query and route_query:
+    if bus_query and origin_query and destination_query:
         try:
             selected_schedule = Schedule.objects.get(
                 Q(bus__license_no__iexact=bus_query) &
-                (Q(route__origin__iexact=route_query) | Q(route__destination__iexact=route_query)) &
+                (Q(route__origin__iexact=origin_query) & Q(route__destination__iexact=destination_query)) &
                 Q(del_flag=0)
             )
             seat_status_list = Seat_Status.objects.filter(schedule=selected_schedule).order_by('seat_no')
@@ -1509,7 +1510,8 @@ def admin_dashboard(request):
         'no_of_bookings': no_of_bookings,
         'no_of_tickets': no_of_tickets,
         'bus_query': bus_query,
-        'route_query': route_query,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
         'selected_schedule': selected_schedule,
         'seat_status_list': seat_status_list
     })
@@ -1661,6 +1663,14 @@ def route_home(request):
     if destination_query:
         routes = routes.filter(Q(destination__icontains=destination_query))
 
+    if status_query:
+        if status_query == 'Active':
+            # Assuming del_flag = 0 means the user is active
+            routes = routes.filter(del_flag=0)
+        elif status_query == 'Deleted':
+            # Assuming any value other than 0 for del_flag means deleted
+            routes = routes.filter(del_flag = 1)
+
     # This is the correct way to order the queryset
     routes = routes.order_by('-updated_date')
 
@@ -1811,7 +1821,8 @@ def delete_bus(request,bus_id):
 def schedule_home(request):
 
     date_query = request.GET.get('date', '')
-    route_query = request.GET.get('route', '')
+    origin_query = request.GET.get('origin', '')
+    destination_query = request.GET.get('destination', '')
     status_query = request.GET.get('status', 'Active')
 
     now = datetime.now()
@@ -1835,11 +1846,20 @@ def schedule_home(request):
     )
 
     if date_query:
-        schedules = schedules.filter(date=date_query) # Corrected filter for exact date match
-
-    if route_query:
         schedules = schedules.filter(
-            Q(route__origin__icontains=route_query) | Q(route__destination__icontains=route_query)
+            Q(date=date_query) &
+            Q(del_flag=0)
+        )
+
+    if origin_query:
+        schedules = schedules.filter(
+            Q(route__origin__icontains=origin_query) &
+            Q(del_flag=0)
+        )
+    if destination_query:
+        schedules = schedules.filter(
+            Q(route__destination__icontains=destination_query) &
+            Q(del_flag=0)
         )
     if status_query:
         if status_query == 'Active':
@@ -1857,7 +1877,8 @@ def schedule_home(request):
         'buses': buses,
         'routes': routes,
         'date_query': date_query,
-        'route_query': route_query,
+        'origin_query': origin_query,
+        'destination_query': destination_query,
         'status_query': status_query,
     }
 
