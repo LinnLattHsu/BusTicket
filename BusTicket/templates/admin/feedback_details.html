@@ -76,22 +76,22 @@
                     <p class="text-gray-800">{{ feedback.response }}</p>
                 </div>
             {% else %}
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Respond to this Inquiry</h3>
-                <form method="post" action="{% url 'feedback_detail' feedback.id %}">
-                    {% csrf_token %}
-                    <div class="mb-4">
-                        <label for="response_message" class="block text-sm font-medium text-gray-700">Your Response</label>
-                        <textarea id="response_message" name="response_message" rows="6"
-                                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                    </div>
-                    <div class="flex justify-end">
-                        <button type="submit"
-                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Submit Response
-                        </button>
-                    </div>
-                </form>
-            {% endif %}
+<!--                <h3 class="text-xl font-semibold mb-4 text-gray-800">Respond to this Inquiry</h3>-->
+<!--                <form method="post" action="{% url 'feedback_detail' feedback.id %}">-->
+<!--                    {% csrf_token %}-->
+<!--                    <div class="mb-4">-->
+<!--                        <label for="response_message" class="block text-sm font-medium text-gray-700">Your Response</label>-->
+<!--                        <textarea id="response_message" name="response_message" rows="6"-->
+<!--                                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-end">-->
+<!--                        <button type="submit"-->
+<!--                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">-->
+<!--                            Submit Response-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            {% endif %}-->
 
             <div class="mt-8 text-center">
                 <a href="{% url 'feedback_list' %}" class="text-blue-600 hover:underline flex items-center justify-center">

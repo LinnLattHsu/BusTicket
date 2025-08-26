@@ -305,8 +305,7 @@
 
 <div class="col-lg-12 col-md-8">
   <div class="container mb-4">
-        <form method="post" action= "{% url 'search_routes'%}" class="route-summary">
-            {% csrf_token %}
+        <form method="get" action= "{% url 'search_routes'%}" class="route-summary">
             <input type="hidden" name="source" value="available">
                     <div class="row align-items-end g-3">
                         <div class="col-md-3">
@@ -330,8 +329,8 @@
                         </div>
 
                         <div class="col-md-2">
-                          <label for="departure_date" class="form-label">Departure Date</label>
-                          <input type="date" name="departure_date" id="departure_date" class="form-control" value="{{selected_date}}">
+                          <label for="date" class="form-label">Date</label>
+                          <input type="date" name="date" id="date" class="form-control" value="{{selected_date}}"  min="{% now 'Y-m-d' %}" required>
                         </div>
 
                         <div class="col-md-2">
@@ -339,7 +338,7 @@
                           <div class="seat-control" style="display:flex; align-items:center; gap:0.5rem;">
                             <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>
 <!--                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="" max="20" class="form-control w-25 text-center">-->
-                            <input type="number" name="number_of_seats" id="seatInput" value="{{selected_seat}}" min="1" max="20" class="w-25 text-center">
+                            <input type="number" name="number_of_seats" id="seatInput" value="{{selected_seat|default:1}}" min="1" max="20" class="w-25 text-center">
 
                             <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>
                           </div>
@@ -365,8 +364,8 @@
                     <input type="hidden" name="source" value="home">
 
 
-                    <div class="filter-sidebar">
-                        <h5 class="text-black">Bus Type</h5>
+<div class="filter-sidebar">
+<h5 class="text-black">Bus Type</h5>
 <div class="filter-group">
     <div class="form-check">
     <input class="form-check-input" type="radio" name="bus_type" id="busTypeAll" value=""
@@ -446,7 +445,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <div class="alert alert-warning">No routes found for the selected date and route.</div>
+            <div class="alert alert-warning">No routes found for the selected data.</div>
         {% endif %}
     </div>
         </div>
