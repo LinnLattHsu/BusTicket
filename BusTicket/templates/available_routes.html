@@ -19,6 +19,10 @@
 
     <title>Title</title>
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+        }
     .navbar {
     background-color: rgb(30, 58, 138) !important;
 }
@@ -90,6 +94,15 @@
 .show {
     display: block;
 }
+    .search-btn,.btn-select{
+        background:  linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        border-radius: 8px; /* Rounded button */
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    }
 /* Styles for the new filter sidebar */
     .filter-sidebar {
         background-color: #fff;
@@ -174,12 +187,14 @@
 
 
       .bus-card {
-            border: 1px solid #ddd;
-            border-left: 5px solid #0d6efd;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-        }
+        border-radius: 15px; /* More rounded corners */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+        padding: 30px;
+        transition: transform 0.3s ease-in-out;
+      }
+      .bus-card:hover{
+        transform: translateY(-5px);
+      }
 
         .bus-time {
             font-size: 1.2rem;
@@ -197,11 +212,6 @@
             font-weight: 600;
         }
 
-        .btn-select {
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -233,13 +243,13 @@
                     </a>
                     {% if request.user.is_authenticated %}
                     <a class="nav-item nav-link" href="{% url 'seebookings' %}">
-                        <i class="fas fa-list"></i> See Bookings
+                        <i class="fas fa-ticket-alt"></i> See Bookings
                     </a>
                     <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
-                        <i class="fas fa-list"></i> Feedback
+                        <i class="fas fa-comment-alt"></i> Feedback
                     </a>
                     <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
-                        <i class="fas fa-list"></i> Contact Us
+                        <i class="fas fa-envelope"></i> Contact Us
                     </a>
 <!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
 <!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
@@ -345,7 +355,7 @@
                         </div>
 
                         <div class="col-md-2 d-flex align-items-end">
-                          <button type="submit" class="btn btn-primary">Search Now</button>
+                          <button type="submit" class="btn search-btn">Search Now</button>
                         </div>
                     </div>
 
@@ -354,7 +364,7 @@
 </div></div>
         <div class="row">
             <!-- Filter Sidebar Column -->
-            <div class="col-lg-3 col-md-4">
+            <div class="col-lg-2 col-md-4">
                 <form method="get" action="{% url 'search_routes' %}" class="h-100">
                     <!-- Hidden fields to retain main search form values when filters are applied -->
                     <input type="hidden" name="origin" value="{{ request.GET.origin }}">
@@ -418,7 +428,7 @@
                     <!-- Time & Route -->
                     <div class="col-md-3">
                         <div class="bus-time">{{ schedule.time|time:"h:i A" }}</div>
-                        <div class="text-primary">{{ schedule.bus.bus_type }} {{ schedule.bus.operator.operator_name }}</div>
+                        <div class="text-primary"><span class="text-primary">{{ schedule.bus.bus_type }}</span><span class="text-success"> {{ schedule.bus.operator.operator_name }}</span></div>
                         <div class="bus-info">
                             {{ schedule.route.origin }} → {{ schedule.route.destination }}
                         </div>
@@ -427,8 +437,8 @@
                     <!-- Duration & Date -->
                     <div class="col-md-3">
                         <div class="bus-info">Departure: {{ schedule.date }} {{ schedule.time|time:"h:i A" }}</div>
-                        <div class="bus-info">Estimated Arrival: {{ schedule.date }} — Add Duration</div>
-                        <div class="bus-info text-muted">Duration: 10–12 hrs (example)</div>
+                        <div class="bus-info">Arrival: {{ schedule.date }}</div>
+<!--                        <div class="bus-info text-muted">Duration: 10–12 hrs (example)</div>-->
                     </div>
 
                     <!-- Price & Seats -->

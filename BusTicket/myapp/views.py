@@ -153,7 +153,7 @@ def search_routes(request):
             del_flag=0,
             route__del_flag=0,
             bus__del_flag=0
-        )
+        ).order_by('time')
         # Apply bus type filter
         if bus_type:
             schedules = schedules.filter(bus__bus_type__iexact=bus_type)
@@ -983,33 +983,10 @@ def profile_page(request):
 
 @login_required
 def seebookings(request, booking_id=None):
-    """
-    Manages both the list view and the detailed ticket view in a single function.
-
-    If booking_id is provided in the URL, it fetches and displays a specific ticket.
-    Otherwise, it fetches and displays a list of all tickets for the logged-in user.
-    """
     if booking_id:
-        # Show detailed ticket view if booking_id is provided
         try:
-            # Fetch the specific Booking object for the logged-in user.
-            # Use select_related to efficiently fetch related Schedule, Ticket,
-            # and Payment objects in a single database query.
             booking = Booking.objects.get(id=booking_id,customer=request.user)
-            # booking = Booking.objects.select_related(
-            #     'schedule',             # Selects the Schedule object
-            #     'schedule__bus',        # Selects the related Bus object from Schedule
-            #     'schedule__route',
-            #     'ticket',               # Selects the related Ticket object
-            #     'ticket__payment',      # Selects the related Payment object from Ticket
-            #     'customer'         # To get customer name/details if needed
-            # ).get(
-            #     id=booking_id,
-            #     customer=request.user  # CRITICAL: Ensures user can only see their own bookings
-            # )
         except Booking.DoesNotExist:
-            # If the booking is not found or does not belong to the user,
-            # display an error message and redirect to the list view.
             messages.error(request, "Ticket not found or you don't have permission to view it.")
             return redirect('seebookings')
 
@@ -1020,24 +997,17 @@ def seebookings(request, booking_id=None):
         return render(request, 'see_bookings.html', context)
 
     else:
-        # Show list of all tickets if no booking_id is provided
-        try:
-            # Fetch all Booking objects for the current user.
-            # Use select_related to efficiently fetch related Schedule and Ticket data.
-            user_bookings = (Booking.objects.filter(customer=request.user).order_by('-booked_time'))
-            # .select_related(
-            #     'schedule',
-            #     'schedule__bus', # Selects the related Bus object from Schedule for the list view
-            #     'schedule__route',  # <--- ADD THIS LINE
-            #     'ticket'
-            # ))
-        except Booking.DoesNotExist:
-            # This case might occur if no bookings exist for the user.
-            user_bookings = None
+        search_id = request.GET.get('booking_id')
+        user_bookings = Booking.objects.filter(customer=request.user)
 
+        if search_id:
+            try:
+                user_bookings = user_bookings.filter(id=int(search_id))
+            except (ValueError, TypeError):
+                user_bookings = Booking.objects.none()
         context = {
-            'bookings': user_bookings,  # Pass the list of bookings for the list view
-            'today': date.today(),  # Useful for future logic like status or actions
+            'bookings': user_bookings,
+            'today': date.today(),
         }
         return render(request, 'see_bookings.html', context)
 
