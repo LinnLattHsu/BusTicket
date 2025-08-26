@@ -88,6 +88,7 @@ def home_page_feedback_qa(request):
     feedbacks = Feedback.objects.filter(del_flag=0).order_by('-created_date')[:3]
     qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')[:3]
     context = {
+        'active_page' : 'home',
         'feedbacks': feedbacks,
         'qas':qas,
     }
@@ -1013,6 +1014,7 @@ def seebookings(request, booking_id=None):
             return redirect('seebookings')
 
         context = {
+            'active_page': 'seebookings',
             'booking': booking  # Pass the single booking object for detailed view
         }
         return render(request, 'see_bookings.html', context)
@@ -1066,6 +1068,7 @@ def feedback(request):
         # print('processs fail')
 
     context = {
+        'active_page': 'feedback',
         'form': form,
     }
     return render(request, 'feedback_form.html', context)

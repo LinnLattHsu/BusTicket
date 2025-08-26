@@ -216,22 +216,22 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
                     <a class="nav-item nav-link" href=""> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
+                    <a class="nav-item nav-link {% if active_page == 'seebookings' %}active{% endif %} " href="{% url 'seebookings' %}">
                         <i class="fas fa-list"></i> See Bookings
                     </a>
-<!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
-<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                    </a>-->
-<!--                    <div class="profile-circle ms-2 me-2">-->
-<!--                        <span>{{ user.name|default:'U'|first|upper }}</span>-->
-<!--                    </div>-->
+                     <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
+                        <i class="fas fa-list"></i> Feedback
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
+                        <i class="fas fa-list"></i> Contact Us
+                    </a>
                     <div class="profile-dropdown-container">
                         <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
 <!--                            <i class="fas fa-user"></i>-->
@@ -250,33 +250,7 @@
             <i class="fas fa-user-plus"></i> Signup
         </a>
     {% endif %}
-<!--                   this is yin wai lwin parts-->
-<!--                    {% if not request.user.is_authenticated %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
-<!--                        </a>-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-user-plus"></i> Signup-->
-<!--                        </a>-->
-<!--                    {% else %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                        </a>-->
-<!--                    {% endif %}-->
 
-<!--                    comment see bookings because of error-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-list"></i> See Bookings-->
-<!--                    </a>-->
-<!--                    {% if request.user.is_active %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                    </a>-->
-<!--                    {% else %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-user-plus"></i> Registration-->
-<!--                    </a>-->
-<!--                    {% endif %}-->
                 </div>
             </div>
         </div>
@@ -294,10 +268,10 @@
             <div class="text-sm mt-2 text-primary text-center">Seat Selection</div>
         </div>
 
-        <div class="d-flex flex-column align-items-center">
-            <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">2</div>
-            <div class="text-sm mt-2 text-secondary text-center">Traveller Info</div>
-        </div>
+<!--        <div class="d-flex flex-column align-items-center">-->
+<!--            <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">2</div>-->
+<!--            <div class="text-sm mt-2 text-secondary text-center">Traveller Info</div>-->
+<!--        </div>-->
 
         <div class="d-flex flex-column align-items-center">
             <div class="rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">3</div>
@@ -322,6 +296,7 @@
 
                 <form method="post" action="{% url 'submit_seats' schedule_id=schedule_id %}">
                 {% csrf_token %}
+                <input type="hidden" id="number-of-seats" value="{{ seats }}">
                 <input type="hidden" id="selectedSeatsInput" name="selected_seats" value="" />
                 <div id="seatGrid" style="grid-template-columns: 80px 80px 30px 80px; max-width: fit-content; margin: auto; display: grid; gap: 10px;">
     {% for seat in seats_data %}
@@ -351,6 +326,7 @@
 <!--                <br>-->
 <!--                <button type="submit" class="btn btn-primary">Continue To Payment</button>-->
                     <div class="d-flex flex-column flex-sm-row justify-content-center mt-4">
+                        <button type="button" onclick="window.history.back();" class="btn btn-secondary me-sm-2 mb-2 mb-sm-0">Back</button>
                     <button type="button" id="resetSeatsBtn" class="btn btn-secondary me-sm-2 mb-2 mb-sm-0">Reset Seats</button>
                     <br>
                     <button type="submit" class="btn btn-primary">Continue To Payment</button>
@@ -459,16 +435,30 @@
             }
         }
     }
-document.addEventListener('DOMContentLoaded', () => {
-        const maxSeats = parseInt(document.getElementById('maxSeatsAllowed').textContent, 10);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Get the requested number of seats from the hidden input
+        const maxSeats = parseInt(document.getElementById('number-of-seats').value, 10);
         const selectedSeats = [];
         const seatButtons = document.querySelectorAll('.seat-btn.available');
         const selectedSeatsInput = document.getElementById('selectedSeatsInput');
         const selectionMessage = document.getElementById('selectionMessage');
-        const totalTicketPriceSpan = document.getElementById('totalTicketPrice');
-        const unitTicketPrice = parseFloat(document.getElementById('unitTicketPrice').textContent);
-        const numberOfSeatsSpan = document.getElementById('numberOfSeats');
+        const paymentButton = document.querySelector('.btn-primary[type="submit"]');
 
+        function updateButtonAndMessage() {
+            if (selectedSeats.length === 0) {
+                paymentButton.disabled = true;
+                selectionMessage.classList.remove('d-none');
+                selectionMessage.textContent = 'Please select your seats to continue.';
+            } else if (selectedSeats.length !== maxSeats) {
+                paymentButton.disabled = true;
+                selectionMessage.classList.remove('d-none');
+                selectionMessage.textContent = `You must select exactly ${maxSeats} seat(s). You have selected ${selectedSeats.length}.`;
+            } else {
+                paymentButton.disabled = false;
+                selectionMessage.classList.add('d-none');
+            }
+        }
 
         seatButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -481,22 +471,76 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (selectedSeats.length < maxSeats) {
                         selectedSeats.push(seat);
                         button.classList.add('selected');
-                        selectionMessage.classList.add('d-none'); // Hide message if selection is valid
                     } else {
-                        // Display error message if max seats reached
                         selectionMessage.classList.remove('d-none');
+                        selectionMessage.textContent = `You can only select a maximum of ${maxSeats} seats.`;
+                        return; // Prevent further action
                     }
                 }
                 selectedSeatsInput.value = selectedSeats.join(',');
-                updatePriceAndCount();
+                updateButtonAndMessage();
             });
         });
-          document.getElementById('resetSeatsBtn').addEventListener('click', () => {
+
+        document.getElementById('resetSeatsBtn').addEventListener('click', () => {
             selectedSeats.length = 0;
             selectedSeatsInput.value = '';
             seatButtons.forEach(button => button.classList.remove('selected'));
-          });
+            updateButtonAndMessage();
         });
+
+        // Initial check on page load
+        updateButtonAndMessage();
+    });
+
+<!--    document.addEventListener('DOMContentLoaded', () => {-->
+<!--        const maxSeats = parseInt(document.getElementById('maxSeatsAllowed').textContent, 10);-->
+<!--        const selectedSeats = [];-->
+<!--        const seatButtons = document.querySelectorAll('.seat-btn.available');-->
+<!--        const selectedSeatsInput = document.getElementById('selectedSeatsInput');-->
+<!--        const selectionMessage = document.getElementById('selectionMessage');-->
+<!--        const totalTicketPriceSpan = document.getElementById('totalTicketPrice');-->
+<!--        const unitTicketPrice = parseFloat(document.getElementById('unitTicketPrice').textContent);-->
+<!--        const numberOfSeatsSpan = document.getElementById('numberOfSeats');-->
+<!--        const paymentButton = document.querySelector('.btn-primary[type="submit"]');-->
+
+<!--        function updateButtonState() {-->
+<!--                if (selectedSeats.length === maxSeats) {-->
+<!--                    paymentButton.disabled = false;-->
+<!--                    selectionMessage.classList.add('d-none'); // Hide error message-->
+<!--                } else {-->
+<!--                    paymentButton.disabled = true;-->
+<!--                    selectionMessage.classList.remove('d-none'); // Show error message-->
+<!--                    selectionMessage.textContent = `Please select exactly ${maxSeats} seats.`;-->
+<!--                }-->
+<!--            }-->
+<!--        seatButtons.forEach(button => {-->
+<!--            button.addEventListener('click', () => {-->
+<!--                const seat = button.dataset.seat;-->
+<!--                if (selectedSeats.includes(seat)) {-->
+<!--                    // Unselect seat-->
+<!--                    selectedSeats.splice(selectedSeats.indexOf(seat), 1);-->
+<!--                    button.classList.remove('selected');-->
+<!--                } else {-->
+<!--                    if (selectedSeats.length < maxSeats) {-->
+<!--                        selectedSeats.push(seat);-->
+<!--                        button.classList.add('selected');-->
+<!--                        selectionMessage.classList.add('d-none'); // Hide message if selection is valid-->
+<!--                    } else {-->
+<!--                        // Display error message if max seats reached-->
+<!--                        selectionMessage.classList.remove('d-none');-->
+<!--                    }-->
+<!--                }-->
+<!--                selectedSeatsInput.value = selectedSeats.join(',');-->
+<!--                updatePriceAndCount();-->
+<!--            });-->
+<!--        });-->
+<!--          document.getElementById('resetSeatsBtn').addEventListener('click', () => {-->
+<!--            selectedSeats.length = 0;-->
+<!--            selectedSeatsInput.value = '';-->
+<!--            seatButtons.forEach(button => button.classList.remove('selected'));-->
+<!--          });-->
+<!--        });-->
     </script>
 </body>
 </html>
