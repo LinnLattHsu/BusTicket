@@ -151,7 +151,7 @@
                     <a class="nav-item nav-link active" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link" href=""> <!-- to correct  -->
+                    <a class="nav-item nav-link" href="{% url 'about_us' %}">
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}

@@ -177,14 +177,14 @@
                     <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link " href=""> <!-- to correct  -->
+                    <a class="nav-item nav-link {% if active_page == 'about_us' %}active{% endif %}" href="{% url 'about_us' %}"> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
 
-                    <a class="nav-item nav-link" href="{% url 'login' %}">
+                    <a class="nav-item nav-link active {% if active_page == 'login' %}active{% endif %}" href="{% url 'login' %}">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </a>
-                    <a class="nav-item nav-link" href="{% url 'register' %}">
+                    <a class="nav-item nav-link {% if active_page == 'register' %}active{% endif %}" href="{% url 'register' %}">
                         <i class="fas fa-user-plus"></i> Signup
                     </a>
 <!--                   this is yin wai lwin parts-->

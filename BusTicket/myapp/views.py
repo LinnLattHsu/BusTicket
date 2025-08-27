@@ -523,7 +523,7 @@ def feedback_success(request):
     return render(request, 'feedback_success.html')
 
 def about_us(request):
-    return render(request,'about_us.html')
+    return render(request,'about_us.html',{'active_page':about_us})
 
 def user_registration(request):
     if request.method == 'POST':
@@ -570,12 +570,13 @@ def user_login(request):
     else:
         form = CustomUserAuthenticationForm(request=request)
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {'form': form,'active_page':login})
 
 @login_required
 def logined_user_home(request):
     user_id = request.user.user_id
     context = {
+        'active_page': login,
         'user_id': user_id,
         'user_email': request.user.email,
     }
