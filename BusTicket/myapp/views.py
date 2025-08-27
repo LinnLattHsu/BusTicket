@@ -522,8 +522,17 @@ def feedback(request):
 def feedback_success(request):
     return render(request, 'feedback_success.html')
 
+
 def about_us(request):
-    return render(request,'about_us.html',{'active_page':about_us})
+    is_authenticated = request.user.is_authenticated
+    context = {
+        'active_page': 'about_us',
+        'is_authenticated': is_authenticated
+    }
+    if is_authenticated:
+        context['user'] = request.user
+
+    return render(request, 'about_us.html', context)
 
 def user_registration(request):
     if request.method == 'POST':

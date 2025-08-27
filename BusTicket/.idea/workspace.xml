@@ -8,8 +8,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqllite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqllite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myapp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/myapp/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/schedule_home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/schedule_home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/about_us.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about_us.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/profile_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profile_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/see_bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/see_bookings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/user_registration_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_registration_form.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

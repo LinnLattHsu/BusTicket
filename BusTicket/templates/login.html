@@ -181,7 +181,7 @@
                         <i class="fas fa-bus"></i> About Us
                     </a>
 
-                    <a class="nav-item nav-link active {% if active_page == 'login' %}active{% endif %}" href="{% url 'login' %}">
+                    <a class="nav-item nav-link active lg:bg-transparent lg:border-2 lg:border-white lg:rounded-lg lg:px-4 lg:py-2 lg:text-white lg:font-semibold lg:hover:bg-white lg:hover:text-blue-900 lg:transition lg:duration-300 {% if active_page == 'login' %}lg:bg-white lg:text-blue-900{% endif %}" href="{% url 'login' %}">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </a>
                     <a class="nav-item nav-link {% if active_page == 'register' %}active{% endif %}" href="{% url 'register' %}">

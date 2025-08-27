@@ -203,7 +203,7 @@
                     <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link " href=""> <!-- to correct  -->
+                    <a class="nav-item nav-link " href="{% url 'about_us' %}"> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}

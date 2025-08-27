@@ -4,11 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Bus Ticket</title>
-    <!-- Use Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('https://res.cloudinary.com/ddvru0ow1/image/upload/v1727193013/imgblur_vcheyk.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-position: center;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
@@ -37,79 +63,190 @@
             color: white;
             margin-bottom: 0.25rem;
         }
+        .navbar {
+    background-color: rgb(30, 58, 138) !important;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important; /* Changes the text color to white on hover */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Adds a subtle glow effect */
+}
+
+/* Custom styling for active navbar links */
+.nav-link.active {
+    font-weight: bold; /* Makes the text bold */
+    background-color: rgba(255, 255, 255, 0.1); /* Adds a subtle background highlight */
+    border-radius: 0.5rem; /* Adds rounded corners */
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: #007bff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: 2px solid #007bff;
+}
+.profile-circle i{
+    font-size: 1.25rem;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.profile-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
     </style>
 </head>
 <body class="bg-gray-700">
 
-    <!-- Main page wrapper to handle full-screen content -->
-    <div class="flex flex-col items-center min-h-screen">
-        <!-- Navbar fixed to the top -->
-        <nav class="fixed top-0 left-0 right-0 z-50 w-full p-4 bg-blue-900 bg-opacity-50 text-white shadow-lg">
-            <div class="container mx-auto flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <!-- Bus icon to match the one on the home page -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 10h-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10h2c0 2.21 1.79 4 4 4s4-1.79 4-4h4c0 2.21 1.79 4 4 4s4-1.79 4-4h2v-4a2 2 0 0 0-2-2zm-6 0H4V6h8v4zm-4 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm12 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4-3h-4v-2h4v2z"/>
-                    </svg>
-                    <span class="text-xl font-bold">Bus Ticket</span>
+    <!-- Responsive Navigation Bar with Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="https://i.pinimg.com/originals/e2/1c/b5/e21cb58cda4ccf597b05d2048b483c0d.jpg" alt=""
+                    style="height:50px;width:50px;border-radius:10px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="nav-item nav-link {% if active_page == 'about_us' %}active{% endif %}" href="{% url 'about_us' %}"> <!-- to correct  -->
+                        <i class="fas fa-bus"></i> About Us
+                    </a>
+
+                    <a class="nav-item nav-link {% if active_page == 'login' %}active{% endif %}" href="{% url 'login' %}" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a class="nav-item nav-link active lg:bg-transparent lg:border-2 lg:border-white lg:rounded-lg lg:px-4 lg:py-2 lg:text-white lg:font-semibold lg:hover:bg-white lg:hover:text-blue-900 lg:transition lg:duration-300 {% if active_page == 'register' %}lg:bg-white lg:text-blue-900{% endif %}" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i> Signup
+                    </a>
+<!--                   this is yin wai lwin parts-->
+<!--                    {% if not request.user.is_authenticated %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
+<!--                        </a>-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-user-plus"></i> Signup-->
+<!--                        </a>-->
+<!--                    {% else %}-->
+<!--                        <a class="nav-item nav-link" href="">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                        </a>-->
+<!--                    {% endif %}-->
+
+<!--                    comment see bookings because of error-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-list"></i> See Bookings-->
+<!--                    </a>-->
+<!--                    {% if request.user.is_active %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
+<!--                    </a>-->
+<!--                    {% else %}-->
+<!--                    <a class="nav-item nav-link" href="">-->
+<!--                        <i class="fas fa-user-plus"></i> Registration-->
+<!--                    </a>-->
+<!--                    {% endif %}-->
                 </div>
-
-                <div class="container mx-auto flex justify-end items-center space-x-4">
-                    <a href="{% url 'home' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full flex items-center">
-                        <i class="fas fa-home mr-2"></i>Home
-                    </a>
-                    <a href="{% url 'about_us' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full flex items-center">
-                        <i class="fas fa-bus mr-2"></i>About Us
-                    </a>
-                    <a href="{% url 'login' %}" class="text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full flex items-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </a>
-                    <a href="{% url 'register' %}" class="active text-white hover:text-gray-300 transition-colors duration-200 py-2 px-4 rounded-full flex items-center">
-                        <i class="fas fa-user-plus mr-2"></i>Signup
-                    </a>
-                </div>
-
-
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main form container, with top padding to prevent it from being hidden -->
-        <div class="w-full max-w-lg mx-auto p-8 rounded-xl shadow-lg form-container mt-28">
+    <!-- Main form container -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="p-4 rounded-3 shadow-lg form-container">
+                    <!-- Form title -->
+                    <h1 class="text-3xl font-bold text-white text-center mb-4">Create Account</h1>
 
-            <!-- Form title -->
-            <h1 class="text-3xl font-bold text-white text-center mb-6">Create Account</h1>
-
-            <!-- The form itself -->
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-field-container">
-                        <label for="{{ field.id_for_label }}" class="form-label">
-                            {{ field.label }}
-                        </label>
-                        <div class="mt-1">
-                            {{ field }}
-                            {% if field.help_text %}
-                                <p class="text-xs text-gray-200 mt-1">{{ field.help_text|safe }}</p>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <p class="text-xs text-red-300 mt-1">{{ error }}</p>
-                            {% endfor %}
+                    <!-- The form itself -->
+                    <form method="POST" class="space-y-4">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                </label>
+                                <div class="mt-1">
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <p class="form-text text-white text-opacity-75">{{ field.help_text|safe }}</p>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <p class="text-danger mt-1">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pt-4">
+                            <button type="submit"
+                                    class="w-full btn btn-primary py-3 px-4 rounded-pill font-semibold shadow-lg">
+                                Create Account
+                            </button>
                         </div>
-                    </div>
-                {% endfor %}
-                <div class="pt-4">
-                    <button type="submit"
-                            class="w-full py-3 px-4 rounded-full text-white font-semibold shadow-lg
-                                   bg-blue-600 hover:bg-blue-700 transition-colors duration-200
-                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Create Account
-                    </button>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
-
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

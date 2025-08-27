@@ -8,7 +8,7 @@
 
     <!-- Bootstrap 5.3.x CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        xintegrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
     <!-- Font Awesome 6.1.1 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
@@ -190,51 +190,52 @@
             border-left: 5px solid #ccc; /* A subtle grey left border */
             opacity: 0.8; /* Slightly desaturate */
         }
-        /* Print-specific styles for clean output */
+
+        /* --- PRINT STYLES - IMPORTANT! --- */
         @media print {
-        body > *:not(.print-only) {
-        display: none !important;
-    }
+            /* 1. Hide everything on the page except for the specific print content */
+            body > *:not(.print-container) {
+                display: none !important;
+            }
 
-    /* 2. Position the ticket content to the top of the page */
-    .print-only {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
+            /* 2. Style the print container to be a full-page layout */
+            .print-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
 
-    /* 3. Refine the ticket-card styles for clean printing */
-    .ticket-card {
-        box-shadow: none !important; /* Remove shadows for a cleaner look */
-        border: 1px solid #ccc; /* Add a subtle border */
-        border-radius: 0 !important; /* Remove rounded corners */
-        width: 100%;
-        max-width: 100%;
-    }
+            /* 3. Ensure the ticket card itself looks clean on print */
+            .ticket-card {
+                box-shadow: none !important;
+                border: 1px solid #ccc;
+                border-radius: 0 !important;
+                width: 100%;
+                max-width: 100%;
+            }
 
-    /* 4. Remove elements from the ticket itself that you don't want to print */
-    .card-footer, .navbar {
-        display: none !important;
-    }
+            /* 4. Hide elements within the ticket you don't want to print */
+            .card-footer, .navbar {
+                display: none !important;
+            }
 
-    /* 5. Force text to be black for readability */
-    body, p, h1, h2, h3, h4, h5, h6, .card-header, .card-body {
-        color: #000 !important;
-    }
-    .text-secondary {
-        color: #555 !important;
-    }
+            /* 5. Force text to be black for readability on paper */
+            body, p, h1, h2, h3, h4, h5, h6, .card-header, .card-body {
+                color: #000 !important;
+            }
+            .text-secondary {
+                color: #555 !important;
+            }
 
-    /* 6. Ensure the card fits on one page */
-    @page {
-        size: A4 portrait;
-        margin: 1cm;
-    }
-    }
-
+            /* 6. Set the page size and margins for a clean A4 printout */
+            @page {
+                size: A4 portrait;
+                margin: 1cm;
+            }
+        }
     </style>
 </head>
 <body>
@@ -287,7 +288,8 @@
     </div>
 </nav>
 
-<div class="container py-5 print-only">
+<!-- Main content container. The `print-container` class is added here. -->
+<div class="container py-5 print-container">
     {% if booking %}
     <!-- --- Detailed Ticket View --- -->
     <div class="row justify-content-center">
@@ -392,15 +394,9 @@
             {% if bookings %}
         {% for booking in bookings %}
             {# Compare booking date with today's date #}
-            {% comment %}
-                Ensure 'booking.schedule.date' is a date object for proper comparison.
-                Django's 'now' tag returns a datetime object.
-                If 'booking.schedule.date' is just a date, you might need to compare it
-                with today's date component of 'now'.
-            {% endcomment %}
             {% now "Y-m-d" as today_date_str %}
             {% if booking.schedule.date|date:"Y-m-d" < today_date_str %}
-                <div class="booking-card row align-items-center past-booking"> {# Apply past-booking class here #}
+                <div class="booking-card row align-items-center past-booking">
             {% else %}
                 <div class="booking-card row align-items-center">
             {% endif %}
@@ -454,7 +450,7 @@
 
 <!-- Bootstrap 5.3.x JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1Z7b1mC+07hF3z0J625Q4rXq+8Qd6T"
+    xintegrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1Z7b1mC+07hF3z0J625Q4rXq+8Qd6T"
     crossorigin="anonymous"></script>
 
 <script>
