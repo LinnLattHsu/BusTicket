@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -12,8 +11,7 @@
 
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
@@ -21,8 +19,6 @@
     <!-- Favicon -->
     <link rel="icon"
         href="https://media.istockphoto.com/id/1316056069/vector/regional-transport-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=puRU0uK1Xr18a3_3m-0bnCpUbgu-Q5Po02EK_goVIdY=">
-
-
 
     <style>
         /* Navbar Styles */
@@ -34,6 +30,17 @@
       font-family: 'Inter', sans-serif;
       background-color: #f0f2f5;
   }
+  .seamless-content-card {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+<!--            padding: 30px;-->
+            margin: 0;
+            padding: 0;
+            gap: 0;
+            margin-right: 0;
+            margin-left: 0;
+            transition: transform 0.3s ease-in-out;
+        }
 .navbar {
     background-color: rgb(30, 58, 138) !important;
 }
@@ -229,50 +236,50 @@
             font-size: 1rem;
         }
     }
-  footer {
-    background-color: rgba(0, 123, 255, 0.4); /* More transparency */
-    color: #fff;
-    padding: 20px 0; /* Reduced padding */
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    transition: background-color 0.3s ease-in-out;
-    z-index: 100;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Less shadow */
-    font-size: 14px; /* Smaller font size */
-}
+<!--  footer {-->
+<!--    background-color: rgba(0, 123, 255, 0.4); /* More transparency */-->
+<!--    color: #fff;-->
+<!--    padding: 20px 0; /* Reduced padding */-->
+<!--    position: relative;-->
+<!--    bottom: 0;-->
+<!--    width: 100%;-->
+<!--    transition: background-color 0.3s ease-in-out;-->
+<!--    z-index: 100;-->
+<!--    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Less shadow */-->
+<!--    font-size: 14px; /* Smaller font size */-->
+<!--}-->
 
-footer:hover {
-    background-color: rgba(0, 86, 179, 0.6); /* Darker hover */
-    padding: 22px 0; /* Slight increase on hover */
-}
+<!--footer:hover {-->
+<!--    background-color: rgba(0, 86, 179, 0.6); /* Darker hover */-->
+<!--    padding: 22px 0; /* Slight increase on hover */-->
+<!--}-->
 
 
-footer {
-    padding: 15px 0; /* More compact */
-    font-size: 12px; /* Smaller font size */
-    text-align: center;
-}
+<!--footer {-->
+<!--    padding: 15px 0; /* More compact */-->
+<!--    font-size: 12px; /* Smaller font size */-->
+<!--    text-align: center;-->
+<!--}-->
 
-  footer h5 {
-      font-size: 1rem; /* Reduce title font size */
-      margin-bottom: 10px; /* Reduce margin below the title */
-      text-transform: uppercase;
-      position: relative;
-  }
+<!--  footer h5 {-->
+<!--      font-size: 1rem; /* Reduce title font size */-->
+<!--      margin-bottom: 10px; /* Reduce margin below the title */-->
+<!--      text-transform: uppercase;-->
+<!--      position: relative;-->
+<!--  }-->
 
-  footer .row {
-      margin-bottom: 10px; /* Reduce spacing between rows */
-  }
+<!--  footer .row {-->
+<!--      margin-bottom: 10px; /* Reduce spacing between rows */-->
+<!--  }-->
 
-  footer h5::after {
-      content: '';
-      display: block;
-      width: 40px; /* Smaller underline */
-      height: 2px;
-      background-color: #ffcc00; /* Yellow underline */
-      margin: 8px auto;
-  }
+<!--  footer h5::after {-->
+<!--      content: '';-->
+<!--      display: block;-->
+<!--      width: 40px; /* Smaller underline */-->
+<!--      height: 2px;-->
+<!--      background-color: #ffcc00; /* Yellow underline */-->
+<!--      margin: 8px auto;-->
+<!--  }-->
 
 
         /* Main Content Styles */
@@ -374,7 +381,7 @@ footer {
      /* Card Text */
      .card-custom .card-text {
          font-size: 1rem;
-         color: #6c757d;
+         color: #000;
      }
 
      /* Button */
@@ -389,53 +396,39 @@ footer {
          background-color: #0056b3;
      }
      /* Reviews Section */
-     .review-container {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-     }
+        /* Responsive spacing and font sizes */
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .lead {
+                font-size: 1rem;
+            }
+            .card-body {
+                padding: 1.5rem;
+            }
+        }
 
-     .reviews-section {
-        margin: 0;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        background: #f4f4f4;
-     }
+        .section-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 2rem;
+        }
 
+        .review-card {
+            border-radius: 1rem;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
 
+        .review-card:hover {
+            transform: translateY(-5px);
+        }
 
+        .rating .fa-star {
+            color: #ffc107;
+        }
 
- .review-card {
-     border-radius: 10px;
-     background-color: rgba(255, 255, 255, 0.8);
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-     transition: transform 0.3s ease, box-shadow 0.3s ease;
-     color:black
- }
-
- .review-card:hover {
-     transform: scale(1.05);
-     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
- }
-
- .review-img {
-     border-radius: 50%;
-     margin-bottom: 15px;
-     width: 80px;
-     height: 80px;
- }
-
- .rating i {
-     color: #ffcc00;
- }
-
- .section-title {
-     font-size: 2.5rem;
-     font-weight: bold;
-     margin-bottom: 40px;
-     position: relative;
-     color: black;
-     animation: fadeIn 1s ease;
- }
 
  /* FAQ Section */
  .accordion-item {
@@ -465,6 +458,10 @@ footer {
     color: #212529; /* Dark text color for better readability */
 }
 
+<!--    footer{-->
+<!--        background-color: rgba(0, 123, 255, 0.4);-->
+<!--        margin-top: 0;-->
+<!--    }-->
 
  /* Fade In Animation */
  @keyframes fadeIn {
@@ -475,8 +472,6 @@ footer {
          opacity: 1;
      }
  }
-
-
 
     </style>
 </head>
@@ -530,40 +525,10 @@ footer {
             <i class="fas fa-user-plus"></i> Signup
         </a>
     {% endif %}
-<!--                   this is yin wai lwin parts-->
-<!--                    {% if not request.user.is_authenticated %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
-<!--                        </a>-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-user-plus"></i> Signup-->
-<!--                        </a>-->
-<!--                    {% else %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                        </a>-->
-<!--                    {% endif %}-->
-
-<!--                    comment see bookings because of error-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-list"></i> See Bookings-->
-<!--                    </a>-->
-<!--                    {% if request.user.is_active %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                    </a>-->
-<!--                    {% else %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-user-plus"></i> Registration-->
-<!--                    </a>-->
-<!--                    {% endif %}-->
                 </div>
             </div>
         </div>
     </nav>
-
-    <!-- In your base.html, inside the <body> and after the <nav> -->
-
 <div class="container mt-3"> {# Add a container and some top margin for spacing #}
     {% if messages %}
         {% for message in messages %}
@@ -641,79 +606,14 @@ footer {
         </div>
     </div>
 </div>
-<!--    <div class="container text-center mt-5">-->
 
 
-<!--    <div class="row justify-content-center align-items-center mt-4">-->
-<!--        <div class="col-md-6">-->
-<!--            <h1>Get Bus Tickets Across Myanmar</h1>-->
-<!--            <p class="lead">Fast and easy—book in just 3 minutes!</p>-->
-<!--        </div>-->
-<!--        <div class="col-md-6">-->
-<!--            <div class="search-card text-start">-->
-<!--                <h4>Book Your Ticket Now</h4>-->
-<!--&lt;!&ndash;                <div>origins length: {{ origins|length }}</div>&ndash;&gt;-->
-
-<!--                <form method="get" action="{% url 'search_routes' %}">-->
-<!--                    <input type="hidden" name="source" value="home">-->
-<!--                    &lt;!&ndash; From (dropdown filled by context_processor -> origins) &ndash;&gt;-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="origin" class="form-label text-black">From</label>-->
-<!--                            <select name="origin" id="origin" class="form-control rounded-0 glass-input stylish-border" required>-->
-<!--                                <option value="">&#45;&#45; Select &#45;&#45;</option>-->
-<!--                                {% for origin in origins %}-->
-<!--                                    <option value="{{ origin }}"-->
-<!--                                        {% if data.origin == origin or request.GET.origin == origin %}-->
-<!--                                            selected-->
-<!--                                        {% endif %}>-->
-<!--                                        {{ origin }}-->
-<!--                                    </option>-->
-<!--                                {% endfor %}-->
-<!--                            </select>-->
-<!--                        </div>-->
-
-<!--                        &lt;!&ndash; Destination (dropdown filled by context_processor -> destinations) &ndash;&gt;-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="destination" class="form-label text-black">To</label>-->
-<!--                            <select name="destination" id="destination" class="form-control rounded-0 glass-input stylish-border" required>-->
-<!--                                <option value="">&#45;&#45; Select &#45;&#45;</option>-->
-<!--                                {% for destination in destinations %}-->
-<!--                                    <option value="{{ destination }}" {% if data.destination == destination or request.GET.to == destination %}selected{% endif %}>{{ destination }}</option>-->
-<!--                                {% endfor %}-->
-<!--                            </select>-->
-<!--                        </div>-->
-
-<!--                        &lt;!&ndash; Date &ndash;&gt;-->
-<!--                        <div class="mb-3">-->
-<!--                            <label for="date" class="form-label text-black">Date</label>-->
-<!--                            <input name="date" id="date" class="form-control rounded-0 glass-input stylish-border" type="date" min="{% now 'Y-m-d' %}"-->
-<!--                                   value="{% if data.date %}{{ data.date }}{% elif request.GET.departure_date %}{{ request.GET.departure_date }}{% endif %}" required>-->
-<!--                        </div>-->
-
-<!--                    <div class="mb-3">-->
-<!--                        <label>Seats</label>-->
-<!--                        <div class="seat-control">-->
-<!--                            <button type="button" class="btn btn-outline-secondary" onclick="decreaseSeat()">−</button>-->
-<!--                            <input type="number" name="number_of_seats" id="seatInput" value="1" min="1" max="20" class="form-control w-25 text-center">-->
-<!--                            <button type="button" class="btn btn-outline-secondary" onclick="increaseSeat()">+</button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    <button type="submit" class="search-btn">Search Now</button>-->
-
-<!--                </form>-->
-
-
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-</div>
 {% endblock %}
 
 
 
     <!-- Bootstrap JS and Popper.js -->
-    <div class="container-fluid mt-5 review-container">
+<div class="container-fluid bg-light py-5 mt-5 review-container">
     <!-- Reviews Section -->
     <div class="reviews-section">
         <h2 class="text-center section-title">Customer Reviews</h2>
@@ -749,40 +649,7 @@ footer {
                 </div>
             </div>
             {% endfor %}
-<!--            &lt;!&ndash; Review 2 &ndash;&gt;-->
-<!--            <div class="col-md-3 mb-4 justify-content-center">-->
-<!--                <div class="card review-card">-->
-<!--                    <div class="card-body text-center">-->
-<!--                        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxIQEhUQEBIVDxUWFRUVFRUVEBAVFRAQFRUWFhUVFhUYHSggGBolGxUXITEhJSkrLi4uFyAzODMtNygwLisBCgoKDg0OGxAQGi0gICUtLS0uKy0tLSsrLS0uLy0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLf/AABEIAOEA4QMBIgACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAADAAEEBQYCBwj/xABDEAACAQIDBQQGCQMCBAcAAAABAgADEQQFIQYSMUFRImFxgRMykaGxwQcUI0JSctHh8DNikoKyFTSj8RYkQ1Njc6L/xAAaAQACAwEBAAAAAAAAAAAAAAAAAQIDBAUG/8QAKhEAAgIBBAEDAwQDAAAAAAAAAAECEQMEEiExQSJRYRMygTNCcbEUkaH/2gAMAwEAAhEDEQA/APOQI9ohFLyoVorRRQAVorRRQAUaPFABoo8QW8AGik7AZTWr/wBKm1TqQLKPFjoJZps2V/rV6NLuB32HsBHvkJZIx7ZZHHOX2oz0U1dHJ8JwOKcn+2kVHvYyemwq1hehiAx5B0tfzBMgtRD3LHpciV0YWKWOcZNVwr+jrIUbl0PeDzB+Ug7n8sflLU7KGmjiKORGjAUeNFAQoo8UAGtFaPFABrRWjxQGNGnUaAjm0UeKMBxHjCPEAooooAKNFFABR4gJptl9l/rA+sYgmlhlJuR69dh9yn3dW5cOPBNpcsaTbpFTlGTVsUxFFCwHrMSFRB1Zzoo9/QGXv1TB4PWoRjao5aigp/LxqeLad0JtDtIAow+HUUqa6LTXRVHVjzPedTMkzljcm/w9kx5MzfCOjh0qXMuS7zDaOtW7IO6vJVAVQO4DSDwOCqVTxsO+DynAekNzwE0VWoKa2UWlCXk13XCCYfCUqI7R3j4Xmn2YRajXQbtumntEwFKq1Rxc8+79Z6CMUMFg2rH1gvZ59o8P4ILsU+EV30kbT4ZHp4Z6K4hkO9vEkBD001I7u6VGV7UqLKaCBem4treFp59icQatUuxJLEm5PH+Xl1R1tp85ZLoqhFX0ejYzY/C5jT9JhSMPVtfd403PQr93xW08xznKKuEqGlWQow5HpyIPAg9RPTNi6pWxBmt2myKjmNHcqWWoAfR1OanoeqnmP0lmLM1wzNqMCT9J872ik3NcuqYaq9CqN1kNj39CO4jWQyJsMQ0aPFABo8UUAFFGjwEKMY8aADR4ooAIR4wjwAaKKdAQAQEcCdASTgcI1V1prxJ9g5mAFpspkQxLmpWO7Qp6ueBqNypqe/meQk/avaX0n2VKyIo3VCiyoo0CqIPPczWhSXDUdFUakfeY8T4mZJnvqZhyZHN/B08GFQVvs74wlMSPvSVh5SzWjVZRTsonGZoT+8JlLBV36jBQOZMq892vpeph6fpj+I3C+VuMffQnUXbLPZvBF6oEm/SbmNkTCI17atbryBmGwmZ5gzfYLuE/gT9ZoE2axu4cTigzvxUWJN+rRqNdlcpqTMqKdnt+Gw8xx980GC1tKUqabWcFTfmDNBlFIPbdN/DWNscIm42XHA8O/wDebN8TZe+ZTJKe6uslYvMANLyPSCS3SK/b7KBjKH1hB9tRGtuNSjz8xxnk5E9gwWYbr9QdCOU892uyoYbEMq+o3bT8jcvI3HlL9Ll3ehmPWYNnrXTKAickQpEYibTCCinREYiIBo0eNAYojFFABRRRQEIRxGE7AgAgJ2BEBCARiGCzQZaow1Bqx9dxZe5OftPwlXgML6RwvU+wcz5CdbTY4FtxdFXQDuGgmfPKltXk06aFvc/BU4vEb7FjIzVIJ3/nfOVNz/NJmo3pkqlrLDDEDtHh8TIFHU2HnNDk+WmoQSPAdJWy6LoCuAq4ogG6pyUfOa7INhEFiy+2XuSZWqgaTTUFAhZXJ8g8qyWlSACqB32EvaeGFrEXkSi0sKVTSWRM87MhtVsdSxCkqoVvDQzxvNcpr4CrvU7rY8OU+j62szG1eQriaZ07QGnf3SL7LISZhcg2wp16e6w3Kg4jkT8pHzLMiTMVtBl74WpvrdSDrJuW5qKwsT2un4v3kJp1aNWKUW6fZqMvzLeNideXfJ+1NAYjCCqNWon/AKbWv7Db3zIFyp3hy4902OzmJFZGpNwdSjf6ha8qjLZNTLc0FkxuBgSs5IkirSKkqeIJB8QbGDKzuHmQBE5Ihys4KxDAkTmFInBEBnEUeNEA0eKKAHSiFURlEIojEJVhAIlEKqxiLDAn0VN6p423V89T8pk8VW3mJl9tBX3EWkOQufE6zL1W5TDJ7pNnSxR2wSGLXhAbaCDXQX58oXDLrvGQZdEtssw9yB7fGei7P4G1tJktm8JvEGek5XRCgSplllphksJMSApmGBgVslUjJ9CVSPaG/wCJ0qetSoieLASUSEkWbrAOkp8TtvgUH9YOeiC/v4SHQ24pVT9nRquvMqL2/njG0KKl7FB9I2zQqIaqjl2h39Z4ZVptSYgaEGfVSVqWJpkod5TowIsVPRgeBnhX0kZGcLXuB2X4d8IuuCfZT5bnSvZavZPDftfyccx3zUZG5o1FIN1bgQbj2zz2rSFrj9x3GWuzOcGm/o27SkjQngeRHfIZMVptGjFnaaUjVbT0N3EvbgxD/wCQvKgrNHtSAxpVBwan7bH9CJQlZ0sEt2OL+Di6iOzLJfIArOCIcicESwqAEQbCSCINhEMAROYUicMIDOIo9oogJKiEURlEKokiI6rJOGTtC/X3DWCVYRm3VY9AYpOothBXJIos5xO/UY98rAOZhqpuZwRMPg6nk4AuYdmsQijePTqekHvBBvHykjIhvMGPWR+Sd/tNBl9PMaa79NRboNwn3yam12Y0tHo+2kfiJFxe0zUmFGipdzpYC5v3D5zhtoqqP6PEUWvcLYVKV9827IG7YnUaAwUZPmgc4p02a7INsatRglenuX4EAjXvvNnQxgYaTzTDYhXvuE3BIIKlWVhxVlPA+0TSbN4sud0yp2nyW0mrReZ7UqGmRSO6evdPO8Vs3VqsS9U69NfjPWKuDukxme76AU6Yu7tuqL2vfv5DqegMOQjJUVGUbOYdG7Qaub8LO4B71QW9s3eDzoYYBSpopwF6TovhcgCePbT4PGUWsxq1lFTdK0yyKo3VNgF4XubE3lxl2zFY0K2Jw+IrUGpsgSlUqb4b0gU+hc6BmuQLga3Gkv8AotKzL/kwlLbR7ZgsTTrdsAb1rXGhI6HrMZ9MGUirgjUA1pspvzsTLfYjK8VSog4vcD9KfADv5eQlptZhRVwVdD/7ZPmuvylXknxZ88ZPkYxdajRL7oqOqFgO0FPHXgdJN202aw2De+DrCsEIWpZr2JNvaDLHZHKTUrizpTIuASyq2uh3bnU2Jlj9IGSLhaVWw03aIHeWqr8gYKTujQ8cabfdEY1vS4Sg3MFh7QD8pAKwmTtfCAdKnyaOVm7S/p18v+zla39Z/j+iOVnBWSCs4ZZoMtkZhBssklYNliGRmEGwkllgmEQwNooS0UBklBCqIyiFURkLHUQeP0pt4SQoixNLeRh1BimrixwlU0zJhf3gmcceAEJiDYbvDmZV16u9oOEwJWdRy2o7qV98noJd7OUd4W7zM3TNjNbsrobHkfdDJwh6f1PkuMHlQoYhawBPW5LE+ZMt8fsxSxh1FxvM4O+UILneZTcai802VYWnWUB1Bl7hsjorqF95kIZZIsy6eD7/AOGVTZZKdK1Nk9J6TfJXeIC2VTTGmo3VHHnrO9nsKVr9BebCvRVFsoA8pS4VfthaRnPc7ZLDDaqXRtkogoJT5vkqkrUFMOy8O0ykeyXNF+yBCM2kZTyjC4zCF23noPvcLqz6jlezdq3fLbKsANPsfRgHeG9pZjxYL17zrLh2hqG7xJg3J8WS2xXKig/ASNjO1Rqj/wCN/wDaZzicTfhBVatqFVj+A+/SJvkag9ts8ur7MFSjrxdQwA4hr8JD+lzElKWFwpN3Yh3/AC0xuqD4s7f4T1DLaCKA9SyEJ6xb1UUXJH4dL6zwDaLNzmGMqYkaJvblEH7tBNE8zqx72MIL9xZkybvQXWSr/wCX/wBXy/eHKzrAU92kq+ftnZWdHTqsaORq5XmZHKwbLJJWDZZaZrIrLBsskssGywJWRmEEyySywTCIlYC0ULuxQAkKIZROVEKojInSrCqIyiEURkTKbQ5eVJYeq3uPSZsrYkT0+th1dSrC4MxWeZS1Jr205HrMmSG134N2HKpqn2Z9hNTs5iqfYG9Z9QQSNelpmqyRsNVKOrjipB9hlbW5FkJvHOz3DIsZa02WExgtPMMtxVwrLqCAR4GX+HzMiwEx9HYlUlZrMwxoCk9BeUmT5rRWqd59Wsf2EiYzEEpbrxmbOUFnul78tT8IyqNHrbZ3h1Udux8RaGGJWupNFt63McL9Jh8o2UqVAExSh0vexXn33noGWZamHpinSQU1HIC2vWTXJTk2R6fJQ1cxKNuv2TDJmIPOdbU4ah6JnrutIKL75YLbzmPynD1mIILbh1G+pVrcrqeEg7RZBxkjYDEXlX9JeZvhcprVKbbjs1Omp6FnBP8A+VaTsDh7HXWYr6eseBhcLhgdXqtVI/tppui/nU90ljVyKs8uODzjFbWY3FU/RVKvYsQd0WLLpdWPTukjLMDYILamx9si5FgN5VvzNz+UcZq8upA1L9Af2lkuWoojD0xc2Tdywt00nJWSCs4ZZ1EqVHCbt2yMywbCSWWDZYARmWBZZKYQTCA0RWEEwklhBMIiQDdihLRRDJCiGVZyohkEkQOkEKqxlEKqwEJVjYjCrUUowuD7oZVhVWNqxW1yjzjPMnaixFtOR6iUL056/j8vWum43keYM88zjKmpMVYWPuI5ETFODg/g6OLIsq57LfY3MAyehY9pOHenL2cPZN5lm6w3T7Z4xh6r0XDobMvvHQ909DyDOlrKGU2YesvNT+nfMuWPlG/Dk42slZ3g8ZhjvUKnpqV+0rqC6LfUqRa/nJGW5ZUxFiuKAJtpYgi5twvLZMTvjWVtfBENvJbrYjn3SKl7ovhHniVGwwWymJsq1Mc270A1HmTJmI2cRNGxeIqHXsq4BItcDsjTlqZl8Lja2gsT5zVZOzuB6Q2H4RpfxMN69hThOPLnf8EfK9jsOKq4qqGqsoHo1qOXCPzfUm7d/K0s8Yo3ryyL6SnzGsFuSbRSKE22c/WAup0nhO32f/8AEMazod6lTUUqXQqtyW82JPhaX30mbTVVP1RL0w6Bnbm1NiQFHQG3sMwuU0xfebRRqe/oJZjjS3EJvdLajW4O1CgCfWIAA6CW2RLcXPG1z5kTJ18YXN/ADuHCbLZ5L0y3gPZHiV5ES1Eqwy/gmlYNlkllg2WdU4BGYQbCSGEGwiGRnECwklhAuIDRHcQLCSWEC4gSA2incUAJKCGQThBDIIETtBDqJwghkEYjpVhVWMqwyiAhlWRc1ypcQm6dGHqt0P6SwVYRVicU1TCMnF2jyfE5O3pfQt2GvYX4b3IX6HrK+pTrYOrqDSdeR4EfMGeq7QZIMSl17NRdVPW3IwmHwlPF0FGIphiBZgw1VhobHiJl+i7aN3+SqUv9lRkuZb6qx0uAfbNbl1Fakx+Py1cMwp07hQAV1JIuTpc98nZXmxpkBv8AvMM47ZNHVxz3xUl5PQ8HlSc5b0MCqjsmZXBbQpbUgSd/4mpKPW8hqYk0KUZMucZXWmpJNgJQUQcQ++wsg9VTz72/SAau+KO8w3UHBeveZc4OlYSLYVtR4b9LAvmTg8BTpf7b/OZdKnLgPn3zY/TRhimPD2NnoU2vbS4LKdfIe2YRaluc1RVxRm3VJl/hsMzgFFLW1NgTYA31tPU9msqNTApVplXO8SQrXYX+6R104TzDZjaFsIxamoqFhZlJsGXvPKarYHP8PQrVPrSuBVOu5VdUpX60xx670mlHHUm+SE3PMnFLg0DLBMJr8yysVE9NRP1hCL3BG+B4j1pmatNeTW7iPmJrhNSVo5k8coOmQWEEwkp0H4vYD84BxJkCMwgmEkMIFhAZHYQLiSGEC4gSA2inVo8AJKCSEEEgh0ECIRBDoINBDoIxHaCGUThBDoICHVYZVjKsKojEJVmW2z2mGBHo6IBrON4ki60lPBiObHkOHMzXrYAs3AAk+Anhee4psRVeq2pqOT4DkPIWHlK8kqRbhhukazJ8VUr4da1ZzUdnfVjyBsAOg0OgkkiQMlfdpLT5D+GWe7OVkdys72GO2NEdlPIkeZl7kGDuQTrK1KM1Wz9G1pUy/wAGkwlGwAlkgsJGoyV0gUMwH005SzYaljKYu1BrP/8ATUsLnwYL/kZ4/muXjcXEUxZH9ZR9x+7uPzn01nlJHwtZKgurU3Ug8wRaeH4TAj6u9I9oA2F+lrTZpvUnExahVUjF5ep3h4iXuKpkWYcR7x0neU5MUu56nd8JKr0T0lOSXqN+CFYzSbAbWPhmAJJpE9pfw/3L856NtNlqVKf1qjbUAtbgQfvfr7Z4Zh1KG46z1nYDOt+l9XqajVfIj944ZNkrIZ8H1Y/JUOIFhJmMp7rMp5Ej2G0itOqmcCqAMIFodxBMIAR2EC4khhAuIDA2inVooDJdMSQggaYkhIEQqCHQQSCHQRkQqCHQQSCSaFItwHDieAHiToIxMdRC6AFmIVRqWJACjvJ0EqM12iw+GFgfTv0BIQHvPFvK0xuLzitjaqiq3YBuEHZRQNfV68r98TdElBs2Wf5mPQ1Fpm4CNc9SRYfGeU1KNiJrs6zFKVA751c6AcSBKDDuuIQsmhU6qeI6HwlWX1KjRg9HJOy7lL6gOEpMsSaKlQJGk5ckdvG+CxXA6AgS1y0bslZDQ9LS8Iephd2V0T3eCdhqt7SyWUeAa72l2TZSY0iufBR7a5mKdBqYOrC08xrt6Olu8C7W8hxlxttnCIxeoeyOQ4s3QCZDH5slfcencALYg8VYnUGbcS2Y3LyzHk9eWMPCNLgGSwHkJKfLUcXEzNHEESyw2ZETHZ06Fi8nI1AlpslTZKg8f0hsDj1fRpfYZKVEelayj+fsPODVi3V2RM4P21T8x+Ale009TI0xI9Jh8QjltSrHnzsw/SUmY5VWof1aZUfi4r/kNJ2IcRSPNZHcm/kr2gWhmgmkiIFoF4ZoF4DBR4ooATKckJI1OSKcBEhJMwuHaobKL21JJACjqSdBIW8FBY6AcTKbMto3cBEsqgW3RwvwLEczfrGKmzT4nMMPhx2mFZu47tMHx4t5TL51tQ9Xsg9kcFUbqD9ZSVN5zdiWPfBmlCyxQS7AVXLG5kjCMKatUbQfIcvM/CcMlpVZjVerZALKOXU8zK3wWVfBAzXHNXcseHBR0Ek7PZo2EqelFNao3SrI40ZT8DADBGEWjaV0+yziqNvlVWnWJqU9EY3tf+mT90+E3GV5YeYni+XY6phXvTN1bip9Vh39D3z1vYPainXtRJ3WHBWOo7r8x0PlKM2K/UjVgzbfS/wbLIMuNEsD6rcO6TsdhRa8lUnG7I2JYkWmTpGltt2UeCIFY+HvnO2ednC4fet2nYU0/MQTfyAJkl8IUJccZ55txWrOUJOqOGUNfdvYjh5x4kt6seVNwbj7GB2qDs4ZyST15CQcr0BHf+k22ebPlaPpqrB2I3vVsAQu9ZddRY2v1mOpLun3zfmjxZz9PL1IvMPrJa0ja8i4DlNLloQizTntHZUuCtwVxUUf3D4ianaZzvJSHADePeSbD4ThMqR7FTYiWG0OF3hTrd243cw1HzlunS+orMusb+m6KSgCpupKnqCQfaJpMq2orUuzU+2TgQ3G3j8iPOUlOnO6i2E6hxDSVspoY1TUwv2NTUmmRZCen9p8NJkK6FSVYFSCQQeII4gzTZDjhS7J01htrsAKqfWqY7SgCpb7ycA3iPh4Q6I0YtoJ4R4JoAcRRrxQAl0zJFORKZixuI9HTZudrDxOkBUQM9zLePolPZHH+49ZV0eJHnIytc3h+h/lj/BFZalSJ1JLzpqE4oVJYUxeSEVdWjIpoDpLqtSkNqcGhpkEYecPgbyxVYZUiodmdxGAPD2QFDfpMGUlGU3BHEETXCgDoZAxmXfsZFxJKR6tsNtD9dw4ZrConYqD+7kw7iNfbNKBPGNgsccHjFDaU6v2b9Ax9RvI6eZntaLObmx7ZHRw5N0RhSvMX9IlCmFRABvk7x/KOHv+E3VwoLHQAXJ6ATzPPMX9YqtUPA6KOiDh+vnLNNj3Sv2KtTl2xr3Mbm1S1Pd/F2R3Lxa3QW+MytfQzU5qu85twXsjx+8fbp5TOYylYzbNGODok4TFWEkDMyNQZRK9pc4OnhmRS72cghrvYKd8aiw0st9DxvpflglCmdSGa0WGF2iZTe802X7VhwadQbyty7+7vmPKYMffGgex3rks1NbAqBqAxexvxUDnqXDfVEfSrvDTVnHZ10KgKd4217vdI7Wuif1E1TRt6VQHVTvA6g9RFVqDeAPn/PKV2S4+hUG4pChRvaHjcENy43C+0ye5oXNn5nnwWy63A1PHTn3ToYp7o2cnNj2SaQUVOcuslzL/ANN9QRYg/eU6EGU9P0BvdyPO99Trw6Ae2d03orZgxvodTqOttNeendLGymirzbDehqvT/CdO9Tqp9hEgMZp9oKdJzSqs3rJY9q12RtfungrA352AlDilo7p3CSRwuePq8racW/xiFRCvFObxRgS6ch7Qf0f9Q+cUUbBdmepSQ3qmKKQLQ9LjLbDRopNEWEqyHUiijYkcCFWKKIYenO8T6sUUYiFW9ZfzL8RPeUiimLV+DbpfJFz7/lqv5G+E80iik9J9rK9X9yM3W4Hz+MocfGil8iiBU1YyRRTJkNuDsaIRRSk0mm2T9dvy/OXw5fzpHimzTfYYdX9/4JNOdRRS8yk7Of8Al8P41PgkoWjRQInEUUUAP//Z" class="review-img" alt="Review 2">-->
-<!--                        <h5 class="card-title">Jane Smith</h5>-->
-<!--                        <p class="card-text">"Super convenient and hassle-free. Highly recommended!"</p>-->
-<!--                        <div class="rating">-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Review 3 &ndash;&gt;-->
-<!--            <div class="col-md-3 mb-4 justify-content-center">-->
-<!--                <div class="card review-card">-->
-<!--                    <div class="card-body text-center">-->
-<!--                        <img src="https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg" class="review-img" alt="Review 3">-->
-<!--                        <h5 class="card-title">Alex Johnson</h5>-->
-<!--                        <p class="card-text">"Booking bus tickets has never been easier. Great experience!"</p>-->
-<!--                        <div class="rating">-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star"></i>-->
-<!--                            <i class="fas fa-star-half-alt"></i>-->
-<!--                            <i class="far fa-star"></i>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+
         </div>
     </div>
 
@@ -805,32 +672,7 @@ footer {
                 </div>
             </div>
             {% endfor %}
-            <!-- FAQ 2 -->
-<!--            <div class="accordion-item">-->
-<!--                <h2 class="accordion-header" id="faqHeadingTwo">-->
-<!--                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">-->
-<!--                        Can I cancel my booking?-->
-<!--                    </button>-->
-<!--                </h2>-->
-<!--                <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#faqAccordion">-->
-<!--                    <div class="accordion-body">-->
-<!--                        No, our BusTicket System do not allow cancellations once a booking has been made.-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; FAQ 3 &ndash;&gt;-->
-<!--            <div class="accordion-item">-->
-<!--                <h2 class="accordion-header" id="faqHeadingThree">-->
-<!--                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">-->
-<!--                        Is my payment secure?-->
-<!--                    </button>-->
-<!--                </h2>-->
-<!--                <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#faqAccordion">-->
-<!--                    <div class="accordion-body">-->
-<!--                        Absolutely. We use secure encryption technology to protect your payment and personal details.-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+
         </div>
     </div>
 </div>
@@ -838,7 +680,8 @@ footer {
 
 
     <!-- Footer -->
-    <footer class="text-center text-lg-start">
+     <!-- Footer -->
+    <footer class="bg-muted text-center text-lg-start text-dark p-5">
         <div class="container text-center">
             <div class="row">
                 <!-- About Us Section -->
@@ -864,68 +707,21 @@ footer {
                 <div class="col-md-4">
                     <h5>Address</h5>
                     <!-- Google Map Embed for Hyderabad -->
-<!--                    <div class="map">-->
+                    <div class="map">
 <!--                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d488799.6759100923!2d95.85190967208102!3d16.8388794951435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1949e223e196b%3A0x56fbd271f8080bb4!2sYangon!5e0!3m2!1sen!2smm!4v1755097545739!5m2!1sen!2smm" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">-->
 <!--                            width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>-->
-<!--                    </div>-->
+                    </div>
                 </div>
             </div>
 
-            <hr class="my-4">
-            <p class="text-center">© 2024 Bus Reservation System. All rights reserved.</p>
+<!--            <hr class="my-4">-->
+<!--            <p class="text-center">© 2024 Bus Reservation System. All rights reserved.</p>-->
         </div>
     </footer>
+    <footer style="background-color: rgb(30, 58, 138); color: white;" class="text-center py-3 mt-auto">
+        &copy; 2025 BusTicket. All Rights Reserved.
+    </footer>
 
-<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
-<!--    &lt;!&ndash; Bootstrap JS &ndash;&gt;-->
-<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>-->
-<!--<script>-->
-<!--    $(document).ready(function() {-->
-<!--        $('#destination').select2();-->
-<!--    });-->
-<!--function toggleDropdown() {-->
-<!--    document.getElementById("profileDropdown").classList.toggle("show");-->
-<!--}-->
-
-<!--// Close the dropdown if the user clicks anywhere else on the page-->
-<!--window.onclick = function(event) {-->
-<!--    if (!event.target.matches('.profile-circle') && !event.target.matches('.profile-circle span')) {-->
-<!--        var dropdowns = document.getElementsByClassName("profile-dropdown-menu");-->
-<!--        for (var i = 0; i < dropdowns.length; i++) {-->
-<!--            var openDropdown = dropdowns[i];-->
-<!--            if (openDropdown.classList.contains('show')) {-->
-<!--                openDropdown.classList.remove('show');-->
-<!--            }-->
-<!--        }-->
-<!--    }-->
-<!--}-->
-<!--&lt;!&ndash;  document.addEventListener('DOMContentLoaded',function(){&ndash;&gt;-->
-<!--&lt;!&ndash;    const today=new Date().toISOString().split('T')[0];&ndash;&gt;-->
-<!--&lt;!&ndash;    document.getElementById('departure_date').setAttribute('min',today);&ndash;&gt;-->
-<!--&lt;!&ndash;  });&ndash;&gt;-->
-
-<!--  function increaseSeat() {-->
-<!--    const seatInput = document.getElementById('seatInput');-->
-<!--    let current = parseInt(seatInput.value);-->
-<!--    const max = parseInt(seatInput.max);-->
-
-<!--    if (current < max) {-->
-<!--      seatInput.value = current + 1;-->
-<!--    }-->
-<!--  }-->
-
-<!--  function decreaseSeat() {-->
-<!--    const seatInput = document.getElementById('seatInput');-->
-<!--    let current = parseInt(seatInput.value);-->
-<!--    const min = parseInt(seatInput.min);-->
-
-<!--    if (current > min) {-->
-<!--      seatInput.value = current - 1;-->
-<!--    }-->
-<!--  }-->
-<!--</script>-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
