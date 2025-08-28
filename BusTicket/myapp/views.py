@@ -21,7 +21,7 @@ from django.urls import reverse
 # from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
 from .forms import UserLoginForm, UserRegisterForm, CustomUserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from decimal import Decimal
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -550,27 +550,68 @@ def user_registration(request):
         form = CustomUserCreationForm()
     return render(request, 'user_registration_form.html', {'form': form})
 
-# user login by lls
+
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = CustomUserAuthenticationForm(request=request, data=request.POST)
+#
+#         if form.is_valid():
+#             user = form.get_user()
+#
+#             if user is not None:
+#                 # Log the user in
+#                 login(request, user)
+#                 messages.success(request, 'You have been logged in successfully!')
+#
+#                 # Check for the 'next' parameter in the request's GET data
+#                 # If a 'next' URL is present, redirect to it.
+#                 next_url = request.GET.get('next')
+#                 if next_url:
+#                     return redirect(next_url)
+#
+#                 # If no 'next' parameter, use the default redirection logic
+#                 if isinstance(user, Admin):
+#                     return redirect('admin_dashboard')
+#                 else:
+#                     return redirect('logined_user')
+#             else:
+#                 messages.error(request, 'Invalid email or password. Please try again.')
+#     else:
+#         form = CustomUserAuthenticationForm(request=request)
+#
+#     return render(request, 'login.html', {'form': form,'active_page':login})
+#
+# @login_required
+# def logined_user_home(request):
+#     user_id = request.user.user_id
+#     context = {
+#         'active_page': login,
+#         'user_id': user_id,
+#         'user_email': request.user.email,
+#     }
+#     return render(request, 'register_user/login_user_home.html', context)
+
+def is_admin(user):
+    """
+    A simple test to check if the user is an admin.
+    You can use user.is_staff or check for a specific group.
+    """
+    return user.is_staff
+
 def user_login(request):
+    """
+    Handles user login for both regular users and admins.
+    """
     if request.method == 'POST':
         form = CustomUserAuthenticationForm(request=request, data=request.POST)
-
         if form.is_valid():
             user = form.get_user()
-
             if user is not None:
-                # Log the user in
                 login(request, user)
                 messages.success(request, 'You have been logged in successfully!')
 
-                # Check for the 'next' parameter in the request's GET data
-                # If a 'next' URL is present, redirect to it.
-                next_url = request.GET.get('next')
-                if next_url:
-                    return redirect(next_url)
-
-                # If no 'next' parameter, use the default redirection logic
-                if isinstance(user, Admin):
+                # Redirect based on user type after successful login
+                if user.is_staff:
                     return redirect('admin_dashboard')
                 else:
                     return redirect('logined_user')
@@ -579,17 +620,24 @@ def user_login(request):
     else:
         form = CustomUserAuthenticationForm(request=request)
 
-    return render(request, 'login.html', {'form': form,'active_page':login})
+    return render(request, 'login.html', {'form': form, 'active_page': 'login'})
 
+# Admin Dashboard View with access control
 @login_required
-def logined_user_home(request):
-    user_id = request.user.user_id
-    context = {
-        'active_page': login,
-        'user_id': user_id,
-        'user_email': request.user.email,
-    }
-    return render(request, 'register_user/login_user_home.html', context)
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+
+    return render(request, 'dashboard.html')
+
+# Logged-in User Dashboard View
+@login_required
+def logined_user(request):
+    """
+    This view is for the regular user dashboard.
+    Only logged-in users can access this page.
+    """
+    return render(request, 'register_user/login_user_home.html')
+
 
 def logout_view(request):
     auth_logout(request)  # <-- use Django’s logout, not your view
@@ -751,6 +799,8 @@ def signout(request):
 
 # Admin Dashboard
 @staff_member_required
+@login_required
+@user_passes_test(is_admin)
 def admin_dashboard(request):
     no_of_users = User.objects.filter(del_flag = 0).count()
     no_of_buses = Bus.objects.filter(del_flag = 0).count()
@@ -793,7 +843,8 @@ def admin_dashboard(request):
         'seat_status_list': seat_status_list
     })
 
-
+@login_required
+@user_passes_test(is_admin)
 def user_home(request):
 
     # Start with the base queryset for all users
@@ -828,7 +879,8 @@ def user_home(request):
     # Render the user_home.html template with the filtered user list
     return render(request, 'admin/user_home.html', users)
 
-
+@login_required
+@user_passes_test(is_admin)
 def soft_delete_user(request,user_id):
     user_info = User.objects.get(user_id=user_id)
     if user_info.del_flag == 0:
@@ -842,6 +894,8 @@ def soft_delete_user(request,user_id):
 
 
 # operator home page in admin
+@login_required
+@user_passes_test(is_admin)
 def operator_home(request):
     search_query = request.GET.get('search', '')
     status_query = request.GET.get('status', 'active')
@@ -866,6 +920,8 @@ def operator_home(request):
 
 
 # route home page in admin
+@login_required
+@user_passes_test(is_admin)
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -894,6 +950,8 @@ def route_home(request):
     }
     return render(request, 'admin/route_home.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def add_operator(request):
     if request.method == 'POST':
         operator_form = OperatorForm(request.POST)
@@ -904,6 +962,8 @@ def add_operator(request):
         operator_form = OperatorForm()
     return render(request, 'admin/operator_add_form.html', {'form': operator_form})
 
+@login_required
+@user_passes_test(is_admin)
 def update_operator(request, operator_id):
     operator_info = Operator.objects.get(pk=operator_id)
     if request.method == 'POST':
@@ -915,6 +975,8 @@ def update_operator(request, operator_id):
         operator_form = OperatorForm(instance=operator_info)
     return render(request, 'admin/operator_update.html', {'operator_form': operator_form})
 
+@login_required
+@user_passes_test(is_admin)
 def delete_operator(request, operator_id):
     operator_info = Operator.objects.get(id=operator_id)
     operator_info.del_flag = 1 if operator_info.del_flag == 0 else 0
@@ -926,7 +988,8 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Route  # Assuming your model is named Route
 
-
+@login_required
+@user_passes_test(is_admin)
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -948,7 +1011,6 @@ def route_home(request):
             # Assuming any value other than 0 for del_flag means deleted
             routes = routes.filter(del_flag = 1)
 
-    # This is the correct way to order the queryset
     routes = routes.order_by('-updated_date')
 
     context = {
@@ -958,7 +1020,8 @@ def route_home(request):
     }
     return render(request, 'admin/route_home.html', context)
 
-
+@login_required
+@user_passes_test(is_admin)
 def add_route(request):
     if request.method == 'POST':
         route_form = RouteForm(request.POST)
@@ -969,6 +1032,8 @@ def add_route(request):
         route_form = RouteForm()
     return render(request, 'admin/route_add_form.html', {'form': route_form})
 
+@login_required
+@user_passes_test(is_admin)
 def update_route(request,route_id):
     route_info = Route.objects.get(pk = route_id)
 
@@ -982,6 +1047,8 @@ def update_route(request,route_id):
 
     return render(request,'admin/route_update.html',{'route_form' : route_form})
 
+@login_required
+@user_passes_test(is_admin)
 def delete_route(request,route_id):
     route_info = Route.objects.get(id=route_id)
     if route_info.del_flag == 0:
@@ -994,6 +1061,8 @@ def delete_route(request,route_id):
     return redirect('route_home')
 
 # Admin Bus Section
+@login_required
+@user_passes_test(is_admin)
 def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
@@ -1027,6 +1096,8 @@ def bus_home(request):
 
     return render(request, 'admin/bus_home.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def add_bus(request):
     if request.method == 'POST':
         bus_form = BusForm(request.POST)
@@ -1038,6 +1109,8 @@ def add_bus(request):
     return render(request,'admin/bus_add_form.html',{'form' : bus_form})
 
 
+@login_required
+@user_passes_test(is_admin)
 def update_bus(request,bus_id):
     bus_info = Bus.objects.get(pk= bus_id)
 
@@ -1051,6 +1124,8 @@ def update_bus(request,bus_id):
 
     return render(request,'admin/bus_update.html',{'bus_form':bus_form})
 
+@login_required
+@user_passes_test(is_admin)
 def delete_bus(request,bus_id):
     bus_info = Bus.objects.get(id=bus_id)
     if bus_info.del_flag == 0:
@@ -1095,6 +1170,8 @@ def delete_bus(request,bus_id):
 #     # Render the schedule_home template with the context
 #     return render(request, 'admin/schedule_home.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def schedule_home(request):
 
     date_query = request.GET.get('date', '')
@@ -1184,6 +1261,8 @@ def schedule_home(request):
 #         schedule_form = ScheduleForm()
 #     return render(request, 'admin/schedule_add_form.html', {'form': schedule_form})
 
+@login_required
+@user_passes_test(is_admin)
 def add_schedule(request):
     """
     Handles the form submission for adding a new bus schedule and automatically
@@ -1233,6 +1312,8 @@ def add_schedule(request):
     # Render the form template.
     return render(request, 'admin/schedule_add_form.html', {'form': schedule_form})
 
+@login_required
+@user_passes_test(is_admin)
 def update_schedule(request,schedule_id):
     schedule_info = Schedule.objects.get(id=schedule_id)
 
@@ -1246,7 +1327,8 @@ def update_schedule(request,schedule_id):
 
     return render(request,'admin/schedule_update.html',{'form':schedule_form})
 
-
+@login_required
+@user_passes_test(is_admin)
 def delete_schedule(request,schedule_id):
     schedule_info = Schedule.objects.get(id=schedule_id)
     if schedule_info.del_flag == 0:
@@ -1259,6 +1341,8 @@ def delete_schedule(request,schedule_id):
     return redirect('schedule_home')
 
 # for booking admindashboard
+@login_required
+@user_passes_test(is_admin)
 def booking_list(request):
 
     now = datetime.now()
@@ -1347,6 +1431,8 @@ def booking_list(request):
 #     # change field as needed
 #     return render(request, "admin/history.html", {"history_records": history_records})
 
+@login_required
+@user_passes_test(is_admin)
 def history_list(request):
 
     bookings = Booking.objects.select_related(
@@ -1397,6 +1483,8 @@ def history_list(request):
 
     return render(request, 'admin/history.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def feedback_list(request):
 
     feedbacks = Feedback.objects.all().order_by('-created_date')
@@ -1413,6 +1501,8 @@ def feedback_list(request):
     }
     return render(request, 'admin/feedback_list.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def feedback_detail(request, feedback_id):
     feedback = get_object_or_404(Feedback, id=feedback_id)
     if not feedback.is_read:
@@ -1432,6 +1522,8 @@ def feedback_detail(request, feedback_id):
     return render(request, 'admin/feedback_details.html', context)
 
 # q&a list page in admin
+@login_required
+@user_passes_test(is_admin)
 def question_answer_list(request):
     qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')
 
@@ -1447,6 +1539,8 @@ def question_answer_list(request):
     }
     return render(request, 'admin/question_answer_list.html', qas)
 
+@login_required
+@user_passes_test(is_admin)
 def add_qa(request):
     if request.method == 'POST':
         qa_form = qaForm(request.POST)
@@ -1457,6 +1551,8 @@ def add_qa(request):
         qa_form = qaForm()
     return render(request,'admin/qa_add_form.html',{'form' : qa_form})
 
+@login_required
+@user_passes_test(is_admin)
 def update_qa(request,qa_id):
     qa_info = QuestionAndAnswer.objects.get(pk= qa_id)
 
@@ -1470,6 +1566,8 @@ def update_qa(request,qa_id):
 
     return render(request,'admin/qa_update.html',{'form':qa_form})
 
+@login_required
+@user_passes_test(is_admin)
 def delete_qa(request,qa_id):
     qa_info = QuestionAndAnswer.objects.get(pk= qa_id)
     if qa_info.del_flag == 0:
