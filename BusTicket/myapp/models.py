@@ -139,8 +139,23 @@ class Booking(models.Model):
     customer = models.ForeignKey(User,on_delete=models.CASCADE)
     seat_numbers = models.CharField(max_length=100)
     booked_time = models.DateTimeField(auto_now_add=True)
-    # def __str__(self):
-    #     self.id
+
+    # @property
+    # def custom_booking_id(self):
+    #     """
+    #     Generates a custom booking ID by combining the date, time, and original ID,
+    #     starting with 'B'.
+    #     Example: 'B-20230829-1029-45'
+    #     """
+    #     # Format the date and time from the booked_time field
+    #     date_part = self.booked_time.strftime('%Y%m%d')
+    #     time_part = self.booked_time.strftime('%H%M')
+    #
+    #     # Combine the formatted date, time, and the original ID, with 'B' at the start
+    #     return f'B-{date_part}-{time_part}-{self.id}'
+
+
+
 
 class Ticket(models.Model):
     booking = models.OneToOneField(Booking,on_delete=models.CASCADE)

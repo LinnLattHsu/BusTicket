@@ -351,6 +351,14 @@ def process_payment(request, user_id):
                 customer=request.user,
                 seat_numbers=selected_seats_str,
             )
+            # date_part = booking.booked_time.strftime('%Y%m%d')
+            # time_part = booking.booked_time.strftime('%H%M')
+            # print(date_part)
+            # print(time_part)
+            #
+            # # Combine the formatted date, time, and original ID
+            # formatted_booking_id = f'B{date_part}{time_part}{booking.id}'
+            # print(formatted_booking_id)
 
             for seat_no in selected_seats_list:
                 seat_status_obj = get_object_or_404(
@@ -464,15 +472,24 @@ def seebookings(request, booking_id=None):
         except Booking.DoesNotExist:
             messages.error(request, "Ticket not found or you don't have permission to view it.")
             return redirect('seebookings')
+        date_part = booking.booked_time.strftime('%Y%m%d')
+        time_part = booking.booked_time.strftime('%H%M')
+        print(date_part)
+        print(time_part)
 
+        # Combine the formatted date, time, and original ID
+        formatted_booking_id = f'B{date_part}{time_part}{booking.id}'
+        print(formatted_booking_id)
         context = {
             'active_page': 'seebookings',
-            'booking': booking  # Pass the single booking object for detailed view
+            'booking': booking,
+            'custom_booking_id': formatted_booking_id # Pass the single booking object for detailed view
         }
         return render(request, 'see_bookings.html', context)
 
     else:
         search_id = request.GET.get('booking_id')
+        # convert string id to booking_id
         user_bookings = Booking.objects.filter(customer=request.user)
 
         if search_id:
@@ -480,10 +497,18 @@ def seebookings(request, booking_id=None):
                 user_bookings = user_bookings.filter(id=int(search_id))
             except (ValueError, TypeError):
                 user_bookings = Booking.objects.none()
+        for booking in user_bookings:
+            date_part = booking.booked_time.strftime('%Y%m%d')
+            time_part = booking.booked_time.strftime('%H%M')
+            # Attach the formatted ID directly to each booking object
+            booking.custom_booking_id = f'B{date_part}{time_part}{booking.id}'
+
         context = {
-            'bookings': user_bookings,
+            'bookings': user_bookings,  # This now contains the custom ID
             'today': date.today(),
+            'active_page': 'seebookings'
         }
+
         return render(request, 'see_bookings.html', context)
 
 # @login_required
@@ -610,6 +635,10 @@ def user_login(request):
                 login(request, user)
                 messages.success(request, 'You have been logged in successfully!')
 
+                next_page = request.session.pop('next_page', None)
+                if next_page:
+                    return redirect(next_page)
+
                 # Redirect based on user type after successful login
                 if user.is_staff:
                     return redirect('admin_dashboard')
@@ -619,6 +648,12 @@ def user_login(request):
                 messages.error(request, 'Invalid email or password. Please try again.')
     else:
         form = CustomUserAuthenticationForm(request=request)
+        # Store the 'next' parameter if it's in the GET request, common for login redirects
+        next_page = request.GET.get('next')
+        if next_page:
+            request.session['next_page'] = next_page
+
+    # return render(request, 'login.html', {'form': form, 'active_page': 'login'})
 
     return render(request, 'login.html', {'form': form, 'active_page': 'login'})
 
@@ -636,7 +671,7 @@ def logined_user(request):
     This view is for the regular user dashboard.
     Only logged-in users can access this page.
     """
-    return render(request, 'register_user/login_user_home.html')
+    return render(request, 'base.html')
 
 
 def logout_view(request):
@@ -1221,7 +1256,7 @@ def schedule_home(request):
         elif status_query == 'Inactive':
             schedules = schedules.filter(del_flag=1)
 
-    schedules = schedules.order_by('-updated_date')
+    schedules = schedules.order_by('created_date')
 
     buses = Bus.objects.all()
     routes = Route.objects.all()
