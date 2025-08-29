@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.shortcuts import render
 from django.db.models import Q, Count
@@ -355,8 +356,8 @@ def process_payment(request, user_id):
             # time_part = booking.booked_time.strftime('%H%M')
             # print(date_part)
             # print(time_part)
-            #
-            # # Combine the formatted date, time, and original ID
+            # #
+            # # # Combine the formatted date, time, and original ID
             # formatted_booking_id = f'B{date_part}{time_part}{booking.id}'
             # print(formatted_booking_id)
 
@@ -383,9 +384,10 @@ def process_payment(request, user_id):
                 payment_method=payment_method_code,
             )
 
-            # Success! Redirect to the booking confirmation page.
-            return redirect('booking_confirmation', booking_id=booking.id)
 
+            # Success! Redirect to the booking confirmation page.
+            # return redirect('booking_confirmation', booking_id=booking.id,custom_booking_id = formatted_booking_id)
+            return redirect('booking_confirmation',booking_id=booking.id)
     except (Schedule.DoesNotExist, Seat_Status.DoesNotExist) as e:
         # A specific seat or schedule was not found, meaning it's already taken or invalid.
         messages.error(request, "One or more selected seats are no longer available. Please re-select your seats.")
@@ -413,6 +415,10 @@ def booking_confirmation(request, booking_id):
         route = schedule.route
         booked_seats_status = Seat_Status.objects.filter(booking=booking)
 
+        date_part = booking.booked_time.strftime('%Y%m%d')
+        time_part = booking.booked_time.strftime('%H%M')
+        formatted_booking_id = f'B{date_part}{time_part}{booking.id}'
+
         context = {
             'booking': booking,
             'ticket': ticket,
@@ -421,6 +427,7 @@ def booking_confirmation(request, booking_id):
             'route': route,
             'booked_seats_status': booked_seats_status,
             'user': request.user,
+            'custom_booking_id': formatted_booking_id,
         }
 
         return render(request, 'booking_confirmation.html', context)
@@ -488,15 +495,23 @@ def seebookings(request, booking_id=None):
         return render(request, 'see_bookings.html', context)
 
     else:
-        search_id = request.GET.get('booking_id')
+        search_id_str = request.GET.get('booking_id')
         # convert string id to booking_id
         user_bookings = Booking.objects.filter(customer=request.user)
 
-        if search_id:
-            try:
-                user_bookings = user_bookings.filter(id=int(search_id))
-            except (ValueError, TypeError):
+        if search_id_str:
+            match = re.search(r'B\d{12}(\d+)$', search_id_str)
+            print(match)
+            if match:
+                try:
+                    numeric_id = int(match.group(1))
+                    print(numeric_id)
+                    user_bookings = user_bookings.filter(id=numeric_id)
+                except (ValueError, TypeError):
+                    user_bookings = Booking.objects.none()
+            else:
                 user_bookings = Booking.objects.none()
+                messages.warning(request, "Please enter a valid booking ID format.")
         for booking in user_bookings:
             date_part = booking.booked_time.strftime('%Y%m%d')
             time_part = booking.booked_time.strftime('%H%M')
