@@ -126,15 +126,25 @@ def search_routes(request):
         except ValueError:
             context.update({'error': 'Invalid date format.'})
             return render(request, 'base.html', context)
-
+        now = datetime.now()
         schedules = Schedule.objects.filter(
             route__origin__iexact=origin_r,
             route__destination__iexact=dest_r,
-            date=date_obj,
+            # date=date_obj,
             del_flag=0,
             route__del_flag=0,
             bus__del_flag=0
-        ).order_by('time')
+        )
+
+        if date_obj < now.date():
+            # If the selected date is in the past, no schedules should be returned
+            schedules = schedules.none()
+        elif date_obj == now.date():
+            # If the selected date is today, filter for schedules with times greater than or equal to now's time
+            schedules = schedules.filter(Q(date=date_obj, time__gte=now.time()))
+        else:
+            # If the selected date is in the future, just filter by the selected date
+            schedules = schedules.filter(date=date_obj)
         # Apply bus type filter
         if bus_type:
             schedules = schedules.filter(bus__bus_type__iexact=bus_type)
@@ -142,6 +152,8 @@ def search_routes(request):
         # Apply operator filter
         if operator_name:
             schedules = schedules.filter(bus__operator__operator_name__iexact=operator_name)
+
+        schedules = schedules.order_by('time')
 
         if schedules.exists():
             return render(request, 'available_routes.html', {
