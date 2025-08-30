@@ -617,9 +617,7 @@ def is_admin(user):
     return user.is_staff
 
 def user_login(request):
-    """
-    Handles user login for both regular users and admins.
-    """
+
     if request.method == 'POST':
         form = CustomUserAuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
@@ -1190,7 +1188,6 @@ def delete_bus(request,bus_id):
 @login_required
 @user_passes_test(is_admin)
 def schedule_home(request):
-
     date_query = request.GET.get('date', '')
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -1198,11 +1195,16 @@ def schedule_home(request):
 
     now = datetime.now()
 
-    # Find and update all active schedules where the date has expired or the date is today but the time has passed
-    Schedule.objects.filter(
+    expired_schedules = Schedule.objects.filter(
         Q(date__lt=now.date()) | Q(date=now.date(), time__lt=now.time()),
         del_flag=0
-    ).update(del_flag=1)
+    )
+
+    buses_to_unassign = expired_schedules.values_list('bus', flat=True).distinct()
+
+    Bus.objects.filter(id__in=buses_to_unassign).update(is_assigned=0)
+
+    expired_schedules.update(del_flag=1)
 
     schedules = Schedule.objects.annotate(
         available_seats_count=Count('seat_status', filter=Q(seat_status__seat_status='Available'))
@@ -1238,7 +1240,7 @@ def schedule_home(request):
         elif status_query == 'Inactive':
             schedules = schedules.filter(del_flag=1)
 
-    schedules = schedules.order_by('created_date')
+    schedules = schedules.order_by('date')
 
     buses = Bus.objects.all()
     routes = Route.objects.all()
@@ -1281,10 +1283,7 @@ def schedule_home(request):
 @login_required
 @user_passes_test(is_admin)
 def add_schedule(request):
-    """
-    Handles the form submission for adding a new bus schedule and automatically
-    generates alphanumeric seat statuses based on the bus's seat capacity.
-    """
+
     if request.method == 'POST':
         schedule_form = ScheduleForm(request.POST)
         if schedule_form.is_valid():
@@ -1293,6 +1292,8 @@ def add_schedule(request):
 
             # Retrieve the bus object from the new schedule to get the seat capacity.
             bus = new_schedule.bus
+            bus.is_assigned = 1
+            bus.save()
             seat_capacity = bus.seat_capacity
 
             # Loop through the total number of seats to create a seat for each one.

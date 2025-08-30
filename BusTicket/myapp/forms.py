@@ -15,6 +15,7 @@ from .models import Route
 from .models import Schedule
 from .models import QuestionAndAnswer
 from .models import Feedback
+from datetime import date
 User = get_user_model()
 
 # for operator form
@@ -49,6 +50,11 @@ class RouteForm(forms.ModelForm):
 
 # for bus form
 class BusForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter the operator queryset to only show operators with del_flag=0
+        self.fields['operator'].queryset = Operator.objects.filter(del_flag=0)
+
     class Meta:
         model = Bus
         fields = ['license_no', 'seat_capacity', 'bus_type', 'operator']
@@ -68,18 +74,51 @@ class BusForm(forms.ModelForm):
                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
             }),
         }
-
 # for schedule form
+# class ScheduleForm(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#
+#         today_date = datetime.date.today().isoformat()
+#
+#         self.fields['date'].widget.attrs['min'] = today_date
+#
+#     class Meta:
+#         model = Schedule
+#         fields = ['bus', 'route', 'date', 'time', 'price']
+#         widgets = {
+#             'bus': forms.Select(attrs={
+#                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+#             }),
+#             'route': forms.Select(attrs={
+#                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2'
+#             }),
+#             'date': forms.DateInput(attrs={
+#                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+#                 'type': 'date'  # This ensures the date picker widget is used in HTML
+#             }),
+#             'time': forms.TimeInput(attrs={
+#                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+#                 'type': 'time'  # This ensures the time picker widget is used in HTML
+#             }),
+#             'price': forms.NumberInput(attrs={
+#                 'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2',
+#                 'placeholder': 'Enter ticket price'
+#             }),
+#         }
+
 class ScheduleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Get today's date in 'YYYY-MM-DD' format
-        today_date = datetime.date.today().isoformat()
-        # Add the 'min' attribute to the date field's widget
+        today_date = date.today().isoformat()
         self.fields['date'].widget.attrs['min'] = today_date
 
+        self.fields['bus'].queryset = Bus.objects.filter(del_flag=0, is_assigned = 0)
+        self.fields['route'].queryset = Route.objects.filter(del_flag=0)
     class Meta:
         model = Schedule
+
+
         fields = ['bus', 'route', 'date', 'time', 'price']
         widgets = {
             'bus': forms.Select(attrs={
@@ -101,6 +140,26 @@ class ScheduleForm(forms.ModelForm):
                 'placeholder': 'Enter ticket price'
             }),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        bus = cleaned_data.get('bus')
+        schedule_date = cleaned_data.get('date')
+
+        # Check if the bus and date are present in the form data.
+        if bus and schedule_date:
+            # Check for existing schedules for the same bus and date.
+            # `self.instance.pk` is used to exclude the current object if it's being edited.
+            qs = Schedule.objects.filter(bus=bus, date=schedule_date)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+
+            # If a schedule already exists, raise a validation error.
+            if qs.exists():
+                raise forms.ValidationError(
+                    "This bus is already scheduled for this date. Please choose a different bus or date."
+                )
+        return cleaned_data
 class BookingForm(forms.Form):
     model = Bus
     source = forms.Select(attrs={'class':'form-select'})

@@ -81,6 +81,7 @@ class Bus(models.Model):
     seat_capacity = models.IntegerField(default=30)
     bus_type = models.CharField(max_length = 10,choices=BUS_TYPES)
     del_flag = models.IntegerField(default=0)
+    is_assigned = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     operator = models.ForeignKey(Operator,on_delete=models.CASCADE)
