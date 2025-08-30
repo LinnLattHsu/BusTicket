@@ -10,18 +10,11 @@ from decimal import Decimal
 from django.db import IntegrityError, transaction
 from django.contrib.auth import login
 from django.template.context_processors import request
-from django.shortcuts import render, redirect  # Ensure 'redirect' is imported
-from decimal import Decimal
-# Make sure you import all your relevant models here:
-from .models import Schedule, Booking, Ticket
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Payment,Feedback, QuestionAndAnswer
-from .models import Seat_Status
+from .models import User, Operator, Bus, Route, Schedule,Booking,Ticket,Payment,Feedback, QuestionAndAnswer,Seat_Status,Admin
 from django.urls import reverse
-# from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.models import User
-from .forms import UserLoginForm, UserRegisterForm, CustomUserCreationForm
+from .forms import UserLoginForm, UserRegisterForm, CustomUserCreationForm,BookingForm,OperatorForm,RouteForm,BusForm,qaForm,ScheduleForm,CustomUserChangeForm,ContactForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from decimal import Decimal
 from reportlab.lib.pagesizes import letter
@@ -32,7 +25,6 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
-from .models import Booking
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
@@ -42,18 +34,10 @@ from django.shortcuts import render, get_object_or_404
 from io import BytesIO
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from .models import Booking, Schedule, User
-from .forms import BookingForm
-from .forms import OperatorForm
-from .forms import RouteForm
-from .forms import BusForm,qaForm
-from .forms import ScheduleForm,CustomUserChangeForm
 from django.shortcuts import render
 from datetime import datetime
-from .models import Route, Schedule
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Admin
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import CustomUserAuthenticationForm,FeedbackForm
 from django.contrib.auth import logout as auth_logout
@@ -69,10 +53,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-import json
 from django.db.models import Q, Count, Case, When, Value, F
 from datetime import datetime, timedelta
-from .forms import ContactForm
 from django.core.mail import EmailMessage
 import smtplib
 import os
@@ -112,8 +94,6 @@ def search_routes(request):
         'selected_operator': None,
         'error': None,
     }
-
-    # Accept both GET and POST
     data = request.GET if request.method == 'GET' and request.GET else request.POST
 
     if data:
@@ -191,19 +171,11 @@ def seat_selection(request,schedule_id):
         schedule=selected_bus
     ).exclude(seat_status='Available').values_list('seat_no', flat=True)
     booked_seat_list = list(booked_seat_statuses)
-    # --- NEW: Prepare seat data with calculated names and status in the view ---
     seats_data = []
     for i in range(seat_capacity):
-        # Calculate the row letter based on a 3-seat-per-row layout.
-        # Python's integer division (//) and chr() are perfect for this.
         row_letter = chr(ord('A') + i // 3)
-
-        # Calculate the seat number within the row using modulo operator.
-        # Python's modulo (%) is correct here.
         seat_number_in_row = (i % 3) + 1
-
         seat_name = f"{row_letter}{seat_number_in_row}"
-
         is_booked = seat_name in booked_seat_list
 
         seats_data.append({
@@ -238,13 +210,11 @@ def seat_selection(request,schedule_id):
 #submit seat by lls
 def submit_seats(request, schedule_id):
     if request.method == 'POST':
-        # Store the POST data in the session
         request.session['seat_selection_data'] = {
             'schedule_id': schedule_id,
             'selected_seats': request.POST.get('selected_seats', ''),
         }
 
-        # Check if user is authenticated
         if not request.user.is_authenticated:
             # Redirect to login page, which will redirect back to this view after login
             return redirect(f"{reverse('login')}?next={reverse('submit_seats', kwargs={'schedule_id': schedule_id})}")
@@ -535,10 +505,6 @@ def feedback(request):
             feedback_instance = form.save(commit=False)  # Create but don't save yet
             feedback_instance.customer = request.user  # Assign the logged-in user
 
-            # Optionally handle booking-ref if you want to store it (e.g., as a CharField in your model)
-            # booking_ref = request.POST.get('booking-ref')
-            # if booking_ref:
-            #     feedback_instance.booking_reference = booking_ref # Assuming you add this field to your model
 
             feedback_instance.save()  # Now save the instance to the database
             print(request.user.email)
@@ -834,17 +800,6 @@ def contact_us(request):
         'active_page': 'contact'
     }
     return render(request, 'contact_us.html', context)
-
-
-def signout(request):
-    context = {}
-    logout(request)
-    context['error'] = "You have been logged out"
-    return render(request, 'signin.html', context)
-
-
-
-
 
 
 # Admin Dashboard
