@@ -495,8 +495,12 @@
             <h4 class="alert-heading">No Tickets Found!</h4>
             <p>It looks like you haven't bought any tickets yet or your search returned no results.</p>
             <hr>
-            <p class="mb-0">Start your journey by booking a ticket <a href="{% url 'home' %}" class="alert-link">here</a>.</p>
+            <p class="mb-0">Start your journey by booking a ticket <a href="{% url 'home' %}" class="alert-link">here</a>.</p></br>
+            <a href="{% url 'seebookings' %}" class="back-btn">
+                Back to list
+            </a>
         </div>
+
     {% endif %}
 {% endif %}
 <!--    {% if bookings %}-->

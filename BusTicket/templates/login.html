@@ -80,6 +80,12 @@
 .nav-link:hover {
     color: rgba(255, 255, 255, 0.75);
 }
+
+.forgot-password-link:hover {
+    color: #ffffff !important;
+    text-decoration: underline !important;
+    transition: color 0.3s ease-in-out;
+}
     </style>
 </head>
 <body>
@@ -131,15 +137,15 @@
                       </div>
                     {% endif %}
 
-                    <form method="POST" class="needs-validation" novalidate>
+                    <form method="POST" class="needs-validation" novalidate autocomplete="off">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="id_username" class="form-label">Email</label>
-                            <input type="text" name="username" id="id_username" class="form-control form-input" placeholder="Enter your Email" required>
+                            <input type="text" name="username" id="id_username" class="form-control form-input" placeholder="Enter your Email" required autocomplete="new-password">
                         </div>
                         <div class="mb-3">
                             <label for="id_password" class="form-label">Password</label>
-                            <input type="password" name="password" id="id_password" class="form-control form-input" placeholder="Enter your password" required>
+                            <input type="password" name="password" id="id_password" class="form-control form-input" placeholder="Enter your password" required autocomplete="new-password">
                         </div>
 
                         {% if form.non_field_errors %}
@@ -148,16 +154,20 @@
                             </div>
                         {% endif %}
 
+                         <div class="mt-2 text-center">
+                            <a href="/forgot-password/" class="forgot-password-link text-black-50 text-decoration-none">
+                                Forgot password?
+                            </a>
+                        </div>
+
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg">
                                 Login
                             </button>
                         </div>
 
-                        <div class="mt-2 text-center">
-                            <a href="/forgot-password/" class="text-white-50 text-decoration-none">
-                                Forgot password?
-                            </a>
+                        <div class="mt-4 text-center text-black">
+                            Don't have an account? <a href="{% url 'register' %}" class="text-blue text-decoration-underline">Register</a>
                         </div>
                     </form>
                 </div>
