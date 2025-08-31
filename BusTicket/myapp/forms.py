@@ -232,16 +232,19 @@ class CustomUserCreationForm(forms.ModelForm):
 
         # Add a widgets dictionary to apply custom HTML attributes to the model fields
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-input'}),
-            'email': forms.EmailInput(attrs={'class': 'form-input'}),
-            'nrc': forms.TextInput(attrs={'class': 'form-input'}),
-            'address': forms.TextInput(attrs={'class': 'form-input'}),
-            'phone_no': forms.TextInput(attrs={'class': 'form-input'}),
+            'name': forms.TextInput(attrs={'class': 'form-input', 'autocomplete': 'off'}),
+            'email': forms.EmailInput(attrs={'class': 'form-input' , 'autocomplete': 'off'}),
+            'nrc': forms.TextInput(attrs={'class': 'form-input' , 'autocomplete': 'off'}),
+            'address': forms.TextInput(attrs={'class': 'form-input' , 'autocomplete': 'off'}),
+            'phone_no': forms.TextInput(attrs={'class': 'form-input' , 'autocomplete': 'off'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Ensure password field is not rendered twice
+        self.initial['phone_no'] = ''
+        self.initial['password'] = ''
+        self.initial['password2'] = ''
         self.fields['password'].required = True
         self.fields['password2'].required = True
 
@@ -290,11 +293,21 @@ class CustomUserAuthenticationForm(forms.Form):
         if username and password:
             # Pass the request as a keyword argument to authenticate
             self.user_cache = authenticate(request=self.request, username=username, password=password)
+
+            # First, check if authentication was successful
             if self.user_cache is None:
                 raise forms.ValidationError(
                     "Invalid email or password. Please try again.",
                     code='invalid_login',
                 )
+
+            # Then, check for the custom 'del_flag'
+            if self.user_cache.del_flag == 1:
+                raise forms.ValidationError(
+                    "This account has been deleted.",
+                    code='account_deleted',
+                )
+
         return self.cleaned_data
 
     def get_user(self):

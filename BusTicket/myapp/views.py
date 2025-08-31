@@ -1321,7 +1321,8 @@ def add_schedule(request):
             # Retrieve the bus object from the new schedule to get the seat capacity.
             bus = new_schedule.bus
             bus.is_assigned = 1
-            bus.save()
+            bus.save()  # <--- This line is essential to save the change to the bus object.
+
             seat_capacity = bus.seat_capacity
 
             # Loop through the total number of seats to create a seat for each one.
