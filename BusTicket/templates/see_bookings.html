@@ -186,8 +186,10 @@
             padding-bottom: 10px; /* Add some space below each detail item */
         }
         .past-booking {
-            background-color: #f0f0f0; /* Very light grey background */
+            background-color: #fff3cd; /* Very light grey background */
             border-left: 5px solid #ccc; /* A subtle grey left border */
+<!--            background-color: red;-->
+            border-left: 5px solid #adb5bd;
             opacity: 0.8; /* Slightly desaturate */
         }
 
@@ -380,22 +382,48 @@
     <h2 class="text-center mb-5 text-dark">Your Bookings</h2>
 
     <!-- Search Form for Booking ID -->
-    <div class="booking-search-form">
-        <form method="get" action="{% url 'seebookings' %}">
-            <h5 class="text-center mb-4 text-primary">Find Your Ticket</h5>
-            <div class="input-group">
-                <input type="text" name="booking_id" class="form-control" placeholder="Enter Booking ID..." value="{{ request.GET.booking_id|default:'' }}">
-                <button type="submit" class="btn btn-primary">
+        <div class="booking-search-form">
+    <form method="get" action="{% url 'seebookings' %}">
+        <h5 class="text-center mb-4 text-primary">Find Your Ticket</h5>
+        <div class="row g-2">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+                    <input type="text" name="booking_id" class="form-control"
+                           placeholder="Enter Booking ID..." value="{{ request.GET.booking_id|default:'' }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                    <input type="date" name="travel_date" class="form-control"
+                           value="{{ request.GET.travel_date|default:'' }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
                     <i class="fas fa-search me-1"></i> Search
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
+<!--    <div class="booking-search-form">-->
+<!--        <form method="get" action="{% url 'seebookings' %}">-->
+<!--            <h5 class="text-center mb-4 text-primary">Find Your Ticket</h5>-->
+<!--            <div class="input-group">-->
+<!--                <input type="text" name="booking_id" class="form-control" placeholder="Enter Booking ID..." value="{{ request.GET.booking_id|default:'' }}">-->
+<!--                <button type="submit" class="btn btn-primary">-->
+<!--                    <i class="fas fa-search me-1"></i> Search-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
             {% if bookings %}
         {% for booking in bookings %}
             {# Compare booking date with today's date #}
             {% now "Y-m-d" as today_date_str %}
-            {% if booking.schedule.date|date:"Y-m-d" < today_date_str %}
+            {% if booking.schedule.date|date:"Y-m-d" < today_date_str  %}
                 <div class="booking-card row align-items-center past-booking">
             {% else %}
                 <div class="booking-card row align-items-center">
@@ -411,7 +439,7 @@
                         <div class="value">{{ booking.schedule.date|date:"F j, Y" }}</div>
                     </div>
                 </div>
-
+<!---->
                 <!-- Middle: Detailed Info -->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="booking-info-item">
@@ -427,7 +455,7 @@
                         <div class="value">{{ booking.custom_booking_id }}</div>
                     </div>
                 </div>
-
+<!---->
                 <!-- Right Side: Actions -->
                 <div class="col-12 col-lg-3 text-lg-end mt-3 mt-lg-0">
                     <a href="{% url 'seebookings_detail' booking_id=booking.id %}" class="btn btn-view-ticket w-100">
@@ -445,7 +473,51 @@
         </div>
     {% endif %}
 {% endif %}
-
+<!--    {% if bookings %}-->
+<!--    {% for booking in bookings %}-->
+<!--        <div class="booking-card row align-items-center {% if booking.is_past_booking %}past-booking{% endif %}">-->
+<!--            <div class="col-12 col-md-6 col-lg-5">-->
+<!--                <div class="booking-info-item">-->
+<!--                    <div class="label">Trip:</div>-->
+<!--                    <div class="value">{{ booking.schedule.route.origin }} &rarr; {{ booking.schedule.route.destination }}</div>-->
+<!--                </div>-->
+<!--                <div class="booking-info-item">-->
+<!--                    <div class="label">Travel Date:</div>-->
+<!--                    <div class="value">{{ booking.schedule.date|date:"F j, Y" }}</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="col-12 col-md-6 col-lg-4">-->
+<!--                <div class="booking-info-item">-->
+<!--                    <div class="label">Seats:</div>-->
+<!--                    <div class="value">{{ booking.seat_numbers }}</div>-->
+<!--                </div>-->
+<!--                <div class="booking-info-item">-->
+<!--                    <div class="label">Amount:</div>-->
+<!--                    <div class="value">MMK {{ booking.ticket.total_amount }}</div>-->
+<!--                </div>-->
+<!--                <div class="booking-info-item">-->
+<!--                    <div class="label">Booking ID:</div>-->
+<!--                    <div class="value">{{ booking.custom_booking_id }}</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="col-12 col-lg-3 text-lg-end mt-3 mt-lg-0">-->
+<!--                <a href="{% url 'seebookings_detail' booking_id=booking.id %}" class="btn btn-view-ticket w-100">-->
+<!--                    <i class="fas fa-eye me-2"></i> View Ticket-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--{% else %}-->
+<!--    <div class="alert alert-info text-center mt-5 p-4 rounded-3 shadow-sm" role="alert">-->
+<!--        <h4 class="alert-heading">No Tickets Found!</h4>-->
+<!--        <p>It looks like you haven't bought any tickets yet or your search returned no results.</p>-->
+<!--        <hr>-->
+<!--        <p class="mb-0">Start your journey by booking a ticket <a href="{% url 'home' %}" class="alert-link">here</a>.</p>-->
+<!--    </div>-->
+<!--{% endif %}-->
+<!---->
 </div>
 
 <!-- Bootstrap 5.3.x JS Bundle -->

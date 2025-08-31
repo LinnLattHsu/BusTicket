@@ -68,9 +68,13 @@ import requests
 # In home page, when you enter origin,destination and date this function will search for available routes
 
 def home_page_feedback_qa(request):
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     feedbacks = Feedback.objects.filter(del_flag=0).order_by('-created_date')[:3]
     qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')[:3]
     context = {
+        'origins':origins,
+        'destinations':destinations,
         'active_page' : 'home',
         'feedbacks': feedbacks,
         'qas':qas,
@@ -78,8 +82,8 @@ def home_page_feedback_qa(request):
     return render(request, 'base.html', context)
 
 def search_routes(request):
-    origins = Route.objects.values_list('origin', flat=True).distinct()
-    destinations = Route.objects.values_list('destination', flat=True).distinct()
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     operators = Operator.objects.filter(del_flag=0).order_by("operator_name")
 
     context = {
@@ -154,13 +158,18 @@ def search_routes(request):
             schedules = schedules.filter(bus__operator__operator_name__iexact=operator_name)
 
         schedules = schedules.order_by('time')
-
+        # --- PLACE THE NEW QUERY HERE ---
+        # Get the operators from the final, filtered list of schedules
+        operators_with_schedules = Operator.objects.filter(
+            id__in=schedules.values_list('bus__operator__id', flat=True)
+        ).distinct().order_by("operator_name")
         if schedules.exists():
             return render(request, 'available_routes.html', {
                 'schedules': schedules,
                 'origins': origins,
                 'destinations': destinations,
-                'operators': operators,  # ✅ added
+                # 'operators': operators,  # ✅ added
+                'operators': operators_with_schedules,
                 'selected_origin': origin_r,
                 'selected_destination': dest_r,
                 'selected_date': date_r,
@@ -478,6 +487,7 @@ def seebookings(request, booking_id=None):
 
     else:
         search_id_str = request.GET.get('booking_id')
+        search_date_str = request.GET.get('travel_date')
         # convert string id to booking_id
         user_bookings = Booking.objects.filter(customer=request.user)
 
@@ -494,16 +504,34 @@ def seebookings(request, booking_id=None):
             else:
                 user_bookings = Booking.objects.none()
                 messages.warning(request, "Please enter a valid booking ID format.")
+        elif search_date_str:
+            try:
+                date_obj = datetime.strptime(search_date_str, "%Y-%m-%d").date()
+                user_bookings = user_bookings.filter(schedule__date=date_obj)
+            except ValueError:
+                user_bookings = user_bookings.none()
+                messages.error(request, "Invalid date format.")
+
+        user_bookings = user_bookings.order_by('-schedule__date')
+        # today=date.today()
+        # processed_bookings = []
         for booking in user_bookings:
+            # booking.is_past_booking = booking.schedule.date < today
+
             date_part = booking.booked_time.strftime('%Y%m%d')
             time_part = booking.booked_time.strftime('%H%M')
             # Attach the formatted ID directly to each booking object
             booking.custom_booking_id = f'B{date_part}{time_part}{booking.id}'
+            # processed_bookings.append(booking)
+
 
         context = {
             'bookings': user_bookings,  # This now contains the custom ID
+            # 'bookings': processed_bookings,
             'today': date.today(),
-            'active_page': 'seebookings'
+            'active_page': 'seebookings',
+            'search_id': search_id_str,
+            'search_date': search_date_str
         }
 
         return render(request, 'see_bookings.html', context)
