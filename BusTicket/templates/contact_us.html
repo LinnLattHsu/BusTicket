@@ -226,7 +226,8 @@
                         <i class="fas fa-envelope"></i> Contact Us
                     </a>
                     <div class="profile-dropdown-container">
-                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown(event)">
+                            <i class="fas fa-user" style="color: white;"></i>
                             </div>
                         <div class="profile-dropdown-menu" id="profileDropdown">
                             <a href="{% url 'profile_page' %}">Your Profile</a>
@@ -328,18 +329,18 @@
             }
         });
 
-        function toggleDropdown() {
+        function toggleDropdown(event) {
             document.getElementById("profileDropdown").classList.toggle("show");
         }
-
+        // Close the dropdown if the user clicks anywhere else
         window.onclick = function(event) {
-            if (!event.target.matches('.profile-circle') && !event.target.matches('.profile-circle span')) {
-                var dropdowns = document.getElementsByClassName("profile-dropdown-menu");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
+        // Check if the clicked element is NOT the profile icon container or the icon itself
+        if (!event.target.closest('.profile-dropdown-container')) {
+            var dropdowns = document.getElementsByClassName("profile-dropdown-menu");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
                 }
             }
         }
