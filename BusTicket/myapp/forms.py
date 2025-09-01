@@ -146,22 +146,22 @@ class ScheduleForm(forms.ModelForm):
             }),
         }
 
-    def clean(self):
-        cleaned_data = super().clean()
-        bus = cleaned_data.get('bus')
-        schedule_date = cleaned_data.get('date')
-
-        if bus and schedule_date:
-
-            qs = Schedule.objects.filter(bus=bus, date=schedule_date)
-            if self.instance.pk:
-                qs = qs.exclude(pk=self.instance.pk)
-
-            if qs.exists():
-                raise forms.ValidationError(
-                    "This bus is already scheduled for this date. Please choose a different bus or date."
-                )
-        return cleaned_data
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     bus = cleaned_data.get('bus')
+    #     schedule_date = cleaned_data.get('date')
+    #
+    #     if bus and schedule_date:
+    #
+    #         qs = Schedule.objects.filter(bus=bus, date=schedule_date)
+    #         if self.instance.pk:
+    #             qs = qs.exclude(pk=self.instance.pk)
+    #
+    #         if qs.exists():
+    #             raise forms.ValidationError(
+    #                 "This bus is already scheduled for this date. Please choose a different bus or date."
+    #             )
+    #     return cleaned_data
 
 
 class BookingForm(forms.Form):
