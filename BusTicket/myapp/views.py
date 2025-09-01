@@ -1119,6 +1119,7 @@ def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
     status_query = request.GET.get('status', 'active')
+    assigned_query = request.GET.get('assigned','available')
 
     buses = Bus.objects.all()
 
@@ -1135,6 +1136,15 @@ def bus_home(request):
         elif status_query == 'deleted':
             # Assuming any value other than 0 for del_flag means deleted
             buses = buses.filter(del_flag = 1)
+
+    if assigned_query:
+        if assigned_query == 'available':
+            # Assuming del_flag = 0 means the user is active
+            buses = buses.filter(is_assigned=0)
+        elif assigned_query == 'assigned_status':
+            # Assuming any value other than 0 for del_flag means deleted
+            buses = buses.filter(is_assigned = 1)
+
 
     buses = buses.order_by('-updated_date')
     operators = Operator.objects.all()
