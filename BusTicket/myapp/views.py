@@ -1,6 +1,6 @@
 import json
 import re
-
+from django.db.models import Max
 from django.shortcuts import render
 from django.db.models import Q, Count
 from datetime import datetime, date
@@ -70,13 +70,22 @@ import requests
 def home_page_feedback_qa(request):
     origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
     destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
-    feedbacks = Feedback.objects.filter(del_flag=0).order_by('-created_date')[:3]
+    # Step 1: Find the latest 'created_date' for each customer
+    latest_dates = Feedback.objects.values('customer').annotate(latest_date=Max('created_date'))
+
+    # Step 2: Query for the Feedback objects that match those latest dates and customers
+    # This is done by filtering the original Feedback queryset
+    latest_feedbacks = Feedback.objects.filter(
+        created_date__in=[item['latest_date'] for item in latest_dates],
+        customer__in=[item['customer'] for item in latest_dates]
+    ).order_by('-created_date')[:3]
+    # feedbacks = Feedback.objects.filter(del_flag=0).distinct().order_by('-created_date')[:3]
     qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')[:3]
     context = {
         'origins':origins,
         'destinations':destinations,
         'active_page' : 'home',
-        'feedbacks': feedbacks,
+        'feedbacks': latest_feedbacks,
         'qas':qas,
     }
     return render(request, 'base.html', context)
@@ -1110,6 +1119,7 @@ def bus_home(request):
     license_query = request.GET.get('license_no', '')
     operator_query = request.GET.get('operator', '')
     status_query = request.GET.get('status', 'active')
+    assigned_query = request.GET.get('assigned','available')
 
     buses = Bus.objects.all()
 
@@ -1126,6 +1136,15 @@ def bus_home(request):
         elif status_query == 'deleted':
             # Assuming any value other than 0 for del_flag means deleted
             buses = buses.filter(del_flag = 1)
+
+    if assigned_query:
+        if assigned_query == 'available':
+            # Assuming del_flag = 0 means the user is active
+            buses = buses.filter(is_assigned=0)
+        elif assigned_query == 'assigned_status':
+            # Assuming any value other than 0 for del_flag means deleted
+            buses = buses.filter(is_assigned = 1)
+
 
     buses = buses.order_by('-updated_date')
     operators = Operator.objects.all()

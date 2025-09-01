@@ -23,8 +23,19 @@
             font-family: 'Inter', sans-serif;
             background-color: #f4f4f4;
         }
-    .navbar {
+.navbar {
     background-color: rgb(30, 58, 138) !important;
+}
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important; /* Changes the text color to white on hover */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Adds a subtle glow effect */
+}
+
+/* Custom styling for active navbar links */
+.nav-link.active {
+    font-weight: bold; /* Makes the text bold */
+    background-color: rgba(255, 255, 255, 0.1); /* Adds a subtle background highlight */
+    border-radius: 0.5rem; /* Adds rounded corners */
 }
 
 .navbar-nav {
@@ -231,15 +242,15 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{% url 'home' %}">
+                    <a class="nav-item nav-link {% if active_page == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Home
                     </a>
-                    <a class="nav-item nav-link" href="{% url 'about_us' %}"> <!-- to correct  -->
+                    <a class="nav-item nav-link {% if active_page == 'about_us' %}active{% endif %}" href="{% url 'about_us' %}"> <!-- to correct  -->
                         <i class="fas fa-bus"></i> About Us
                     </a>
                     {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'seebookings' %}">
-                        <i class="fas fa-ticket-alt"></i> See Bookings
+                    <a class="nav-item nav-link {% if active_page == 'seebookings' %}active{% endif %}" href="{% url 'seebookings' %}">
+                        <i class="fas fa-list"></i> See Bookings
                     </a>
                     <a class="nav-item nav-link {% if active_page == 'feedback' %}active{% endif %}" href="{% url 'feedback' %}">
                         <i class="fas fa-comment-alt"></i> Feedback
@@ -247,16 +258,10 @@
                     <a class="nav-item nav-link {% if active_page == 'contact' %}active{% endif %}" href="{% url 'contact_us' %}">
                         <i class="fas fa-envelope"></i> Contact Us
                     </a>
-<!--                    <a class="nav-item nav-link" href="{% url 'logout' %}">-->
-<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                    </a>-->
-<!--                    <div class="profile-circle ms-2 me-2">-->
-<!--                        <span>{{ user.name|default:'U'|first|upper }}</span>-->
-<!--                    </div>-->
-                    <div class="profile-dropdown-container">
-                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">&#x1F464;
-<!--                            <i class="fas fa-user"></i>-->
 
+                    <div class="profile-dropdown-container">
+                        <div class="profile-circle ms-2 me-2" onclick="toggleDropdown()">
+                            <i class="fas fa-user" style="color: white;"></i>
                         </div>
                         <div class="profile-dropdown-menu" id="profileDropdown">
                             <a href="{% url 'profile_page' %}">Your Profile</a>
@@ -271,33 +276,6 @@
             <i class="fas fa-user-plus"></i> Signup
         </a>
     {% endif %}
-<!--                   this is yin wai lwin parts-->
-<!--                    {% if not request.user.is_authenticated %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-in-alt"></i> Login-->
-<!--                        </a>-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-user-plus"></i> Signup-->
-<!--                        </a>-->
-<!--                    {% else %}-->
-<!--                        <a class="nav-item nav-link" href="">-->
-<!--                            <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                        </a>-->
-<!--                    {% endif %}-->
-
-<!--                    comment see bookings because of error-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-list"></i> See Bookings-->
-<!--                    </a>-->
-<!--                    {% if request.user.is_active %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-sign-out-alt"></i> Logout-->
-<!--                    </a>-->
-<!--                    {% else %}-->
-<!--                    <a class="nav-item nav-link" href="">-->
-<!--                        <i class="fas fa-user-plus"></i> Registration-->
-<!--                    </a>-->
-<!--                    {% endif %}-->
                 </div>
             </div>
         </div>
@@ -433,7 +411,7 @@
                     <!-- Duration & Date -->
                     <div class="col-md-3">
                         <div class="bus-info">Departure: {{ schedule.date }} {{ schedule.time|time:"h:i A" }}</div>
-                        <div class="bus-info">Arrival: {{ schedule.date }}</div>
+                        <div class="bus-info">License No: {{ schedule.bus.license_no }}</div>
 <!--                        <div class="bus-info text-muted">Duration: 10–12 hrs (example)</div>-->
                     </div>
 

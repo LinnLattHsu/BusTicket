@@ -183,6 +183,7 @@ class Admin(models.Model):
     email = models.EmailField(unique=True)  # It's a good practice to make the email unique
     password = models.CharField(max_length=128)  # Use a longer max_length for hashed passwords
     last_login = models.DateTimeField(null=True, blank=True)  # Add this line
+    del_flag = models.IntegerField(default=0)
 
     # --- Required for Django's Authentication system ---
     @property
