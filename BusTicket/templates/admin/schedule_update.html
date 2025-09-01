@@ -48,7 +48,6 @@
                 <a href="{% url 'feedback_list' %}"
                    class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
                     <ion-icon name="chatbox-ellipses-outline" class="text-3xl mr-3"></ion-icon>
-                    <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
                     <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span>
                 </a>
                 </li>
@@ -77,23 +76,15 @@
                 {% csrf_token %}
 
                 <div>
-                    <label for="{{ form.bus.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                        Bus
+                    <label class="block text-sm font-medium text-gray-700">
+                        Bus License Number
                     </label>
-                    <div class="mt-1">
-                        <select name="{{ form.bus.name }}" id="{{ form.bus.id_for_label }}"
-                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                            {% for bus in form.bus.field.queryset %}
-                                <option value="{{ bus.id }}" {% if bus.id == form.bus.value %}selected{% endif %}>
-                                    {{ bus.license_no }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                    <div class="mt-1 p-2 bg-gray-100 rounded-md border border-gray-300">
+                        {{ schedule.bus.license_no }}
                     </div>
-                    {% for error in form.bus.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
-                    {% endfor %}
                 </div>
+
+                <input type="hidden" name="bus" value="{{ schedule.bus.id }}">
 
                 <div>
                     <label for="{{ form.route.id_for_label }}" class="block text-sm font-medium text-gray-700">

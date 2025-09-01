@@ -1381,18 +1381,23 @@ def add_schedule(request):
 
 @login_required
 @user_passes_test(is_admin)
-def update_schedule(request,schedule_id):
-    schedule_info = Schedule.objects.get(id=schedule_id)
+def update_schedule(request, schedule_id):
+    # Retrieve the specific schedule object or return a 404 error if it doesn't exist
+    schedule_info = get_object_or_404(Schedule, pk=schedule_id)
 
     if request.method == 'POST':
+        # Instantiate the form with the POST data and the existing schedule instance
         schedule_form = ScheduleForm(request.POST, instance=schedule_info)
         if schedule_form.is_valid():
+            # Save the updated data from the form
             schedule_form.save()
             return redirect('schedule_home')
     else:
+        # Instantiate the form with the existing schedule instance for display
         schedule_form = ScheduleForm(instance=schedule_info)
 
-    return render(request,'admin/schedule_update.html',{'form':schedule_form})
+    # Pass both the form and the schedule object to the template context
+    return render(request, 'admin/schedule_update.html', {'form': schedule_form, 'schedule': schedule_info})
 
 @login_required
 @user_passes_test(is_admin)
