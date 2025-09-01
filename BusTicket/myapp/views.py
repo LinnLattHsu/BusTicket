@@ -470,6 +470,83 @@ def profile_page(request):
     return render(request, 'profile_page.html', {'form': form})
 
 # custom user register form by sdwp
+# @login_required
+# def seebookings(request, booking_id=None):
+#     if booking_id:
+#         try:
+#             booking = Booking.objects.get(id=booking_id, customer=request.user)
+#         except Booking.DoesNotExist:
+#             messages.error(request, "Ticket not found or you don't have permission to view it.")
+#             return redirect('seebookings')
+#         date_part = booking.booked_time.strftime('%Y%m%d')
+#         time_part = booking.booked_time.strftime('%H%M')
+#         print(date_part)
+#         print(time_part)
+#
+#         # Combine the formatted date, time, and original ID
+#         formatted_booking_id = f'B{date_part}{time_part}{booking.id}'
+#         print(formatted_booking_id)
+#         context = {
+#             'active_page': 'seebookings',
+#             'booking': booking,
+#             'custom_booking_id': formatted_booking_id  # Pass the single booking object for detailed view
+#         }
+#         return render(request, 'see_bookings.html', context)
+#
+#     else:
+#         search_id_str = request.GET.get('booking_id')
+#         search_date_str = request.GET.get('travel_date')
+#
+#         user_bookings = Booking.objects.filter(customer=request.user)
+#
+#         if search_id_str:
+#             # Corrected Regex: captures the date part and the numeric ID
+#             match = re.search(r'B(\d{8})\d{4}(\d+)$', search_id_str)
+#             if match:
+#                 try:
+#                     date_from_id_str = match.group(1)
+#                     date_from_id_obj = datetime.strptime(date_from_id_str, '%Y%m%d').date()
+#                     numeric_id = int(match.group(2))
+#
+#                     # Filter by both the numeric ID and the travel date from the ID string
+#                     user_bookings = user_bookings.filter(id=numeric_id, schedule__date=date_from_id_obj)
+#
+#                 except (ValueError, TypeError):
+#                     user_bookings = Booking.objects.none()
+#                     messages.warning(request, "Please enter a valid booking ID.")
+#             else:
+#                 user_bookings = Booking.objects.none()
+#                 messages.warning(request, "Please enter a valid booking ID format.")
+#
+#         if search_date_str:
+#             try:
+#                 date_obj = datetime.strptime(search_date_str, "%Y-%m-%d").date()
+#                 # Chain the filter: applies to the existing user_bookings queryset
+#                 user_bookings = user_bookings.filter(schedule__date=date_obj)
+#             except ValueError:
+#                 user_bookings = user_bookings.none()
+#                 messages.error(request, "Invalid date format.")
+#
+#         # If no search criteria, show all bookings
+#         if not search_id_str and not search_date_str:
+#             user_bookings = Booking.objects.filter(customer=request.user)
+#
+#         user_bookings = user_bookings.order_by('-schedule__date')
+#
+#         for booking in user_bookings:
+#             date_part = booking.booked_time.strftime('%Y%m%d')
+#             time_part = booking.booked_time.strftime('%H%M')
+#             booking.custom_booking_id = f'B{date_part}{time_part}{booking.id}'
+#
+#         context = {
+#             'bookings': user_bookings,
+#             'today': date.today(),
+#             'active_page': 'seebookings',
+#             'search_id': search_id_str,
+#             'search_date': search_date_str
+#         }
+#
+#         return render(request, 'see_bookings.html', context)
 
 @login_required
 def seebookings(request, booking_id=None):
