@@ -169,3 +169,10 @@ LOGIN_URL = '/login/' # Or whatever your login URL path is, e.g., '/accounts/log
 
 # Optional: The URL to redirect to after successful login (if no 'next' parameter is provided)
 # LOGIN_REDIRECT_URL = '/process-payment/' # Or '/dashboard/' or '/profile/' etc.
+
+STATIC_URL = 'static/'
+
+# This is the line you need to add or correct
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]

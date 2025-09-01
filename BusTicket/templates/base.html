@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +25,7 @@
     <style>
         /* Navbar Styles */
         body {
-      background: url('https://res.cloudinary.com/ddvru0ow1/image/upload/v1727193013/imgblur_vcheyk.jpg') no-repeat center center fixed;
+      background: url('{% static "img/imgblur_vcheyk.jpg" %}') no-repeat center center fixed;
       background-size: cover;
       background-position: center;
       color: #fff;
