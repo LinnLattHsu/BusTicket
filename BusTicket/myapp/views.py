@@ -1,6 +1,6 @@
 import json
 import re
-
+from django.db.models import Max
 from django.shortcuts import render
 from django.db.models import Q, Count
 from datetime import datetime, date
@@ -70,13 +70,22 @@ import requests
 def home_page_feedback_qa(request):
     origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
     destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
-    feedbacks = Feedback.objects.filter(del_flag=0).order_by('-created_date')[:3]
+    # Step 1: Find the latest 'created_date' for each customer
+    latest_dates = Feedback.objects.values('customer').annotate(latest_date=Max('created_date'))
+
+    # Step 2: Query for the Feedback objects that match those latest dates and customers
+    # This is done by filtering the original Feedback queryset
+    latest_feedbacks = Feedback.objects.filter(
+        created_date__in=[item['latest_date'] for item in latest_dates],
+        customer__in=[item['customer'] for item in latest_dates]
+    ).order_by('-created_date')[:3]
+    # feedbacks = Feedback.objects.filter(del_flag=0).distinct().order_by('-created_date')[:3]
     qas = QuestionAndAnswer.objects.filter(del_flag=0).order_by('-created_date')[:3]
     context = {
         'origins':origins,
         'destinations':destinations,
         'active_page' : 'home',
-        'feedbacks': feedbacks,
+        'feedbacks': latest_feedbacks,
         'qas':qas,
     }
     return render(request, 'base.html', context)
