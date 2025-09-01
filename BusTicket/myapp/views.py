@@ -920,8 +920,7 @@ def user_home(request):
             # Assuming any value other than 0 for del_flag means deleted
             users = users.filter(del_flag__gt=0)
 
-    # Sort the users for a consistent display
-    users = users.order_by('user_id')
+    users = users.order_by('name')
 
     # Prepare the context to pass to the template
     users = {
@@ -963,6 +962,8 @@ def operator_home(request):
         elif status_query == 'Deleted':
             # Assuming any value other than 0 for del_flag means deleted
             operators = operators.filter(del_flag = 1)
+    operators = operators.order_by('operator_name')
+
     context = {
     'operators': operators,
     'search_query': search_query,
@@ -1045,7 +1046,7 @@ from .models import Route  # Assuming your model is named Route
 def route_home(request):
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
-    status_query = request.GET.get('status', 'active')
+    status_query = request.GET.get('status', 'Active')
 
     routes = Route.objects.all()
 
@@ -1063,7 +1064,7 @@ def route_home(request):
             # Assuming any value other than 0 for del_flag means deleted
             routes = routes.filter(del_flag = 1)
 
-    routes = routes.order_by('-updated_date')
+    routes = routes.order_by('origin')
 
     context = {
         'routes': routes,

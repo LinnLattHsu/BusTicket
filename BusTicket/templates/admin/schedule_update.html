@@ -76,28 +76,79 @@
             <form method="POST" class="space-y-4">
                 {% csrf_token %}
 
-                {% for field in form %}
                 <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                        {{ field.label }}
+                    <label for="{{ form.bus.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Bus
                     </label>
                     <div class="mt-1">
-                        {{ field }}
+                        <select name="{{ form.bus.name }}" id="{{ form.bus.id_for_label }}"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            {% for bus in form.bus.field.queryset %}
+                                <option value="{{ bus.id }}" {% if bus.id == form.bus.value %}selected{% endif %}>
+                                    {{ bus.license_no }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    {% if field.help_text %}
-                        <p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
+                    {% for error in form.bus.errors %}
                         <p class="mt-2 text-sm text-red-600">{{ error }}</p>
                     {% endfor %}
                 </div>
-                {% endfor %}
+
+                <div>
+                    <label for="{{ form.route.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Route
+                    </label>
+                    <div class="mt-1">
+                        {{ form.route }}
+                    </div>
+                    {% for error in form.route.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Date
+                    </label>
+                    <div class="mt-1">
+                        {{ form.date }}
+                    </div>
+                    {% for error in form.date.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.time.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Time
+                    </label>
+                    <div class="mt-1">
+                        {{ form.time }}
+                    </div>
+                    {% for error in form.time.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.price.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Price
+                    </label>
+                    <div class="mt-1">
+                        {{ form.price }}
+                    </div>
+                    {% for error in form.price.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
 
                 <button type="submit"
                         class="w-full md:w-auto px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold text-center hover:bg-blue-600 transition-colors duration-200 shadow-md">
                     <ion-icon name="save-outline" class="mr-2"></ion-icon> Update Schedule
                 </button>
             </form>
+
         </div>
     </div>
 
