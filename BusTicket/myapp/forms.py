@@ -113,11 +113,9 @@ class ScheduleForm(forms.ModelForm):
         today_date = date.today().isoformat()
         self.fields['date'].widget.attrs['min'] = today_date
 
-        # If the form is for an existing instance (update), include the currently assigned bus.
-        # Otherwise, filter for unassigned buses for new schedules.
         if self.instance and self.instance.pk:
             current_bus = self.instance.bus
-            # Allow the currently assigned bus to be selected
+
             self.fields['bus'].queryset = Bus.objects.filter(del_flag=0, is_assigned=0) | Bus.objects.filter(pk=current_bus.pk)
         else:
             self.fields['bus'].queryset = Bus.objects.filter(del_flag=0, is_assigned=0)
@@ -154,8 +152,7 @@ class ScheduleForm(forms.ModelForm):
         schedule_date = cleaned_data.get('date')
 
         if bus and schedule_date:
-            # Check for existing schedules for the same bus and date.
-            # `self.instance.pk` is used to exclude the current object if it's being edited.
+
             qs = Schedule.objects.filter(bus=bus, date=schedule_date)
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
@@ -165,6 +162,8 @@ class ScheduleForm(forms.ModelForm):
                     "This bus is already scheduled for this date. Please choose a different bus or date."
                 )
         return cleaned_data
+
+
 class BookingForm(forms.Form):
     model = Bus
     source = forms.Select(attrs={'class':'form-select'})
