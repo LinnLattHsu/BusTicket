@@ -396,6 +396,12 @@
                         </div>
                     </div>
 
+<!--                    new feature-->
+                    <div class="mb-4">
+                        <label for="paymentProof" class="form-label fw-bold text-dark">Upload Payment Screenshot:</label>
+                        <input type="file" class="form-control" id="paymentProof" name="payment_proof" accept="image/*" required>
+                    </div>
+
                     <button type="submit" id="confirmPayBtn"
                             class="btn btn-primary w-100 mt-4 d-flex align-items-center justify-content-center py-3 rounded-lg shadow-sm" disabled>
                         <i class="fas fa-lock me-2"></i> Confirm & Pay
@@ -419,6 +425,7 @@
             // Get the payment form and the confirm button
             const paymentForm = document.getElementById('paymentForm');
             const confirmPayBtn = document.getElementById('confirmPayBtn');
+            const paymentProofInput = document.getElementById('paymentProof');
 
             // Get all radio buttons with the name 'payment_method'
             const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
@@ -432,6 +439,12 @@
                         isSelected = true;
                     }
                 });
+                const isFileUploaded = paymentProofInput.files.length > 0;
+                 if (isPaymentSelected && isFileUploaded) {
+                    confirmPayBtn.disabled = false;
+                 } else {
+                    confirmPayBtn.disabled = true;
+                 }
 
                 // Enable or disable the button based on the selection
                 if (isSelected) {
@@ -445,6 +458,8 @@
             paymentOptions.forEach(option => {
                 option.addEventListener('change', checkPaymentSelection);
             });
+            paymentProofInput.addEventListener('change', checkFormValidity);
+
 
             // Initial check on page load to ensure the button is disabled
             checkPaymentSelection();

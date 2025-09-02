@@ -308,6 +308,7 @@ def process_payment(request, user_id):
     selected_seats_str = request.POST.get('selected_seats', '')
     total_price_str = request.POST.get('total_price')
     payment_method_value = request.POST.get('payment_method')
+    payment_proof_image = request.FILES.get('payment_proof')
     # selected_seats_list = selected_seats_str.split(',')
 
     # Add this print statement to see what you are receiving from the form
