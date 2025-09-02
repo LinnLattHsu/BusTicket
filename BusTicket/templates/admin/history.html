@@ -88,7 +88,7 @@
                    class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
                     <ion-icon name="chatbox-ellipses-outline" class="text-3xl mr-3"></ion-icon>
                     <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
-                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Q&A</span>
                 </a>
                 </li>
                 <li><a href="{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
@@ -114,15 +114,23 @@
                     <!-- Origin Input -->
                     <div>
                         <label for="origin" class="block text-sm font-medium text-gray-700 mb-1">Origin</label>
-                        <input type="text" id="origin" name="origin" value="{{ request.GET.origin }}"
-                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                        <select id="origin" name="origin" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                            <option value="" {% if not origin_query %}selected{% endif %}>All Origins</option>
+                            {% for origin in origins %}
+                                <option value="{{ origin }}" {% if origin == origin_query %}selected{% endif %}>{{ origin }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!-- Destination Input -->
                     <div>
                         <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                        <input type="text" id="destination" name="destination" value="{{ request.GET.destination }}"
-                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                        <select id="destination" name="destination" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                            <option value="" {% if not destination_query %}selected{% endif %}>All Destinations</option>
+                            {% for destination in destinations %}
+                                <option value="{{ destination }}" {% if destination == destination_query %}selected{% endif %}>{{ destination }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!-- Operator Input -->

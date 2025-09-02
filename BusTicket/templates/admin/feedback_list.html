@@ -42,7 +42,17 @@
                 <li><a href="{% url 'schedule_home' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="list-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Schedules</span></a></li>
                 <li><a href="{% url 'booking_list' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="calendar-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Bookings</span></a></li>
                 <li><a href="{% url 'history' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="time-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">History</span></a></li>
-                <li><a href="{% url 'feedback_list' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900"><ion-icon name="chatbox-ellipses-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span></a></li>
+                <li>
+                    <a href="{% url 'feedback_list' %}" class="flex items-center p-2 bg-white rounded-lg text-blue-900">
+                        <ion-icon name="chatbox-ellipses-outline" class="text-2xl md:text-3xl mr-3"></ion-icon>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Q&A</span>
+                        {% if unread_count > 0 %}
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full ml-2">
+                                {{ unread_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
                 <li><a href="{% url 'logout' %}" class="flex items-center p-2 text-white rounded-lg hover:bg-white group hover:text-blue-900"><ion-icon name="log-out-outline" class="text-2xl md:text-3xl mr-3"></ion-icon><span class="flex-1 ms-3 whitespace-nowrap">Logout</span></a></li>
             </ul>
         </div>
@@ -52,28 +62,28 @@
         <button id="sidebar-toggle" class="md:hidden p-2 text-blue-900">
             <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
         </button>
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex space-x-2 text-2xl md:text-3xl font-bold">
-                <a href="{% url 'feedback_list' %}" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">Feedbacks</a>
-                <a href="{% url 'question_answer_list' %}" class="px-4 py-2 rounded-xl text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200">Q&A</a>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 text-2xl md:text-3xl font-bold mb-4 sm:mb-0">
+                <a href="{% url 'feedback_list' %}" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 text-center">Feedbacks</a>
+                <a href="{% url 'question_answer_list' %}" class="px-4 py-2 rounded-xl text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 text-center">Q&A</a>
             </div>
         </div>
 
         <form method="get" action="{% url 'feedback_list' %}">
-            <div class="bg-gray-50 rounded-2xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-4">Search & Filter Feedback</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+            <div class="bg-gray-50 rounded-2xl shadow-lg p-4 sm:p-6 mb-8">
+                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 border-b border-gray-200 pb-2 sm:pb-4">Search & Filter Feedback</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-end">
                     <div>
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search by User</label>
                         <input type="search" id="search" name="search" value="{{ request.GET.search }}"
-                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 sm:px-4 py-2 sm:py-3 transition-colors duration-200 hover:border-gray-400">
                     </div>
                 </div>
-                <div class="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-base font-semibold rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                         <ion-icon name="filter-outline" class="mr-2"></ion-icon> Filter
                     </button>
-                    <a href="{% url 'feedback_list' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                    <a href="{% url 'feedback_list' %}" class="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
                         <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reset
                     </a>
                 </div>
@@ -86,29 +96,29 @@
                 <table class="min-w-full border border-gray-200">
                     <thead class="bg-gray-100 text-center">
                         <tr class="text-center">
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Customer</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Email</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Date Submitted</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border">Action</th>
+                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 border">Customer</th>
+                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 border">Email</th>
+                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 border">Date Submitted</th>
+                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 border">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for feedback in feedbacks %}
                             {% if feedback.is_read == 0 %}
-                                <tr class="hover:bg-gray-50 font-semibold">
+                                <tr class="hover:bg-gray-50 font-semibold text-sm sm:text-base">
                             {% else %}
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50 text-sm sm:text-base">
                             {% endif %}
-                                <td class="px-6 py-4 border">{{ feedback.customer.name }}</td>
-                                <td class="px-6 py-4 border">{{ feedback.customer.email }}</td>
-                                <td class="px-6 py-4 border">{{ feedback.created_date|date:"F j, Y, P" }}</td>
-                                <td class="px-6 py-4 border">
+                                <td class="px-3 sm:px-6 py-2 sm:py-4 border">{{ feedback.customer.name }}</td>
+                                <td class="px-3 sm:px-6 py-2 sm:py-4 border">{{ feedback.customer.email }}</td>
+                                <td class="px-3 sm:px-6 py-2 sm:py-4 border">{{ feedback.created_date|date:"F j, Y, P" }}</td>
+                                <td class="px-3 sm:px-6 py-2 sm:py-4 border">
                                     <a href="{% url 'feedback_detail' feedback.id %}" class="text-blue-600 hover:text-blue-900 font-semibold">View Details</a>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">No feedback or inquiries to display.</td>
+                                <td colspan="4" class="px-3 sm:px-6 py-4 text-center text-gray-500 text-sm sm:text-base">No feedback or inquiries to display.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

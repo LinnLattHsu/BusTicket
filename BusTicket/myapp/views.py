@@ -939,6 +939,11 @@ def admin_dashboard(request):
     no_of_bookings = Booking.objects.all().count()
     no_of_tickets = Ticket.objects.all().count()
 
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
+    buses = Bus.objects.filter(del_flag = 0, is_assigned = 1)
+    unread_count = Feedback.objects.filter(is_read=0).count()
+
     bus_query = request.GET.get('bus_number', '')
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -969,7 +974,11 @@ def admin_dashboard(request):
         'origin_query': origin_query,
         'destination_query': destination_query,
         'selected_schedule': selected_schedule,
-        'seat_status_list': seat_status_list
+        'seat_status_list': seat_status_list,
+        'origins' : origins,
+        'destinations' : destinations,
+        'buses' : buses,
+        # 'unread_count' : unread_count,
     })
 
 @login_required
@@ -978,6 +987,7 @@ def user_home(request):
 
     # Start with the base queryset for all users
     users = User.objects.all()
+    # unread_count = Feedback.objects.filter(is_read=0).count()
 
     # Get the filter parameters from the request
     name_query = request.GET.get('name')
@@ -1001,7 +1011,8 @@ def user_home(request):
 
     # Prepare the context to pass to the template
     users = {
-        'users': users
+        'users': users,
+        # 'unread_count' : unread_count,
     }
 
     # Render the user_home.html template with the filtered user list
@@ -1121,6 +1132,8 @@ from .models import Route  # Assuming your model is named Route
 @login_required
 @user_passes_test(is_admin)
 def route_home(request):
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
     status_query = request.GET.get('status', 'Active')
@@ -1147,6 +1160,8 @@ def route_home(request):
         'routes': routes,
         'origin_query': origin_query,
         'destination_query': destination_query,
+        'origins' : origins,
+        'destinations' : destinations,
     }
     return render(request, 'admin/route_home.html', context)
 
@@ -1200,6 +1215,7 @@ def bus_home(request):
     assigned_query = request.GET.get('assigned','available')
 
     buses = Bus.objects.all()
+    # unread_count = Feedback.objects.filter(is_read=0).count()
 
     if license_query:
         buses = buses.filter(Q(license_no__icontains=license_query))
@@ -1232,6 +1248,7 @@ def bus_home(request):
         'operators': operators,
         'license_query': license_query,
         'operator_query': operator_query,
+        # 'unread_count' : unread_count,
     }
 
     return render(request, 'admin/bus_home.html', context)
@@ -1313,6 +1330,8 @@ def delete_bus(request,bus_id):
 @login_required
 @user_passes_test(is_admin)
 def schedule_home(request):
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     date_query = request.GET.get('date', '')
     origin_query = request.GET.get('origin', '')
     destination_query = request.GET.get('destination', '')
@@ -1378,6 +1397,8 @@ def schedule_home(request):
         'origin_query': origin_query,
         'destination_query': destination_query,
         'status_query': status_query,
+        'origins' : origins,
+        'destinations' : destinations,
     }
 
     # Render the schedule_home template with the context
@@ -1505,6 +1526,8 @@ def booking_list(request):
         (Q(schedule__date=now.date()) & Q(schedule__time__gte=now.time()))
     ).all()
 
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     origin = request.GET.get('origin')
     destination = request.GET.get('destination')
     operator_name = request.GET.get('operator_name')
@@ -1543,7 +1566,9 @@ def booking_list(request):
 
     context = {
         'bookings': bookings,
-        'request': request
+        'request': request,
+        'origins' : origins,
+        'destinations' : destinations,
     }
     print(now)
     for booking in bookings:
@@ -1583,7 +1608,8 @@ def booking_list(request):
 @login_required
 @user_passes_test(is_admin)
 def history_list(request):
-
+    origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
+    destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
     bookings = Booking.objects.select_related(
         'customer',
         'schedule__bus__operator',
@@ -1627,7 +1653,9 @@ def history_list(request):
 
     context = {
         'history': history_items,
-        'request': request
+        'request': request,
+        'origins' : origins,
+        'destinations' : destinations,
     }
 
     return render(request, 'admin/history.html', context)
@@ -1637,6 +1665,7 @@ def history_list(request):
 def feedback_list(request):
 
     feedbacks = Feedback.objects.all().order_by('-created_date')
+    unread_count = Feedback.objects.filter(is_read = 0).count()
 
     search_query = request.GET.get('search')
     if search_query:
@@ -1647,6 +1676,7 @@ def feedback_list(request):
 
     context = {
         'feedbacks': feedbacks,
+        'unread_count' : unread_count,
     }
     return render(request, 'admin/feedback_list.html', context)
 

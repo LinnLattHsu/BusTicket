@@ -115,7 +115,7 @@
                    class="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-white group hover:text-blue-900">
                     <ion-icon name="chatbox-ellipses-outline" class="text-3xl mr-3"></ion-icon>
                     <!-- <ion-icon name="chatbox-ellipses"></ion-icon> -->
-                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Inquiries</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Feedback & Q&A</span>
                 </a>
             </li>
 
@@ -252,12 +252,26 @@
             <h2 class="text-xl font-bold text-gray-800">Seat Status</h2>
             <form method="GET" action="{% url 'admin_dashboard' %}">
                 <div class="flex items-center space-x-2">
-                    <input type="text" name="bus_number" placeholder="Bus Number" value="{{ bus_query }}"
-                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="text" name="origin" placeholder="Origin" value="{{ origin_query }}"
-                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="text" name="destination" placeholder="Destination" value="{{ destination_query }}"
-                           class="px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="bus_number" name="bus_number" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not bus_query %}selected{% endif %}>Select License No</option>
+                        {% for bus in buses %}
+                            <option value="{{ bus }}" {% if bus == bus_query %}selected{% endif %}>{{ bus }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="origin" name="origin" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not origin_query %}selected{% endif %}>Select Origins</option>
+                        {% for origin in origins %}
+                            <option value="{{ origin }}" {% if origin == origin_query %}selected{% endif %}>{{ origin }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="destination" name="destination" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not destination_query %}selected{% endif %}>Select Destination</option>
+                        {% for destination in destinations %}
+                            <option value="{{ destination }}" {% if destination == destination_query %}selected{% endif %}>{{ destination }}</option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="px-4 py-2 text-sm text-white bg-gray-700 rounded-lg shadow hover:bg-gray-800 transition">
                         Search
                     </button>
