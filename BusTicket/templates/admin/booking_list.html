@@ -143,8 +143,12 @@
                     <!-- License No Input -->
                     <div>
                         <label for="license" class="block text-sm font-medium text-gray-700 mb-1">License NO</label>
-                        <input type="text" id="license" name="license" value="{{ request.GET.license }}"
-                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 transition-colors duration-200 hover:border-gray-400">
+                        <select id="bus_number" name="bus_number" class="block w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200 hover:border-gray-400">
+                        <option value="" {% if not bus_query %}selected{% endif %}>Select License No</option>
+                        {% for bus in buses %}
+                            <option value="{{ bus }}" {% if bus == bus_query %}selected{% endif %}>{{ bus }}</option>
+                        {% endfor %}
+                    </select>
                     </div>
 
                     <!-- From Date Input -->

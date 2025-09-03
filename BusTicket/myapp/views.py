@@ -1529,10 +1529,11 @@ def booking_list(request):
 
     origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
     destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
+    buses = Bus.objects.filter(del_flag=0)
     origin = request.GET.get('origin')
     destination = request.GET.get('destination')
     operator_name = request.GET.get('operator_name')
-    license_no = request.GET.get('license')
+    license_no = request.GET.get('bus_number')
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
 
@@ -1570,6 +1571,7 @@ def booking_list(request):
         'request': request,
         'origins' : origins,
         'destinations' : destinations,
+        'buses' : buses,
     }
     print(now)
     for booking in bookings:
@@ -1611,6 +1613,7 @@ def booking_list(request):
 def history_list(request):
     origins = Route.objects.values_list('origin', flat=True).distinct().order_by('origin')
     destinations = Route.objects.values_list('destination', flat=True).distinct().order_by('destination')
+    buses = Bus.objects.filter(del_flag=0)
     bookings = Booking.objects.select_related(
         'customer',
         'schedule__bus__operator',
@@ -1620,7 +1623,7 @@ def history_list(request):
     origin = request.GET.get('origin')
     destination = request.GET.get('destination')
     operator_name = request.GET.get('operator_name')
-    license_no = request.GET.get('license')
+    license_no = request.GET.get('bus_number')
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
 
@@ -1657,6 +1660,7 @@ def history_list(request):
         'request': request,
         'origins' : origins,
         'destinations' : destinations,
+        'buses' : buses,
     }
 
     return render(request, 'admin/history.html', context)
