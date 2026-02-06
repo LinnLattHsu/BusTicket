@@ -127,6 +127,7 @@ class Seat_Status(models.Model):
     seat_no = models.CharField(max_length=5)
     schedule = models.ForeignKey(Schedule,on_delete=models.CASCADE)
     seat_status = models.CharField(max_length=20,default='Available')
+    # no use
     booking = models.ForeignKey('Booking',on_delete=models.CASCADE,null=True,blank=True)
     class Meta:
         unique_together = ('schedule','seat_no')

@@ -1,0 +1,61 @@
+from django.test import TestCase
+
+# Create your tests here.
+import pytest
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+@pytest.mark.django_db
+def test_soft_delete_user_toggle_logic(admin_client):
+    """
+    Test that an admin can toggle del_flag from 0 to 1.
+    """
+    # 1. Setup: Create a user with del_flag = 0
+    # Note: Ensure your User model has 'user_id' and 'del_flag' fields
+    target_user = User.objects.create(
+        username="testuser",
+        user_id=999,
+        del_flag=0
+    )
+
+    # 2. Action: Call the view
+    url = reverse('soft_delete_user', kwargs={'user_id': 999})
+    response = admin_client.get(url)
+
+    # 3. Verification
+    target_user.refresh_from_db()
+    assert target_user.del_flag == 1
+    assert response.status_code == 302  # Check for redirect
+    assert response.url == reverse('user_home')
+
+
+@pytest.mark.django_db
+def test_soft_delete_user_undo_logic(admin_client):
+    """
+    Test that calling it again toggles del_flag back from 1 to 0.
+    """
+    target_user = User.objects.create(username="undo_user", user_id=888, del_flag=1)
+
+    url = reverse('soft_delete_user', kwargs={'user_id': 888})
+    admin_client.get(url)
+
+    target_user.refresh_from_db()
+    assert target_user.del_flag == 0
+
+
+@pytest.mark.django_db
+def test_soft_delete_user_permission_denied(client):
+    """
+    Test that a non-logged-in user cannot access the view.
+    """
+    target_user = User.objects.create(username="protected", user_id=777, del_flag=0)
+    url = reverse('soft_delete_user', kwargs={'user_id': 777})
+
+    response = client.get(url)
+
+    # Should redirect to login page because of @login_required
+    assert response.status_code == 302
+    assert 'login' in response.url
