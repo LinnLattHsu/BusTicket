@@ -266,3 +266,38 @@ class TestSeatSelectionView:
 
         a2_seat = next(s for s in seats_data if s['seat_name'] == "A2")
         assert a2_seat['is_booked'] is False
+
+
+@pytest.mark.django_db
+class TestRouteAndOperatorRoles:
+            """Tests for the core roles of Route and Operator models."""
+
+            def test_operator_setup_and_str(self):
+                """Verify Operator role: holding company info and correct display."""
+                operator = Operator.objects.create(operator_name="Mandalar Minn")
+                assert operator.operator_name == "Mandalar Minn"
+                assert str(operator) == "Mandalar Minn"
+                assert operator.del_flag == 0  # Default role is 'Active'
+
+            def test_route_setup_and_str(self):
+                """Verify Route role: defining the path between origin and destination."""
+                route = Route.objects.create(origin="Yangon", destination="Taunggyi")
+                assert route.origin == "Yangon"
+                assert route.destination == "Taunggyi"
+                # Tests the specific arrow format you wrote in your __str__
+                assert str(route) == "Yangon -> Taunggyi"
+
+            def test_soft_delete_operator_role(self):
+                """Verify the 'Deactivation' role using del_flag."""
+                op = Operator.objects.create(operator_name="Test Operator")
+                # Soft delete action
+                op.del_flag = 1
+                op.save()
+
+                # Verify the data persists but the flag has changed
+                db_op = Operator.objects.get(operator_name="Test Operator")
+                assert db_op.del_flag == 1
+
+            def test_route_meta_plural(self):
+                """Verify the Meta role: ensures 'Routes' shows correctly in Admin."""
+                assert str(Route._meta.verbose_name_plural) == "Routes"
