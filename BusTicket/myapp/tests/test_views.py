@@ -2,8 +2,11 @@ import pytest
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
+from django.utils import timezone
 from myapp.models import Feedback
 from django.contrib.messages import get_messages
+from myapp.models import Route, Operator, Bus, Schedule
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 User = get_user_model()
 
@@ -132,3 +135,79 @@ class TestFeedbackView:
         response = client.post(url, data)
 
         assert response.status_code in [200, 302]
+
+
+@pytest.mark.django_db
+class TestSearchRoutes:
+
+    def test_search_routes_past_date(self, client):
+        url = reverse('search_routes')
+        # Django timezone သုံးပြီး ၅ ရက် အနောက်ကို ဆုတ်မယ်
+        past_date = (timezone.now() - timedelta(days=5)).strftime('%Y-%m-%d')
+
+        data = {
+            'origin': 'Yangon',
+            'destination': 'Mandalay',
+            'date': past_date,
+        }
+
+        response = client.get(url, data)
+
+        # assertContains က status_code=200 ဖြစ်မဖြစ်ပါ တစ်ခါတည်း စစ်ပေးတယ်
+        assertContains(response, 'No routes found for the selected data.')
+
+    def test_search_routes_missing_fields(self, client):
+        url = reverse('search_routes')
+        data = {
+            'origin': 'Yangon',
+            # destination နဲ့ date မပါဘူး
+        }
+
+        response = client.get(url, data)
+
+        assertContains(response, 'Please enter origin, destination and date.')
+
+    def test_search_routes_success(self, client):
+
+        # 1. Setup Data: setup required data for testing
+        operator = Operator.objects.create(operator_name="Elite", del_flag=0)
+        route = Route.objects.create(origin="Yangon", destination="Mandalay", del_flag=0)
+        bus = Bus.objects.create(bus_type="VIP", operator=operator, del_flag=0)
+
+        # Define future date
+        future_date = (timezone.now() + timedelta(days=2)).date()
+
+        schedule = Schedule.objects.create(
+            route=route,
+            bus=bus,
+            date=future_date,
+            time="08:00:00",
+            price=50000,
+            del_flag=0
+        )
+
+        # 2. Action: define the data that will be sent from the search form
+        url = reverse('search_routes')
+        search_query = {
+            'origin': 'Yangon',
+            'destination': 'Mandalay',
+            'date': future_date.strftime('%Y-%m-%d'),
+            'bus_type': 'VIP'
+        }
+
+        # 3. Make request
+        response = client.get(url, search_query)
+
+        # 4. Assertions: test the result
+        assert response.status_code == 200
+        assertTemplateUsed(response, 'available_routes.html')
+
+        # Check whether schedules are included in the context
+        assert 'schedules' in response.context
+        assert response.context['schedules'].count() == 1
+
+        # Check whether the operator name and bus type are included in the displayed HTML
+        assertContains(response, 'Elite')
+        assertContains(response, 'VIP')
+        assertContains(response, 'Yangon')
+        assertContains(response, 'Mandalay')
