@@ -134,6 +134,97 @@ class BusViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
+
+# test for schedule management
+class ScheduleTests(TestCase):
+    def setUp(self):
+        # 1. Create User (Using your custom model fields)
+        self.password = 'password123'
+        self.admin_user = User.objects.create_superuser(
+            name='admin',
+            email='admin@test.com',
+            password=self.password
+        )
+
+        # 2. Create Operator
+        # Note: If Operator has a field like 'user', assign it here.
+        # If it doesn't have 'name', this is usually where the error is.
+        self.operator = Operator.objects.create(operator_name='Test Operator')
+
+        # 3. Create Bus and Route
+        self.bus = Bus.objects.create(
+            license_no="B123",
+            seat_capacity=6,
+            operator=self.operator
+        )
+        self.route = Route.objects.create(
+            origin="City A",
+            destination="City B"
+        )
+
+        self.client = Client()
+
+    def test_add_schedule_creates_seats(self):
+        # Ensure login matches the email used in setUp
+        self.client.login(email='admin@test.com', password=self.password)
+
+        form_data = {
+            'bus': self.bus.id,  # Use the actual PK field name
+            'route': self.route.id,
+            'date': '2026-05-20',
+            'time': '14:30',
+            'price': 500,
+        }
+
+        # Submit to the 'schedule_add' name (ensure this matches urls.py)
+        response = self.client.post(reverse('schedule_add'), data=form_data)
+
+        # If this fails, the view is redirecting back to the form because of errors
+        self.assertEqual(response.status_code, 302)
+
+        # Verify logic
+        schedule = Schedule.objects.filter(bus=self.bus).first()
+        self.assertIsNotNone(schedule)  # This will now pass
+        self.assertEqual(Seat_Status.objects.filter(schedule=schedule).count(), 6)
+
+    def test_update_schedule(self):
+        self.client.login(email='admin@test.com', password=self.password)
+
+        schedule = Schedule.objects.create(
+            bus=self.bus, route=self.route, date='2026-05-20',
+            time='14:30', price=500
+        )
+
+        update_data = {
+            'bus': self.bus.id,
+            'route': self.route.id,
+            'date': '2026-05-20',
+            'time': '14:30',
+            'price': 750,  # New Price
+        }
+
+        # Use the name 'schedule_update'
+        response = self.client.post(reverse('schedule_update', args=[schedule.id]), data=update_data)
+
+        schedule.refresh_from_db()
+        # Use Decimal() for the comparison
+        self.assertEqual(schedule.price, Decimal('750'))
+
+    def test_soft_delete_schedule(self):
+        self.client.login(email='admin@test.com', password=self.password)
+
+        schedule = Schedule.objects.create(
+            bus=self.bus, route=self.route, date='2026-05-20',
+            time='14:30', price=500, del_flag=0
+        )
+
+        # First call: Toggle 0 to 1
+        self.client.get(reverse('schedule_delete', args=[schedule.id]))
+        schedule.refresh_from_db()
+        self.assertEqual(schedule.del_flag, 1)
+
+
+
 @pytest.mark.django_db
 class TestFeedbackView:
 
