@@ -8,9 +8,11 @@ from myapp.models import Feedback
 from django.contrib.messages import get_messages
 from myapp.models import Route, Operator, Bus, Schedule, Seat_Status
 from pytest_django.asserts import assertContains, assertTemplateUsed
+from django.test import TestCase, Client
+
+
 
 User = get_user_model()
-
 @pytest.mark.django_db
 def test_soft_delete_user_toggle_logic(client):
     """Test that an admin can toggle del_flag from 0 to 1."""
@@ -66,6 +68,71 @@ def test_soft_delete_user_permission_denied(client):
     assert response.status_code == 302
     assert 'login' in response.url
 
+# test for bus management
+class BusViewTests(TestCase):
+    def setUp(self):
+        """Set up the test environment."""
+        # Create user with mandatory fields (email and name as per your model)
+        self.user = User.objects.create_user(
+            email='admin@example.com',
+            name='Admin User',
+            password='password123',
+            is_staff=True
+        )
+
+        self.client = Client()
+        # Login using the credentials defined above
+        self.client.login(email='admin@example.com', password='password123')
+
+        # Create Operator first because Bus depends on it (ForeignKey)
+        self.operator = Operator.objects.create(operator_name="Express Line")
+
+        # Create Bus instance
+        self.bus = Bus.objects.create(
+            license_no="YGN-1234",
+            seat_capacity=45,
+            bus_type="VIP",
+            operator=self.operator,
+            del_flag=0
+        )
+
+    def test_update_bus_post(self):
+        """Test updating bus details."""
+        # Use the name 'update_bus' directly without any prefix
+        url = reverse('bus_update', kwargs={'bus_id': self.bus.id})
+
+        updated_data = {
+            'license_no': 'MDY-9999',
+            'seat_capacity': 30,
+            'bus_type': 'Standard',
+            'operator': self.operator.id,
+        }
+
+        response = self.client.post(url, data=updated_data)
+
+        # 302 means redirect was successful
+        self.assertEqual(response.status_code, 302)
+
+        self.bus.refresh_from_db()
+        self.assertEqual(self.bus.license_no, 'MDY-9999')
+
+    def test_delete_bus_toggle(self):
+        """Test the toggle logic for del_flag (0 to 1)."""
+        url = reverse('bus_delete', kwargs={'bus_id': self.bus.id})
+
+        # First toggle: Change 0 to 1
+        response = self.client.get(url)
+        self.bus.refresh_from_db()
+        self.assertEqual(self.bus.del_flag, 1)
+        self.assertRedirects(response, reverse('bus_home'))
+
+    def test_access_denied_for_anonymous_user(self):
+        """Ensure non-logged in users are redirected."""
+        self.client.logout()
+        url = reverse('bus_update', kwargs={'bus_id': self.bus.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 302)
 
 @pytest.mark.django_db
 class TestFeedbackView:
