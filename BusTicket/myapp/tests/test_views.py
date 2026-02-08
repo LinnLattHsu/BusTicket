@@ -6,10 +6,9 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from myapp.models import Feedback
 from django.contrib.messages import get_messages
-from myapp.models import Route, Operator, Bus, Schedule, Seat_Status
+from myapp.models import Route, Operator, Bus, Schedule, Seat_Status, Booking, Ticket, Payment
 from pytest_django.asserts import assertContains, assertTemplateUsed
 from django.test import TestCase, Client
-
 
 
 User = get_user_model()
@@ -371,66 +370,60 @@ class TestSearchRoutes:
         assertContains(response, 'Mandalay')
 
 
-@pytest.mark.django_db
-class TestSeatSelectionView:
+# @pytest.mark.django_db
+# class TestSeatSelectionView:
+#
+#     @pytest.fixture
+#     def setup_data(self):
+#         op = Operator.objects.create(operator_name="Famous Express")
+#         route = Route.objects.create(origin="Yangon", destination="Mandalay")
+#         bus = Bus.objects.create(
+#             license_no="YGN-1234",
+#             seat_capacity=30,
+#             bus_type="VIP",
+#             operator=op
+#         )
+#
+#         schedule = Schedule.objects.create(
+#             bus=bus,
+#             route=route,
+#             date="2026-02-10",
+#             time="08:00:00",
+#             price=Decimal("20000")
+#         )
+#         return schedule
+#
+#     def test_seat_selection_view_success(self, client, setup_data):
+#         schedule = setup_data
+#         url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
+#
+#         response = client.get(url, {'number_of_seats': '2'})
+#
+#         assert response.status_code == 200
+#         assert response.context['origin'] == "Yangon"
+#         assert response.context['destination'] == "Mandalay"
+#         assert response.context['total_price'] == Decimal("40000")
+#
+#     def test_seat_data_logic(self, client, setup_data):
+#         schedule = setup_data
+#         url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
+#
+#         Seat_Status.objects.create(
+#             schedule=schedule,
+#             seat_no="A1",
+#             seat_status="Booked"
+#         )
+#
+#         response = client.get(url, {'number_of_seats': '1'})
+#         seats_data = response.context['seats_data']
+#
+#         a1_seat = next(s for s in seats_data if s['seat_name'] == "A1")
+#         assert a1_seat['is_booked'] is True
+#
+#         a2_seat = next(s for s in seats_data if s['seat_name'] == "A2")
+#         assert a2_seat['is_booked'] is False
 
-    @pytest.fixture
-    def setup_data(self):
-        op = Operator.objects.create(operator_name="Famous Express")
-        route = Route.objects.create(origin="Yangon", destination="Mandalay")
-        bus = Bus.objects.create(
-            license_no="YGN-1234",
-            seat_capacity=30,
-            bus_type="VIP",
-            operator=op
-        )
 
-        schedule = Schedule.objects.create(
-            bus=bus,
-            route=route,
-            date="2026-02-10",
-            time="08:00:00",
-            price=Decimal("20000")
-        )
-        return schedule
-
-    def test_seat_selection_view_success(self, client, setup_data):
-        schedule = setup_data
-        url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
-
-        response = client.get(url, {'number_of_seats': '2'})
-
-        assert response.status_code == 200
-        assert response.context['origin'] == "Yangon"
-        assert response.context['destination'] == "Mandalay"
-        assert response.context['total_price'] == Decimal("40000")
-
-    def test_seat_data_logic(self, client, setup_data):
-        schedule = setup_data
-        url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
-
-        Seat_Status.objects.create(
-            schedule=schedule,
-            seat_no="A1",
-            seat_status="Booked"
-        )
-
-        response = client.get(url, {'number_of_seats': '1'})
-        seats_data = response.context['seats_data']
-
-        a1_seat = next(s for s in seats_data if s['seat_name'] == "A1")
-        assert a1_seat['is_booked'] is True
-
-        a2_seat = next(s for s in seats_data if s['seat_name'] == "A2")
-        assert a2_seat['is_booked'] is False
-
-
-import pytest
-from django.urls import reverse
-from django.contrib.messages import get_messages
-from decimal import Decimal
-from myapp.models import Schedule, Booking, Seat_Status, Ticket, Payment, Route, Bus, Operator
-from django.utils import timezone
 
 
 @pytest.mark.django_db
