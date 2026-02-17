@@ -516,7 +516,7 @@
             <div class="search-card text-start">
                 <h4 class="mb-4 text-center" style="color: #444;">Book Your Ticket Now</h4>
 
-                <form method="get" action="{% url 'search_routes' %}">
+                <form id="searchForm" method="get" action="{% url 'search_routes' %}" novalidate>
                     <input type="hidden" name="source" value="home">
 
                     <!-- From (dropdown filled by context_processor -> origins) -->
@@ -637,6 +637,16 @@
     crossorigin="anonymous"></script>
 
 <script>
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+    const origin = document.getElementById('origin').value;
+    const destination = document.getElementById('destination').value;
+    const date = document.getElementById('date').value;
+
+    if (!origin || !destination || !date) {
+        e.preventDefault(); // Stop the form from submitting
+        alert('Please enter origin, destination and date.');
+    }
+});
     // Use jQuery's ready function for all initializations
     $(document).ready(function() {
         // Initialize Select2 for the destination dropdown

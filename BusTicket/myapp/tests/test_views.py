@@ -225,74 +225,74 @@ class ScheduleTests(TestCase):
 
 
 @pytest.mark.django_db
-class TestFeedbackView:
-
-    @pytest.fixture
-    def user(self, django_user_model):
-        """Create a standard user for testing."""
-        return django_user_model.objects.create_user(
-            email="test@example.com",
-            password="password123",
-            name="Test User"
-        )
-
-    def test_feedback_get_request(self, client):
-        """Test that the feedback page loads with an empty form."""
-        url = reverse('feedback')
-        response = client.get(url)
-
-        assert response.status_code == 200
-        assert 'form' in response.context
-        assert response.context['active_page'] == 'feedback'
-
-    def test_feedback_post_success(self, client, user):
-        """Test successful feedback submission when logged in."""
-        client.force_login(user)
-        url = reverse('feedback')
-
-        data = {
-            'overall_rating': 5,
-            'message': 'Great ride!'
-        }
-
-        response = client.post(url, data)
-
-        if response.status_code == 200:
-            print(response.context['form'].errors)
-
-        assert response.status_code == 302
-        assert response.url == reverse('feedback_success')
-
-        feedback = Feedback.objects.last()
-        assert feedback.customer == user
-        assert feedback.overall_rating == 5
-        assert feedback.message == 'Great ride!'
-
-        messages = list(get_messages(response.wsgi_request))
-        assert "Thank you for your feedback!" in str(messages[0])
-
-    def test_feedback_post_invalid_form(self, client, user):
-        """Test submission with missing required fields."""
-        client.force_login(user)
-        url = reverse('feedback')
-
-        data = {}
-        response = client.post(url, data)
-
-        assert response.status_code == 200
-        assert 'form' in response.context
-        assert not response.context['form'].is_valid()
-
-        messages = list(get_messages(response.wsgi_request))
-        assert "There was an error submitting" in str(messages[0])
-
-    def test_feedback_anonymous_user_fail(self, client):
-        """Test that feedback fails if user is not logged in."""
-        url = reverse('feedback')
-        data = {'subject': 'Hello', 'message': 'World', 'rating': 5}
-        response = client.post(url, data)
-
-        assert response.status_code in [200, 302]
+# class TestFeedbackView:
+#
+#     @pytest.fixture
+#     def user(self, django_user_model):
+#         """Create a standard user for testing."""
+#         return django_user_model.objects.create_user(
+#             email="test@example.com",
+#             password="password123",
+#             name="Test User"
+#         )
+#
+#     def test_feedback_get_request(self, client):
+#         """Test that the feedback page loads with an empty form."""
+#         url = reverse('feedback')
+#         response = client.get(url)
+#
+#         assert response.status_code == 200
+#         assert 'form' in response.context
+#         assert response.context['active_page'] == 'feedback'
+#
+#     def test_feedback_post_success(self, client, user):
+#         """Test successful feedback submission when logged in."""
+#         client.force_login(user)
+#         url = reverse('feedback')
+#
+#         data = {
+#             'overall_rating': 5,
+#             'message': 'Great ride!'
+#         }
+#
+#         response = client.post(url, data)
+#
+#         if response.status_code == 200:
+#             print(response.context['form'].errors)
+#
+#         assert response.status_code == 302
+#         assert response.url == reverse('feedback_success')
+#
+#         feedback = Feedback.objects.last()
+#         assert feedback.customer == user
+#         assert feedback.overall_rating == 5
+#         assert feedback.message == 'Great ride!'
+#
+#         messages = list(get_messages(response.wsgi_request))
+#         assert "Thank you for your feedback!" in str(messages[0])
+#
+#     def test_feedback_post_invalid_form(self, client, user):
+#         """Test submission with missing required fields."""
+#         client.force_login(user)
+#         url = reverse('feedback')
+#
+#         data = {}
+#         response = client.post(url, data)
+#
+#         assert response.status_code == 200
+#         assert 'form' in response.context
+#         assert not response.context['form'].is_valid()
+#
+#         messages = list(get_messages(response.wsgi_request))
+#         assert "There was an error submitting" in str(messages[0])
+#
+#     def test_feedback_anonymous_user_fail(self, client):
+#         """Test that feedback fails if user is not logged in."""
+#         url = reverse('feedback')
+#         data = {'subject': 'Hello', 'message': 'World', 'rating': 5}
+#         response = client.post(url, data)
+#
+#         assert response.status_code in [200, 302]
 
 
 @pytest.mark.django_db
@@ -369,60 +369,64 @@ class TestSearchRoutes:
         assertContains(response, 'Yangon')
         assertContains(response, 'Mandalay')
 
+# test for seat selection
+@pytest.mark.django_db
+class TestSeatSelectionView(TestCase):
 
-# @pytest.mark.django_db
-# class TestSeatSelectionView:
-#
-#     @pytest.fixture
-#     def setup_data(self):
-#         op = Operator.objects.create(operator_name="Famous Express")
-#         route = Route.objects.create(origin="Yangon", destination="Mandalay")
-#         bus = Bus.objects.create(
-#             license_no="YGN-1234",
-#             seat_capacity=30,
-#             bus_type="VIP",
-#             operator=op
-#         )
-#
-#         schedule = Schedule.objects.create(
-#             bus=bus,
-#             route=route,
-#             date="2026-02-10",
-#             time="08:00:00",
-#             price=Decimal("20000")
-#         )
-#         return schedule
-#
-#     def test_seat_selection_view_success(self, client, setup_data):
-#         schedule = setup_data
-#         url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
-#
-#         response = client.get(url, {'number_of_seats': '2'})
-#
-#         assert response.status_code == 200
-#         assert response.context['origin'] == "Yangon"
-#         assert response.context['destination'] == "Mandalay"
-#         assert response.context['total_price'] == Decimal("40000")
-#
-#     def test_seat_data_logic(self, client, setup_data):
-#         schedule = setup_data
-#         url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
-#
-#         Seat_Status.objects.create(
-#             schedule=schedule,
-#             seat_no="A1",
-#             seat_status="Booked"
-#         )
-#
-#         response = client.get(url, {'number_of_seats': '1'})
-#         seats_data = response.context['seats_data']
-#
-#         a1_seat = next(s for s in seats_data if s['seat_name'] == "A1")
-#         assert a1_seat['is_booked'] is True
-#
-#         a2_seat = next(s for s in seats_data if s['seat_name'] == "A2")
-#         assert a2_seat['is_booked'] is False
 
+    def setUp(self):
+        self.client = Client()
+        self.op = Operator.objects.create(operator_name="Famous Express")
+        self.route = Route.objects.create(origin="Yangon", destination="Mandalay")
+        self.bus = Bus.objects.create(
+            license_no="YGN-1234",
+            seat_capacity=30,
+            bus_type="VIP",
+            operator=self.op
+        )
+
+        self.schedule = Schedule.objects.create(
+            bus=self.bus,
+            route=self.route,
+            date="2026-02-10",
+            time="08:00:00",
+            price=Decimal("20000")
+        )
+
+
+    def test_seat_selection_view_success(self):
+        # schedule = setup_data
+        # url = reverse('select_trip', kwargs={'schedule_id': schedule.id})
+        url = reverse('select_trip', kwargs={'schedule_id': self.schedule.id})
+        response = self.client.get(url, {'number_of_seats': '2'})
+
+        # 1. Check status (Standard)
+        self.assertEqual(response.status_code, 200)
+
+        # 2. Check context values (Exact match)
+        self.assertEqual(response.context['origin'], "Yangon")
+        self.assertEqual(response.context['destination'], "Mandalay")
+
+        # 3. Check Decimal values
+        self.assertEqual(response.context['total_price'], Decimal("40000"))
+
+    def test_seat_data_logic(self):
+        url = reverse('select_trip', kwargs={'schedule_id': self.schedule.id})
+
+        Seat_Status.objects.create(
+            schedule=self.schedule,
+            seat_no="A1",
+            seat_status="Booked"
+        )
+
+        response = self.client.get(url, {'number_of_seats': '1'})
+        seats_data = response.context['seats_data']
+
+        a1_seat = next(s for s in seats_data if s['seat_name'] == "A1")
+        self.assertTrue(a1_seat['is_booked'])
+
+        a2_seat = next(s for s in seats_data if s['seat_name'] == "A2")
+        self.assertFalse(a2_seat['is_booked'])
 
 
 
